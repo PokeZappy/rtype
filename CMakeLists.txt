@@ -1,34 +1,71 @@
 cmake_minimum_required(VERSION 3.0)
 project(RType)
 
-include_directories(server client)
-file(GLOB_RECURSE SERVER_SOURCES "server/src/*.cpp" "server/include/*.hpp")
-file(GLOB_RECURSE SERVER_SOURCES_TEST "server/tests/*.cpp" "server/tests/*.hpp")
-file(GLOB CLIENT_SOURCES "client/*.cpp" "client/*.hpp")
-file(GLOB_RECURSE SERVER_SOURCES_TEST "client/tests/*.cpp" "client/tests/*.hpp")
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(DEFINED ENV{VCPKG_ROOT})
+    set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
+        CACHE STRING "Vcpkg toolchain file")
+else()
+    message(WARNING "VCPKG_ROOT environment variable not defined, skipping vcpkg integration")
+endif()
+
+include_directories(engine r-type)
+file(GLOB_RECURSE SERVER_SOURCES "r-type/server/src/*.cpp" "r-type/server/include/*.hpp")
+file(GLOB_RECURSE CLIENT_SOURCES "r-type/client/src/*.cpp" "r-type/client/include/*.hpp")
+file(GLOB_RECURSE ENGINE_SOURCES "engine/*.cpp" "engine/*.hpp")
+file(GLOB_RECURSE SERVER_SOURCES_TEST "r-type/server/tests/*.cpp" "r-type/server/tests/*.hpp")
+file(GLOB_RECURSE CLIENT_SOURCES_TEST "r-type/client/tests/*.cpp" "r-type/client/tests/*.hpp")
 
 add_executable(r-type_server ${SERVER_SOURCES})
-add_executable(r-type_client  ${CLIENT_SOURCES})
+add_executable(r-type_client ${CLIENT_SOURCES})
 
-target_compile_options(r-type_server PUBLIC -std=c++20 -Wall -Wfloat-conversion)
-target_compile_options(r-type_client PUBLIC -std=c++20 -Wall -Wfloat-conversion)
+add_library(engine STATIC ${ENGINE_SOURCES})
 
-find_package(GTest)
+target_link_libraries(r-type_server engine)
+target_link_libraries(r-type_client engine)
 
-if(GTEST_FOUND)
-  add_executable(unit_tests ${SERVER_SOURCES_TEST} ${SERVER_SOURCES})
-  target_compile_definitions(unit_tests PUBLIC UNIT_TESTS)
+target_compile_options(r-type_server PUBLIC -std=c++20 -Wall)
+target_compile_options(r-type_client PUBLIC -std=c++20 -Wall)
 
-  # linker options and library dependencies from it, by simply adding it as dependency.
-  set_target_properties(example PROPERTIES ENABLE_EXPORTS on)
+enable_testing()
 
-  target_link_libraries(unit_tests PUBLIC
-    ${GTEST_BOTH_LIBRARIES}
-    example
-  )
+add_executable(r-type_server_test ${SERVER_SOURCES_TEST})
+target_link_libraries(r-type_server_test engine)
+add_test(NAME ServerTests COMMAND r-type_server_test)
 
-  target_include_directories(unit_tests PUBLIC
-    ${GTEST_INCLUDE_DIRS} # doesn't do anything on linux
-  )
+add_executable(r-type_client_test ${CLIENT_SOURCES_TEST})
+target_link_libraries(r-type_client_test engine)
+add_test(NAME ClientTests COMMAND r-type_client_test)
 
-endif()
+add_custom_target(re
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target clean
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}
+)
+
+add_custom_target(build_server
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target r-type_server
+)
+
+add_custom_target(build_client
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target r-type_client
+)
+
+add_custom_target(re_server
+    COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/r-type_server
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target r-type_server
+)
+
+add_custom_target(re_client
+    COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/r-type_client
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target r-type_client
+)
+
+# Exemple d'utilisation de vcpkg avec Boost
+# find_package(Boost REQUIRED)
+# if(Boost_FOUND)
+#     include_directories(${Boost_INCLUDE_DIRS})
+#     target_link_libraries(r-type_server ${Boost_LIBRARIES})
+#     target_link_libraries(r-type_client ${Boost_LIBRARIES})
+# endif()

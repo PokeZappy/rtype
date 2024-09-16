@@ -1,0 +1,13 @@
+.idea
+sprites
+CMakeFiles
+build
+Testing
+*.pdf
+*.cmake
+CMakeCache.txt
+*.a
+main
+Makefile
+r-type_server
+r-type_client
