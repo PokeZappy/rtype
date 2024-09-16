@@ -26,8 +26,8 @@ add_library(engine STATIC ${ENGINE_SOURCES})
 target_link_libraries(r-type_server engine)
 target_link_libraries(r-type_client engine)
 
-target_compile_options(r-type_server PUBLIC -std=c++20 -Wall -Wfloat-conversion)
-target_compile_options(r-type_client PUBLIC -std=c++20 -Wall -Wfloat-conversion)
+target_compile_options(r-type_server PUBLIC -std=c++20 -Wall)
+target_compile_options(r-type_client PUBLIC -std=c++20 -Wall)
 
 enable_testing()
 
