@@ -1,6 +1,7 @@
 .idea
 sprites
 CMakeFiles
+build
 Testing
 *.pdf
 *.cmake
