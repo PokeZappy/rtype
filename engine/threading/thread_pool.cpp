@@ -7,13 +7,15 @@
 
 #include "thread_pool.hpp"
 
-ThreadPool::ThreadPool(size_t threads) : stop(false) {
+ThreadPool::ThreadPool(size_t threads) : stop(false)
+{
     for (size_t i = 0; i < threads; ++i) {
         workers.emplace_back([this] { worker_thread(); });
     }
 }
 
-ThreadPool::~ThreadPool() {
+ThreadPool::~ThreadPool()
+{
     {
         std::unique_lock<std::mutex> lock(queue_mutex);
         stop = true;
@@ -24,7 +26,8 @@ ThreadPool::~ThreadPool() {
     }
 }
 
-void ThreadPool::enqueue(std::function<void()> task) {
+void ThreadPool::enqueue(std::function<void()> task)
+{
     {
         std::unique_lock<std::mutex> lock(queue_mutex);
         tasks.push(std::move(task));
@@ -32,7 +35,8 @@ void ThreadPool::enqueue(std::function<void()> task) {
     condition.notify_one();
 }
 
-void ThreadPool::worker_thread() {
+void ThreadPool::worker_thread()
+{
     while (true) {
         std::function<void()> task;
         {
