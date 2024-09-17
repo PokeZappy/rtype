@@ -37,7 +37,7 @@ static void handle_client(int client_socket)
 
     while (true) {
         memset(buffer, 0, BUFFER_SIZE);
-        int valread = read(client_socket, buffer, BUFFER_SIZE - 2);
+        int valread = read(client_socket, buffer, BUFFER_SIZE);
         if (valread <= 0 || buffer[0] == 0x04) {
             std::cout << "Client disconnected (EOF or CTRL+D).\n";
             close(client_socket);
