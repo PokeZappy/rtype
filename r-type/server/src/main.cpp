@@ -10,6 +10,7 @@
 #include "../../../engine/events/event_handler.hpp"
 #include "../../../engine/threading/thread_pool.hpp"
 #include "../../../engine/networking/socket.hpp"
+#include "serializer/serializer.hpp"
 
 static void handle_event(const std::string& client_input)
 {
@@ -87,6 +88,44 @@ static void launch_server()
 
 int main()
 {
-    launch_server();
+    //launch_server();
+    Socket serverSocket;
+    serverSocket.bindSocket("0.0.0.0", 12345);
+
+    std::string senderIp;
+    int senderPort;
+    BitSerializer serializer;
+
+    std::cout << "Serveur en attente de messages..." << std::endl;
+    while (true) {
+        std::string message = serverSocket.receiveFrom(senderIp, senderPort);
+        serializer.loadBuffer(std::vector<uint8_t>(message.begin(), message.end()));
+        serializer.printBuffer();
+        uint16_t messageType = serializer.readBits(8);
+        if (messageType == MOVE) {
+            std::cout << "Received move event\n";
+            serializer.clearBuffer();
+            serializer.writeBits(MOVE, 8);
+            std::vector<uint8_t> buffer = serializer.getBuffer();
+            serializer.printBuffer();
+            std::string bufferStr(buffer.begin(), buffer.end());
+            serverSocket.sendTo(senderIp, senderPort, bufferStr);
+        } else if (messageType == FIRE) {
+            std::cout << "Received fire event\n";
+            serializer.clearBuffer();
+            serializer.writeBits(FIRE, 8);
+            std::vector<uint8_t> buffer = serializer.getBuffer();
+            serializer.printBuffer();
+            std::string bufferStr(buffer.begin(), buffer.end());
+            serverSocket.sendTo(senderIp, senderPort, bufferStr);
+        } else {
+            std::cout << "Received unknown event\n";
+            std::cout << "Message reçu de " << senderIp << ":" << senderPort << " -> " << message << std::endl;
+            serverSocket.sendTo(senderIp, senderPort, "Message reçu !");
+        }
+        if (message == "exit") {
+            break;
+        }
+    }
     return 0;
 }

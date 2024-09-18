@@ -5,8 +5,8 @@
 ** serializer.hpp
 */
 
-#ifndef RTYPE_SERIALIZER_H
-#define RTYPE_SERIALIZER_H
+#ifndef RTYPE_SERIALIZER_HPP
+#define RTYPE_SERIALIZER_HPP
 
 #include <vector>
 #include <cstdint>
@@ -43,9 +43,10 @@ public:
     std::vector<uint8_t> getBuffer() const;
     void loadBuffer(const std::vector<uint8_t>& newBuffer);
     void printBuffer() const;
+    void clearBuffer();
 
     template <typename T>
-    T deserialize(const std::vector<uint8_t>& buffer);
+    T deserialize();
 
 private:
     std::vector<uint8_t> buffer;
@@ -55,10 +56,10 @@ private:
 };
 
 template <>
-MovementMessage BitSerializer::deserialize<MovementMessage>(const std::vector<uint8_t>& buffer);
+MovementMessage BitSerializer::deserialize<MovementMessage>();
 
 template <>
-FireMessage BitSerializer::deserialize<FireMessage>(const std::vector<uint8_t>& buffer);
+FireMessage BitSerializer::deserialize<FireMessage>();
 
 
 #endif

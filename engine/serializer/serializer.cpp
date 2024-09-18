@@ -5,7 +5,7 @@
 ** serializer.cpp
 */
 
-#include "serializer.h"
+#include "serializer.hpp"
 
 void BitSerializer::writeBits(uint32_t data, uint8_t numBits) {
     for (int i = numBits - 1; i >= 0; --i) {
@@ -64,9 +64,15 @@ void BitSerializer::printBuffer() const {
     std::cout << std::endl;
 }
 
+void BitSerializer::clearBuffer() {
+    buffer.clear();
+    bitIndex = 0;
+    currentByte = 0;
+    bufferIndex = 0;
+}
+
 template <>
-MovementMessage BitSerializer::deserialize<MovementMessage>(const std::vector<uint8_t>& buffer) {
-    size_t index = 0;
+MovementMessage BitSerializer::deserialize<MovementMessage>() {
     MovementMessage msg;
 
     msg.playerId = readBits(12);
@@ -79,7 +85,7 @@ MovementMessage BitSerializer::deserialize<MovementMessage>(const std::vector<ui
 }
 
 template <>
-FireMessage BitSerializer::deserialize<FireMessage>(const std::vector<uint8_t>& buffer) {
+FireMessage BitSerializer::deserialize<FireMessage>() {
     size_t index = 0;
     FireMessage msg;
 

@@ -2,7 +2,7 @@
 #include <vector>
 #include <cassert>
 #include <bitset>
-#include "serializer/serializer.h"
+#include "serializer/serializer.hpp"
 
 #define GREEN   "\033[32m"
 #define RESET   "\033[0m"
@@ -131,7 +131,7 @@ void testComplexOne() {
     std::vector<uint8_t> buffer = serializer.getBuffer();
     serializer.loadBuffer(buffer);
     serializer.readBits(8);
-    MovementMessage movementMessage = serializer.deserialize<MovementMessage>(buffer);
+    MovementMessage movementMessage = serializer.deserialize<MovementMessage>();
     assert(movementMessage.playerId == 1234);
     assert(movementMessage.posX == 300);
     assert(movementMessage.posY == 500);
@@ -155,7 +155,7 @@ void testComplexTwo() {
     std::vector<uint8_t> fireBuffer = fireSerializer.getBuffer();
     fireSerializer.loadBuffer(fireBuffer);
     fireSerializer.readBits(8);
-    FireMessage fireMessage = fireSerializer.deserialize<FireMessage>(fireBuffer);
+    FireMessage fireMessage = fireSerializer.deserialize<FireMessage>();
     assert(fireMessage.playerId == 4000);
     assert(fireMessage.posX == 250);
     assert(fireMessage.posY == 400);
