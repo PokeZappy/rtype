@@ -5,7 +5,7 @@
 ** main.cpp
 */
 
-#include <iostream>
+#include "../include/client_config.hpp"
 
 int main()
 {
