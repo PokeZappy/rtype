@@ -11,9 +11,12 @@ else()
     message(WARNING "VCPKG_ROOT environment variable not defined, skipping vcpkg integration")
 endif()
 
+set(CLIENT_INCLUDE_DIRS r-type/client/include)
+set(ENGINE_INCLUDE_DIRS engine)
+
 include_directories(engine r-type)
 file(GLOB_RECURSE SERVER_SOURCES "r-type/server/src/*.cpp" "r-type/server/include/*.hpp")
-file(GLOB_RECURSE CLIENT_SOURCES "r-type/client/src/*.cpp" "r-type/client/include/*.hpp")
+file(GLOB_RECURSE CLIENT_SOURCES "r-type/client/src/*.cpp")
 file(GLOB_RECURSE ENGINE_SOURCES "engine/*.cpp" "engine/*.hpp")
 file(GLOB_RECURSE SERVER_SOURCES_TEST "r-type/server/tests/*.cpp" "r-type/server/tests/*.hpp")
 file(GLOB_RECURSE CLIENT_SOURCES_TEST "r-type/client/tests/*.cpp" "r-type/client/tests/*.hpp")
@@ -23,8 +26,12 @@ add_executable(r-type_client ${CLIENT_SOURCES})
 
 add_library(engine STATIC ${ENGINE_SOURCES})
 
-target_link_libraries(r-type_server engine)
-target_link_libraries(r-type_client engine)
+target_link_libraries(r-type_server PRIVATE engine)
+target_link_libraries(r-type_client PRIVATE engine)
+
+target_include_directories(r-type_server PRIVATE ${SERVER_INCLUDE_DIRS} ${ENGINE_INCLUDE_DIRS})
+target_include_directories(r-type_client PRIVATE ${CLIENT_INCLUDE_DIRS} ${ENGINE_INCLUDE_DIRS})
+
 
 target_compile_options(r-type_server PUBLIC -std=c++20 -Wall)
 target_compile_options(r-type_client PUBLIC -std=c++20 -Wall)
@@ -62,10 +69,12 @@ add_custom_target(re_client
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target r-type_client
 )
 
-# Exemple d'utilisation de vcpkg avec Boost
-# find_package(Boost REQUIRED)
-# if(Boost_FOUND)
-#     include_directories(${Boost_INCLUDE_DIRS})
-#     target_link_libraries(r-type_server ${Boost_LIBRARIES})
-#     target_link_libraries(r-type_client ${Boost_LIBRARIES})
-# endif()
+find_package(SFML 2.6 COMPONENTS system window graphics network audio REQUIRED)
+
+if(SFML_FOUND)
+    message(STATUS "SFML found: ${SFML_LIBRARIES}.")
+    target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+
+else()
+    message(FATAL_ERROR "SFML not found!")
+endif()
