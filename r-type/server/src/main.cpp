@@ -9,7 +9,7 @@
 #include "../include/server_config.hpp"
 #include "../../../engine/events/event_handler.hpp"
 #include "../../../engine/threading/thread_pool.hpp"
-#include "../../../engine/networking/server_socket.hpp"
+#include "../../../engine/networking/socket.hpp"
 
 static void handle_event(const std::string& client_input)
 {
