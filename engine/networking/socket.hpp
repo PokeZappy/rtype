@@ -5,7 +5,7 @@
 ** server_socket.hpp
 */
 
-#ifndef SERVER_SOCKET_HPP
-#define SERVER_SOCKET_HPP
+#ifndef SOCKET_HPP
+#define SOCKET_HPP
 
-#endif // SERVER_SOCKET_HPP
+#endif // SOCKET_HPP
