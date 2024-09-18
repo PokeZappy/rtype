@@ -1,15 +1,29 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.0)
 project(RType)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
+if(WIN32)
+    message(STATUS "Configuring for Windows")
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    set(SFML_STATIC_LIBRARIES TRUE)
+elseif(UNIX)
+    message(STATUS "Configuring for Unix-based system")
+endif()
+
+if(DEFINED ENV{VCPKG_ROOT})
+    set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
+        CACHE STRING "Vcpkg toolchain file")
+else()
+    message(WARNING "VCPKG_ROOT environment variable not defined, skipping vcpkg integration")
+endif()
 
 set(CLIENT_INCLUDE_DIRS r-type/client/include)
 set(ENGINE_INCLUDE_DIRS engine)
 
-include_directories(engine r-type)
+include_directories(${ENGINE_INCLUDE_DIRS} r-type)
+
 file(GLOB_RECURSE SERVER_SOURCES "r-type/server/src/*.cpp" "r-type/server/include/*.hpp")
 file(GLOB_RECURSE CLIENT_SOURCES "r-type/client/src/*.cpp")
 file(GLOB_RECURSE ENGINE_SOURCES "engine/*.cpp" "engine/*.hpp")
@@ -27,8 +41,13 @@ target_link_libraries(r-type_client PRIVATE engine)
 target_include_directories(r-type_server PRIVATE ${SERVER_INCLUDE_DIRS} ${ENGINE_INCLUDE_DIRS})
 target_include_directories(r-type_client PRIVATE ${CLIENT_INCLUDE_DIRS} ${ENGINE_INCLUDE_DIRS})
 
-target_compile_options(r-type_server PUBLIC -std=c++20 -Wall)
-target_compile_options(r-type_client PUBLIC -std=c++20 -Wall)
+if(MSVC)
+    target_compile_options(r-type_server PRIVATE /W4)
+    target_compile_options(r-type_client PRIVATE /W4)
+else()
+    target_compile_options(r-type_server PRIVATE -std=c++20 -Wall)
+    target_compile_options(r-type_client PRIVATE -std=c++20 -Wall)
+endif()
 
 enable_testing()
 
@@ -63,12 +82,26 @@ add_custom_target(re_client
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target r-type_client
 )
 
-find_package(SFML 2.6 COMPONENTS system window graphics network audio REQUIRED)
+if(WIN32)
+    find_package(SFML 2.5.1 COMPONENTS system window graphics network audio REQUIRED)
 
-if(SFML_FOUND)
-    message(STATUS "SFML found: ${SFML_LIBRARIES}.")
-    target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+    if(SFML_FOUND)
+        message(STATUS "SFML found: ${SFML_LIBRARIES}.")
+        target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+    else()
+        message(FATAL_ERROR "SFML not found!")
+    endif()
+
+    if(SFML_STATIC_LIBRARIES)
+        target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+        target_link_libraries(r-type_client PRIVATE opengl32 freetype winmm gdi32)
+    endif()
 
 else()
-    message(FATAL_ERROR "SFML not found!")
+    find_package(SFML 2.5.1 COMPONENTS system window graphics network audio REQUIRED)
+    if(SFML_FOUND)
+        target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+    else()
+        message(FATAL_ERROR "SFML not found!")
+    endif()
 endif()
