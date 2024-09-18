@@ -1,15 +1,10 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.15)
 project(RType)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(DEFINED ENV{VCPKG_ROOT})
-    set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
-        CACHE STRING "Vcpkg toolchain file")
-else()
-    message(WARNING "VCPKG_ROOT environment variable not defined, skipping vcpkg integration")
-endif()
+include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
 
 set(CLIENT_INCLUDE_DIRS r-type/client/include)
 set(ENGINE_INCLUDE_DIRS engine)
@@ -31,7 +26,6 @@ target_link_libraries(r-type_client PRIVATE engine)
 
 target_include_directories(r-type_server PRIVATE ${SERVER_INCLUDE_DIRS} ${ENGINE_INCLUDE_DIRS})
 target_include_directories(r-type_client PRIVATE ${CLIENT_INCLUDE_DIRS} ${ENGINE_INCLUDE_DIRS})
-
 
 target_compile_options(r-type_server PUBLIC -std=c++20 -Wall)
 target_compile_options(r-type_client PUBLIC -std=c++20 -Wall)
