@@ -8,9 +8,4 @@
 #ifndef EVENT_HANDLER_HPP
 #define EVENT_HANDLER_HPP
 
-#include <iostream>
-#include <string>
-
-void handle_event(const std::string& client_input);
-
 #endif // EVENT_HANDLER_HPP

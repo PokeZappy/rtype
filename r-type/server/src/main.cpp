@@ -5,28 +5,21 @@
 ** main.cpp
 */
 
-#include "../../../engine/threading/thread_pool.hpp"
+
 #include "../include/server_config.hpp"
 #include "../../../engine/events/event_handler.hpp"
+#include "../../../engine/threading/thread_pool.hpp"
+#include "../../../engine/networking/server_socket.hpp"
 
-static int error_handling(int ac, char **av)
+static void handle_event(const std::string& client_input)
 {
-    if (ac != 2) {
-        std::cerr << "Usage: ./prog <port>" << std::endl;
-        return -84;
+    if (client_input == "move") {
+        std::cout << "Handling move event.\n";
+    } else if (client_input == "shoot") {
+        std::cout << "Handling shoot event.\n";
+    } else {
+        std::cout << "Unknown event: " << client_input << "\n";
     }
-    for (int i = 0; av[1][i] != '\0'; i++) {
-        if (!std::isdigit(av[1][i])) {
-            std::cerr << "Error: Port must be an integer." << std::endl;
-            return -84;
-        }
-    }
-    int port = std::atoi(av[1]);
-    if (port <= 0 || port > 65535) {
-        std::cerr << "Error: Port must be between 1 and 65535." << std::endl;
-        return -84;
-    }
-    return port;
 }
 
 static void handle_client(int client_socket)
@@ -53,7 +46,7 @@ static void handle_client(int client_socket)
     }
 }
 
-static void launch_server(int port)
+static void launch_server()
 {
     int server_fd, new_socket;
     struct sockaddr_in address;
@@ -70,7 +63,7 @@ static void launch_server(int port)
 
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(port);
+    address.sin_port = htons(PORT);
 
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
         perror("bind failed");
@@ -81,7 +74,7 @@ static void launch_server(int port)
     }
 
     ThreadPool pool(MAX_PLAYERS);
-    std::cout << "Server started on port " << port << ". Waiting for clients...\n";
+    std::cout << "Server started on port " << PORT << ". Waiting for clients...\n";
     while (true) {
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0) {
             perror("accept failed");
@@ -92,12 +85,8 @@ static void launch_server(int port)
     }
 }
 
-int main(int ac, char **av)
+int main()
 {
-    int port = error_handling(ac, av);
-
-    if (port == -84)
-        return -84;
-    launch_server(port);
+    launch_server();
     return 0;
 }

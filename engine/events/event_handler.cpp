@@ -6,14 +6,3 @@
 */
 
 #include "event_handler.hpp"
-
-void handle_event(const std::string& client_input)
-{
-    if (client_input == "move") {
-        std::cout << "Handling move event.\n";
-    } else if (client_input == "shoot") {
-        std::cout << "Handling shoot event.\n";
-    } else {
-        std::cout << "Unknown event: " << client_input << "\n";
-    }
-}

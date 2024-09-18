@@ -15,8 +15,10 @@
 #include <cstring>
 #include <cstdlib>
 #include <cctype>
+#include <sys/socket.h>
 
-constexpr int MAX_PLAYERS = 2;
+constexpr int MAX_PLAYERS = 4;
 constexpr int BUFFER_SIZE = 1024;
+constexpr int PORT = 8080;
 
 #endif // SERVER_CONFIG_HPP
