@@ -73,12 +73,6 @@ jobs:
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.sh
           ${{ github.workspace }}/vcpkg/vcpkg install sfml
 
-    - name: Set reusable strings
-      id: strings
-      shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-
     - name: Configure CMake (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -97,7 +91,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} `
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} `
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
-        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\scripts\buildsystems\vcpkg.cmake `
+        -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" `
         -G "Visual Studio 17 2022" `
         -S ${{ github.workspace }}
     
