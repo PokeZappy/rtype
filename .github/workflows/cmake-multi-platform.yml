@@ -73,6 +73,12 @@ jobs:
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.sh
           ${{ github.workspace }}/vcpkg/vcpkg install sfml
 
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
     - name: Configure CMake (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
