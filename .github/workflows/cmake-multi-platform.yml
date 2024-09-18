@@ -45,6 +45,14 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
+    - name: Install Conan
+      run: |
+        pip install conan
+
+    - name: Run Conan
+      run: |
+        conan install . --output-folder="${{ steps.strings.outputs.build-output-dir }}" --build=missing
+
     - name: Configure CMake ${{ matrix.c_compiler }} ${{ matrix.cpp_compiler }}
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
