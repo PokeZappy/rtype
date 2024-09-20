@@ -1,7 +1,8 @@
 .idea
-sprites
 CMakeFiles
 build
+bin
+cmake-build-debug
 Testing
 *.pdf
 *.cmake
