@@ -1,4 +1,4 @@
-#include "RenderSystem.hpp"
+#include "../include/systems/RenderSystem.hpp"
 #include "RenderComponent.hpp"
 
 namespace potEngine {
@@ -19,7 +19,7 @@ namespace potEngine {
             auto renderComponentOpt = entity->getComponent<RenderComponent>();
             if (renderComponentOpt) {
                 RenderComponent& renderComponent = renderComponentOpt->get();
-                
+
                 if (renderComponent.getSprite()) {
                     _window->draw(*renderComponent.getSprite());
                 }
