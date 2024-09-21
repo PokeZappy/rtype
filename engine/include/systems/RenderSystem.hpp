@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ASystem.hpp"
-#include "SFML/Graphics.hpp"
+#include <SFML/Graphics.hpp>
 
 namespace potEngine {
     class RenderSystem : public ASystem {

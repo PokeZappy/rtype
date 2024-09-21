@@ -2,7 +2,7 @@
 #include "ECSManager.hpp"
 #include "Entity.hpp"
 #include "RenderComponent.hpp"
-#include "SFML/Graphics.hpp"
+#include <SFML/Graphics.hpp>
 
 int mainPotEngine()
 {

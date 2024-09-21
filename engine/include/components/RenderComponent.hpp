@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IComponent.hpp"
-#include "SFML/Graphics.hpp"
+#include <SFML/Graphics.hpp>
 
 namespace potEngine {
     class RenderComponent : public IComponent {
