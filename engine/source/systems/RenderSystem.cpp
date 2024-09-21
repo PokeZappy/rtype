@@ -1,4 +1,4 @@
-#include "../include/systems/RenderSystem.hpp"
+#include "RenderSystem.hpp"
 #include "RenderComponent.hpp"
 
 namespace potEngine {

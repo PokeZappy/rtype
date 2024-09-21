@@ -13,11 +13,16 @@ elseif(UNIX)
 endif()
 
 if(DEFINED ENV{VCPKG_ROOT})
-    set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
-        CACHE STRING "Vcpkg toolchain file")
+    option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+    include("$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 else()
-    message(WARNING "VCPKG_ROOT environment variable not defined, skipping vcpkg integration")
+    option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+    include("/opt/vcpkg/scripts/buildsystems/vcpkg.cmake")
+    message(WARNING "VCPKG_ROOT environment variable not defined, please modify the previous path")
 endif()
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 set(CLIENT_INCLUDE_DIRS r-type/client/include)
 set(SERVER_INCLUDE_DIRS r-type/server/include)
@@ -100,7 +105,7 @@ add_custom_target(re_client
 
 # SFML
 if(WIN32)
-    find_package(SFML 2.5.1 COMPONENTS system window graphics network audio REQUIRED)
+    find_package(SFML COMPONENTS system window graphics network audio  REQUIRED)
 
     if(SFML_FOUND)
         message(STATUS "SFML found: ${SFML_LIBRARIES}.")
@@ -115,7 +120,7 @@ if(WIN32)
     endif()
 
 else()
-    find_package(SFML 2.5.1 COMPONENTS system window graphics network audio REQUIRED)
+    find_package(SFML COMPONENTS system window graphics network audio REQUIRED)
     if(SFML_FOUND)
         target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
     else()
