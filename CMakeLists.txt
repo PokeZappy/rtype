@@ -17,6 +17,8 @@ file(GLOB_RECURSE ENGINE_SOURCES
     "engine/source/core/*.cpp"
     "engine/source/renderer/*.cpp"
     "engine/source/systems/*.cpp"
+    "engine/source/*.cpp"
+    "engine/source/entity/*.cpp"
 )
 
 add_library(engine SHARED ${ENGINE_SOURCES})
@@ -27,6 +29,7 @@ target_include_directories(engine PUBLIC
     engine/include/core
     engine/include/renderer
     engine/include/systems
+    engine/include/entity
 )
 
 file(GLOB_RECURSE SERVER_SOURCES "r-type/server/src/*.cpp")
@@ -108,6 +111,7 @@ else()
     find_package(SFML COMPONENTS system window graphics network audio REQUIRED)
     if(SFML_FOUND)
         target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+        target_link_libraries(engine PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
     else()
         message(FATAL_ERROR "SFML not found!")
     endif()

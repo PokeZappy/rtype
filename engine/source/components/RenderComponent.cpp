@@ -27,6 +27,11 @@ namespace potEngine {
         delete _sprite;
     }
 
+    void RenderComponent::setSprite(sf::Sprite* sprite)
+    {
+        _sprite = sprite;
+    }
+
     sf::Sprite* RenderComponent::getSprite() const
     {
         return _sprite;
