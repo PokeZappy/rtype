@@ -5,7 +5,6 @@
 ** main.cpp
 */
 
-
 #include "server_config.hpp"
 
 Server::Server() : current_players(0)
