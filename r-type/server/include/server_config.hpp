@@ -42,6 +42,8 @@ class Server {
 
         uint8_t assign_client_id();
         void remove_client(uint8_t client_id);
+
+        void handle_action(uint8_t client_id, uint8_t action);
 };
 
 #endif // SERVER_CONFIG_HPP

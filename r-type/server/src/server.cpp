@@ -63,20 +63,49 @@ void Server::start()
     while (true) {
         auto [client_id, action] = recv_system.recv_message(server_fd, client_addr, client_addr_len);
 
-        if (action == 0x01) {
+        if (action == CONNECTION) {
             if (current_players < MAX_PLAYERS) {
                 client_id = assign_client_id();
                 if (client_id > 0) {
                     clients.push_back({client_id, client_addr});
                     current_players++;
                     std::cout << "Client connected with ID: " << static_cast<int>(client_id) << std::endl;
-                    send_system.send_message(server_fd, client_addr, client_id, 0x01);
+                    send_system.send_message(server_fd, client_addr, client_id, CONNECTION);
                 }
             }
-        } else if (action == 0x02) {
-            std::cout << "Client " << static_cast<int>(client_id) << " is disconnecting.\n";
-            remove_client(client_id);
-            current_players--;
+        } else {
+            handle_action(client_id, action);
+        }
+    }
+}
+
+void Server::handle_action(uint8_t client_id, uint8_t action)
+{
+    auto it = std::find_if(clients.begin(), clients.end(), [client_id](const ClientInfo& client) {
+        return client.client_id == client_id;
+    });
+
+    if (it != clients.end()) {
+        switch (action) {
+            case MOVE_UP:
+                std::cout << "Client " << static_cast<int>(client_id) << " moves up.\n";
+                break;
+            case MOVE_DOWN:
+                std::cout << "Client " << static_cast<int>(client_id) << " moves down.\n";
+                break;
+            case MOVE_LEFT:
+                std::cout << "Client " << static_cast<int>(client_id) << " moves left.\n";
+                break;
+            case MOVE_RIGHT:
+                std::cout << "Client " << static_cast<int>(client_id) << " moves right.\n";
+                break;
+            case DISCONNECT :
+                std::cout << "Client " << static_cast<int>(client_id) << " is disconnecting.\n";
+                remove_client(client_id);
+                current_players--;
+                break;
+            default:
+                std::cout << "Unknown action.\n";
         }
     }
 }

@@ -25,9 +25,7 @@ class Client {
         ~Client();
 
         void connect_to_server();
-        void send_message(uint8_t action);
-        uint8_t receive_id();
-
+        int handle_input();
         void set_id(uint8_t id);
         uint8_t get_id() const;
 
