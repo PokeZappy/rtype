@@ -7,7 +7,7 @@
 
 #include "client_config.hpp"
 
-Client::Client() : client_id(0x00)
+potEngine::Client::Client() : client_id(0x00)
 {
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("socket creation failed");
@@ -24,22 +24,22 @@ Client::Client() : client_id(0x00)
     }
 }
 
-Client::~Client()
+potEngine::Client::~Client()
 {
     close(sockfd);
 }
 
-void Client::set_id(uint8_t id)
+void potEngine::Client::set_id(uint8_t id)
 {
     client_id = id;
 }
 
-uint8_t Client::get_id() const
+uint8_t potEngine::Client::get_id() const
 {
     return client_id;
 }
 
-void Client::connect_to_server()
+void potEngine::Client::connect_to_server()
 {
     potEngine::SendNetworkSystem send_system;
     potEngine::RecvNetworkSystem recv_system;
@@ -61,7 +61,7 @@ void Client::connect_to_server()
     send_system.send_message(sockfd, server_addr, this->client_id, DISCONNECT);
 }
 
-int Client::handle_input()
+int potEngine::Client::handle_input()
 {
     potEngine::SendNetworkSystem send_system;
 

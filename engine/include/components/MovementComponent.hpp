@@ -7,16 +7,15 @@
 
 #pragma once
 
-#include "AComponent.hpp"
+#include "IComponent.hpp"
 
 namespace potEngine
 {
     class MovementComponent : public AComponent {
     public:
-        int x;
-        int y;
+        float velocity_x, velocity_y;
 
-        MovementComponent(int init_x = 0, int init_y = 0) : x(init_x), y(init_y) {}
-        ~MovementComponent() {}
+        MovementComponent(float vx = 0, float vy = 0) : velocity_x(vx), velocity_y(vy) {}
     };
 }
+

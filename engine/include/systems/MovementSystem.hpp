@@ -17,12 +17,14 @@ namespace potEngine
         MovementSystem() {}
         ~MovementSystem() {}
 
-        void update(float deltaTime, std::vector<std::shared_ptr<Entity>> entities) override
+        void update(float deltaTime, std::vector<std::shared_ptr<Entity>> entities)
         {
             for (auto& entity : entities) {
-                auto movement = entity->getComponent<MovementComponent>();
-                if (movement) {
-                    movement->x += deltaTime * 10;
+                if (entity->hasComponent<PositionComponent>() && entity->hasComponent<MovementComponent>()) {
+                    auto position = entity->getComponent<PositionComponent>().value();
+                    auto movement = entity->getComponent<MovementComponent>().value();
+                    position->x += movement->velocity_x * deltaTime;
+                    position->y += movement->velocity_y * deltaTime;
                 }
             }
         }

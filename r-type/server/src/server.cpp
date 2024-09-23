@@ -7,7 +7,7 @@
 
 #include "server_config.hpp"
 
-Server::Server() : current_players(0)
+potEngine::Server::Server() : current_players(0)
 {
     if ((server_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("socket creation failed");
@@ -27,12 +27,13 @@ Server::Server() : current_players(0)
 
     std::cout << "Server started on port " << PORT << ". Waiting for clients...\n";
 }
-Server::~Server()
+
+potEngine::Server::~Server()
 {
     close(server_fd);
 }
 
-uint8_t Server::assign_client_id()
+uint8_t potEngine::Server::assign_client_id()
 {
     for (uint8_t id = 1; id <= MAX_PLAYERS; ++id) {
         auto it = std::find_if(clients.begin(), clients.end(), [id](const ClientInfo& client) {
@@ -45,41 +46,14 @@ uint8_t Server::assign_client_id()
     return 0;
 }
 
-void Server::remove_client(uint8_t client_id)
+void potEngine::Server::remove_client(uint8_t client_id)
 {
     clients.erase(std::remove_if(clients.begin(), clients.end(), [client_id](const ClientInfo& client) {
         return client.client_id == client_id;
     }), clients.end());
 }
 
-void Server::start()
-{
-    potEngine::RecvNetworkSystem recv_system;
-    potEngine::SendNetworkSystem send_system;
-
-    struct sockaddr_in client_addr;
-    socklen_t client_addr_len = sizeof(client_addr);
-
-    while (true) {
-        auto [client_id, action] = recv_system.recv_message(server_fd, client_addr, client_addr_len);
-
-        if (action == CONNECTION) {
-            if (current_players < MAX_PLAYERS) {
-                client_id = assign_client_id();
-                if (client_id > 0) {
-                    clients.push_back({client_id, client_addr});
-                    current_players++;
-                    std::cout << "Client connected with ID: " << static_cast<int>(client_id) << std::endl;
-                    send_system.send_message(server_fd, client_addr, client_id, CONNECTION);
-                }
-            }
-        } else {
-            handle_action(client_id, action);
-        }
-    }
-}
-
-void Server::handle_action(uint8_t client_id, uint8_t action)
+void potEngine::Server::handle_action(uint8_t client_id, uint8_t action)
 {
     auto it = std::find_if(clients.begin(), clients.end(), [client_id](const ClientInfo& client) {
         return client.client_id == client_id;
@@ -110,3 +84,42 @@ void Server::handle_action(uint8_t client_id, uint8_t action)
     }
 }
 
+void potEngine::Server::handle_client_connection(int client_id)
+{
+    std::shared_ptr<Entity> player = std::make_shared<Entity>(client_id);
+    std::shared_ptr<potEngine::PositionComponent> PositionComponentPtr = std::make_shared<PositionComponent>(0, 0);
+    std::shared_ptr<potEngine::MovementComponent> MovementComponentPtr = std::make_shared<MovementComponent>(0, 0);
+
+    player->addComponent(PositionComponentPtr);
+    player->addComponent(MovementComponentPtr);
+    entities[client_id] = player;
+    std::cout << "Client " << client_id << " connected and Player entity created.\n";
+}
+
+void potEngine::Server::start()
+{
+    potEngine::RecvNetworkSystem recv_system;
+    potEngine::SendNetworkSystem send_system;
+
+    struct sockaddr_in client_addr;
+    socklen_t client_addr_len = sizeof(client_addr);
+
+    while (true) {
+        auto [client_id, action] = recv_system.recv_message(server_fd, client_addr, client_addr_len);
+
+        if (action == CONNECTION) {
+            if (current_players < MAX_PLAYERS) {
+                client_id = assign_client_id();
+                if (client_id > 0) {
+                    clients.push_back({client_id, client_addr});
+                    current_players++;
+                    handle_client_connection(client_id);
+                    std::cout << "Client connected with ID: " << static_cast<int>(client_id) << std::endl;
+                    send_system.send_message(server_fd, client_addr, client_id, CONNECTION);
+                }
+            }
+        } else {
+            handle_action(client_id, action);
+        }
+    }
+}

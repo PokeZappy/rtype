@@ -15,9 +15,9 @@
 #define MOVE_LEFT 0x05
 #define MOVE_RIGHT 0x06
 
-constexpr int BUFFER_SIZE = 1024;
-constexpr int PORT = 8080;
-constexpr int MAX_PLAYERS = 4;
-constexpr int MAX_ACTIONS = 5;
+const int BUFFER_SIZE = 1024;
+const int PORT = 8080;
+const int MAX_PLAYERS = 4;
+const int MAX_ACTIONS = 5;
 
 #endif // GAME_CONFIG_HPP

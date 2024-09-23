@@ -9,7 +9,7 @@
 
 int main()
 {
-    Client client;
+    potEngine::Client client;
     client.connect_to_server();
     return 0;
 }

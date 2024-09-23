@@ -5,8 +5,7 @@
 ** server_config.hpp
 */
 
-#ifndef SERVER_CONFIG_HPP
-#define SERVER_CONFIG_HPP
+#pragma once
 
 #include <iostream>
 #include <netinet/in.h>
@@ -17,33 +16,42 @@
 #include <sys/socket.h>
 #include <vector>
 #include <algorithm>
+#include <memory>
 
+#include "Entity.hpp"
 #include "game_config.hpp"
+
 #include "NetworkComponent.hpp"
+#include "MovementComponent.hpp"
+#include "PositionComponent.hpp"
+
 #include "RecvNetworkSystem.hpp"
 #include "SendNetworkSystem.hpp"
+#include "MovementSystem.hpp"
 
 struct ClientInfo {
     uint8_t client_id;
     struct sockaddr_in client_addr;
 };
 
-class Server {
-    public:
-        Server();
-        ~Server();
-        void start();
+namespace potEngine
+{
+    class Server {
+        public:
+            Server();
+            ~Server();
+            void start();
 
-    private:
-        int server_fd;
-        struct sockaddr_in server_addr;
-        std::vector<ClientInfo> clients;
-        uint8_t current_players;
+        private:
+            int server_fd;
+            struct sockaddr_in server_addr;
+            std::vector<ClientInfo> clients;
+            std::unordered_map<int, std::shared_ptr<Entity>> entities;
+            uint8_t current_players;
 
-        uint8_t assign_client_id();
-        void remove_client(uint8_t client_id);
-
-        void handle_action(uint8_t client_id, uint8_t action);
-};
-
-#endif // SERVER_CONFIG_HPP
+            uint8_t assign_client_id();
+            void remove_client(uint8_t client_id);
+            void handle_action(uint8_t client_id, uint8_t action);
+            void handle_client_connection(int client_id);
+    };
+}
