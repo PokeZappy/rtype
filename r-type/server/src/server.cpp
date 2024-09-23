@@ -64,17 +64,17 @@ void Server::start()
     while (true) {
         auto [client_id, action] = recv_system.recv_message(server_fd, client_addr, client_addr_len);
 
-        if (action == 0x01) {  // Client trying to connect
+        if (action == 0x01) {
             if (current_players < MAX_PLAYERS) {
                 client_id = assign_client_id();
                 if (client_id > 0) {
                     clients.push_back({client_id, client_addr});
                     current_players++;
                     std::cout << "Client connected with ID: " << static_cast<int>(client_id) << std::endl;
-                    send_system.send_message(server_fd, client_addr, client_id, 0x01);  // Send acknowledgment
+                    send_system.send_message(server_fd, client_addr, client_id, 0x01);
                 }
             }
-        } else if (action == 0x02) {  // Client disconnecting
+        } else if (action == 0x02) {
             std::cout << "Client " << static_cast<int>(client_id) << " is disconnecting.\n";
             remove_client(client_id);
             current_players--;

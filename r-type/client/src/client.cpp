@@ -44,7 +44,7 @@ void Client::connect_to_server()
     potEngine::SendNetworkSystem send_system;
     potEngine::RecvNetworkSystem recv_system;
 
-    send_system.send_message(sockfd, server_addr, 0x00, 0x01);  // Send connection request
+    send_system.send_message(sockfd, server_addr, 0x00, 0x01);
 
     struct sockaddr_in from_addr;
     socklen_t from_addr_len = sizeof(from_addr);
