@@ -1,7 +1,16 @@
-#include <iostream>
+/*
+** EPITECH PROJECT, 2024
+** B-CPP-500-LYN-5-1-rtype-cyprien.diederichs
+** File description:
+** main.cpp
+*/
+
+
+#include "../include/server_config.hpp"
 
 int main()
 {
-    std::cout << "Hello World" << std::endl;
+    Server server;
+    server.start();
     return 0;
 }
