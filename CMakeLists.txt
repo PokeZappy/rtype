@@ -37,7 +37,7 @@ add_executable(r-type_server ${SERVER_SOURCES})
 target_include_directories(r-type_server PRIVATE ${SERVER_INCLUDE_DIRS})
 target_link_libraries(r-type_server PRIVATE engine)
 
-file(GLOB_RECURSE CLIENT_SOURCES "r-type/client/src/*.cpp")
+file(GLOB_RECURSE CLIENT_SOURCES "r-type/client/source/*.cpp")
 add_executable(r-type_client ${CLIENT_SOURCES})
 target_include_directories(r-type_client PRIVATE ${CLIENT_INCLUDE_DIRS})
 target_link_libraries(r-type_client PRIVATE engine)
