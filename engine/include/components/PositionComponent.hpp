@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "IComponent.hpp"
+#include "AComponent.hpp"
 
 namespace potEngine
 {
