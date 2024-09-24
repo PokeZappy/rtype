@@ -1,8 +1,6 @@
 #include "gloop.hpp"
 #include "ECSManager.hpp"
 #include "Entity.hpp"
-#include "WindowClearSystem.hpp"
-#include "WindowDisplaySystem.hpp"
 
 int potEngine::gloop::mainPotEngine()
 {
