@@ -39,47 +39,6 @@ uint8_t potEngine::Client::get_id() const
     return client_id;
 }
 
-void potEngine::Client::connect_to_server()
-{
-    potEngine::SendNetworkSystem send_system;
-    potEngine::RecvNetworkSystem recv_system;
-
-    send_system.send_message(sockfd, server_addr, 0x00, CONNECTION);
-
-    struct sockaddr_in from_addr;
-    socklen_t from_addr_len = sizeof(from_addr);
-
-    auto [client_id, action] = recv_system.recv_message(sockfd, from_addr, from_addr_len);
-    this->set_id(client_id);
-
-    if (action == CONNECTION) {
-        std::cout << "Connected to server. Client ID: " << static_cast<int>(client_id) << std::endl;
-
-        std::thread receive_thread([this, &recv_system]() {
-            struct sockaddr_in from_addr;
-            socklen_t from_addr_len = sizeof(from_addr);
-            while (true) {
-                auto [sender_id, action] = recv_system.recv_message(sockfd, from_addr, from_addr_len);
-                if (action == MOVE_UP || action == MOVE_DOWN || action == MOVE_LEFT || action == MOVE_RIGHT) {
-                    int x = 0;
-                    int y = 0;
-                    std::cout << "Position updated to (" << x << ", " << y << ") for client " << static_cast<int>(sender_id) << ".\n";
-                } else if (action == DISCONNECT) {
-                    std::cout << "Server has disconnected the client." << std::endl;
-                    break;
-                }
-            }
-        });
-        while (handle_input() == 0);
-        send_system.send_message(sockfd, server_addr, this->client_id, DISCONNECT);
-        if (receive_thread.joinable()) {
-            receive_thread.join();
-        }
-    } else {
-        std::cout << "Failed to connect to server.\n";
-    }
-}
-
 int potEngine::Client::handle_input()
 {
     potEngine::SendNetworkSystem send_system;
@@ -97,6 +56,47 @@ int potEngine::Client::handle_input()
         case 'q': action = DISCONNECT; return 1;
         default: std::cout << "Invalid input\n"; return 0;
     }
-    send_system.send_message(sockfd, server_addr, this->client_id, action);
+    send_system.send_message(sockfd, server_addr, this->client_id, action, std::vector<uint16_t>{});
     return 0;
+}
+
+void potEngine::Client::connect_to_server()
+{
+    potEngine::SendNetworkSystem send_system;
+    potEngine::RecvNetworkSystem recv_system;
+
+    send_system.send_message(sockfd, server_addr, 0x00, CONNECTION, std::vector<uint16_t>{});
+
+    struct sockaddr_in from_addr;
+    socklen_t from_addr_len = sizeof(from_addr);
+
+    auto [client_id, action, params] = recv_system.recv_message(sockfd, from_addr, from_addr_len);
+    this->set_id(client_id);
+
+    if (action == CONNECTION) {
+        std::cout << "Connected to server. Client ID: " << static_cast<int>(client_id) << std::endl;
+
+        std::thread receive_thread([this, &recv_system]() {
+            struct sockaddr_in from_addr;
+            socklen_t from_addr_len = sizeof(from_addr);
+            while (true) {
+                auto [sender_id, action, params] = recv_system.recv_message(sockfd, from_addr, from_addr_len);
+                if (action == MOVE_UP || action == MOVE_DOWN || action == MOVE_LEFT || action == MOVE_RIGHT) {
+                    int x = params[0];
+                    int y = params[1];
+                    std::cout << "Position updated to (" << x << ", " << y << ") for client " << static_cast<int>(sender_id) << ".\n";
+                } else if (action == DISCONNECT) {
+                    std::cout << "Server has disconnected the client." << std::endl;
+                    break;
+                }
+            }
+        });
+        while (handle_input() == 0);
+        send_system.send_message(sockfd, server_addr, this->client_id, DISCONNECT, std::vector<uint16_t>{});
+        if (receive_thread.joinable()) {
+            receive_thread.join();
+        }
+    } else {
+        std::cout << "Failed to connect to server.\n";
+    }
 }
