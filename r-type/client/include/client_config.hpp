@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <cstdint>
+#include <thread>
 
 #include "game_config.hpp"
 #include "NetworkComponent.hpp"

@@ -17,6 +17,38 @@ namespace potEngine
         MovementSystem() {}
         ~MovementSystem() {}
 
+        void moveUp(std::shared_ptr<Entity> entity)
+        {
+            if (entity->hasComponent<PositionComponent>() && entity->hasComponent<MovementComponent>()) {
+                auto position = entity->getComponent<PositionComponent>().value();
+                position->y += 1;
+            }
+        }
+
+        void moveDown(std::shared_ptr<Entity> entity)
+        {
+            if (entity->hasComponent<PositionComponent>() && entity->hasComponent<MovementComponent>()) {
+                auto position = entity->getComponent<PositionComponent>().value();
+                position->y -= 1;
+            }
+        }
+
+        void moveLeft(std::shared_ptr<Entity> entity)
+        {
+            if (entity->hasComponent<PositionComponent>() && entity->hasComponent<MovementComponent>()) {
+                auto position = entity->getComponent<PositionComponent>().value();
+                position->x -= 1;
+            }
+        }
+
+        void moveRight(std::shared_ptr<Entity> entity)
+        {
+            if (entity->hasComponent<PositionComponent>() && entity->hasComponent<MovementComponent>()) {
+                auto position = entity->getComponent<PositionComponent>().value();
+                position->x += 1;
+            }
+        }
+
         void update(float deltaTime, std::vector<std::shared_ptr<Entity>> entities)
         {
             for (auto& entity : entities) {
@@ -29,4 +61,5 @@ namespace potEngine
             }
         }
     };
+
 }

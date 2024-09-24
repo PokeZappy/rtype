@@ -43,6 +43,10 @@ namespace potEngine
             void start();
 
         private:
+            MovementSystem movement_system;
+            RecvNetworkSystem recv_system;
+            SendNetworkSystem send_system;
+
             int server_fd;
             struct sockaddr_in server_addr;
             std::vector<ClientInfo> clients;

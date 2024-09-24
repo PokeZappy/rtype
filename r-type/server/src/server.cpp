@@ -55,32 +55,56 @@ void potEngine::Server::remove_client(uint8_t client_id)
 
 void potEngine::Server::handle_action(uint8_t client_id, uint8_t action)
 {
-    auto it = std::find_if(clients.begin(), clients.end(), [client_id](const ClientInfo& client) {
-        return client.client_id == client_id;
-    });
+    auto entity_it = entities.find(client_id);
+    if (entity_it != entities.end()) {
+        std::shared_ptr<Entity> player_entity = entity_it->second;
+        sockaddr_in client_addr;
+        bool client_found = false;
 
-    if (it != clients.end()) {
+        for (const auto& client : clients) {
+            if (client.client_id == client_id) {
+                client_addr = client.client_addr;
+                client_found = true;
+                break;
+            }
+        }
+        if (!client_found) {
+            std::cerr << "Client address not found for client ID " << static_cast<int>(client_id) << ".\n";
+            return;
+        }
+
         switch (action) {
             case MOVE_UP:
                 std::cout << "Client " << static_cast<int>(client_id) << " moves up.\n";
+                this->movement_system.moveUp(player_entity);
+                std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
                 break;
             case MOVE_DOWN:
                 std::cout << "Client " << static_cast<int>(client_id) << " moves down.\n";
+                this->movement_system.moveDown(player_entity);
+                std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
                 break;
             case MOVE_LEFT:
                 std::cout << "Client " << static_cast<int>(client_id) << " moves left.\n";
+                this->movement_system.moveLeft(player_entity);
+                std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
                 break;
             case MOVE_RIGHT:
                 std::cout << "Client " << static_cast<int>(client_id) << " moves right.\n";
+                this->movement_system.moveRight(player_entity);
+                std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
                 break;
-            case DISCONNECT :
+            case DISCONNECT:
                 std::cout << "Client " << static_cast<int>(client_id) << " is disconnecting.\n";
                 remove_client(client_id);
                 current_players--;
-                break;
+                return;
             default:
                 std::cout << "Unknown action.\n";
+                return;
         }
+    } else {
+        std::cout << "No entity found for client " << static_cast<int>(client_id) << ".\n";
     }
 }
 
@@ -98,9 +122,6 @@ void potEngine::Server::handle_client_connection(int client_id)
 
 void potEngine::Server::start()
 {
-    potEngine::RecvNetworkSystem recv_system;
-    potEngine::SendNetworkSystem send_system;
-
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
 
