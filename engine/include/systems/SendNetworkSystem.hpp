@@ -30,11 +30,13 @@ namespace potEngine
 
         void send_message(int sockfd, const struct sockaddr_in& addr, uint8_t client_id, uint8_t action)
         {
-            int client_id_bits = std::ceil(std::log2(MAX_PLAYERS));
+            int client_id_bits = std::ceil(std::log2(MAX_PLAYERS + 1));
             int action_bits = 8 - client_id_bits;
+
             uint8_t packet = (client_id & ((1 << client_id_bits) - 1)) << action_bits | (action & ((1 << action_bits) - 1));
 
             sendto(sockfd, &packet, sizeof(packet), 0, (const struct sockaddr*)&addr, sizeof(addr));
         }
+
     };
 }

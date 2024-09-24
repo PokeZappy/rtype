@@ -78,26 +78,31 @@ void potEngine::Server::handle_action(uint8_t client_id, uint8_t action)
                 std::cout << "Client " << static_cast<int>(client_id) << " moves up.\n";
                 this->movement_system.moveUp(player_entity);
                 std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
+                this->send_system.send_message(server_fd, client_addr, client_id, MOVE_UP);
                 break;
             case MOVE_DOWN:
                 std::cout << "Client " << static_cast<int>(client_id) << " moves down.\n";
                 this->movement_system.moveDown(player_entity);
                 std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
+                this->send_system.send_message(server_fd, client_addr, client_id, MOVE_DOWN);
                 break;
             case MOVE_LEFT:
                 std::cout << "Client " << static_cast<int>(client_id) << " moves left.\n";
                 this->movement_system.moveLeft(player_entity);
                 std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
+                this->send_system.send_message(server_fd, client_addr, client_id, MOVE_LEFT);
                 break;
             case MOVE_RIGHT:
                 std::cout << "Client " << static_cast<int>(client_id) << " moves right.\n";
                 this->movement_system.moveRight(player_entity);
                 std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
+                this->send_system.send_message(server_fd, client_addr, client_id, MOVE_RIGHT);
                 break;
             case DISCONNECT:
                 std::cout << "Client " << static_cast<int>(client_id) << " is disconnecting.\n";
                 remove_client(client_id);
                 current_players--;
+                this->send_system.send_message(server_fd, client_addr, client_id, DISCONNECT);
                 return;
             default:
                 std::cout << "Unknown action.\n";
@@ -122,6 +127,7 @@ void potEngine::Server::handle_client_connection(int client_id)
 
 void potEngine::Server::start()
 {
+    std::mutex client_mutex;
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
 
@@ -129,6 +135,7 @@ void potEngine::Server::start()
         auto [client_id, action] = recv_system.recv_message(server_fd, client_addr, client_addr_len);
 
         if (action == CONNECTION) {
+            std::lock_guard<std::mutex> lock(client_mutex);
             if (current_players < MAX_PLAYERS) {
                 client_id = assign_client_id();
                 if (client_id > 0) {
@@ -137,10 +144,15 @@ void potEngine::Server::start()
                     handle_client_connection(client_id);
                     std::cout << "Client connected with ID: " << static_cast<int>(client_id) << std::endl;
                     send_system.send_message(server_fd, client_addr, client_id, CONNECTION);
+                } else {
+                    std::cerr << "Failed to assign client ID." << std::endl;
                 }
+            } else {
+                std::cerr << "Maximum players reached." << std::endl;
             }
         } else {
             handle_action(client_id, action);
         }
     }
 }
+

@@ -55,26 +55,26 @@ void potEngine::Client::connect_to_server()
     if (action == CONNECTION) {
         std::cout << "Connected to server. Client ID: " << static_cast<int>(client_id) << std::endl;
 
-        while (true) {
-            // std::thread receive_thread([this, &recv_system]() {
-            //     struct sockaddr_in from_addr;
-            //     socklen_t from_addr_len = sizeof(from_addr);
-            //     while (true) {
-            //         auto [sender_id, action] = recv_system.recv_message(sockfd, from_addr, from_addr_len);
-            //         if (action == MOVE_UP || action == MOVE_DOWN || action == MOVE_LEFT || action == MOVE_RIGHT) {
-            //             int x = 0;
-            //             int y = 0;
-            //             std::cout << "Position updated to (" << x << ", " << y << ") for client " << static_cast<int>(sender_id) << ".\n";
-            //         }
-            //     }
-            // });
-
-            if (handle_input() != 0) {
-                break;
+        std::thread receive_thread([this, &recv_system]() {
+            struct sockaddr_in from_addr;
+            socklen_t from_addr_len = sizeof(from_addr);
+            while (true) {
+                auto [sender_id, action] = recv_system.recv_message(sockfd, from_addr, from_addr_len);
+                if (action == MOVE_UP || action == MOVE_DOWN || action == MOVE_LEFT || action == MOVE_RIGHT) {
+                    int x = 0;
+                    int y = 0;
+                    std::cout << "Position updated to (" << x << ", " << y << ") for client " << static_cast<int>(sender_id) << ".\n";
+                } else if (action == DISCONNECT) {
+                    std::cout << "Server has disconnected the client." << std::endl;
+                    break;
+                }
             }
-        }
-
+        });
+        while (handle_input() == 0);
         send_system.send_message(sockfd, server_addr, this->client_id, DISCONNECT);
+        if (receive_thread.joinable()) {
+            receive_thread.join();
+        }
     } else {
         std::cout << "Failed to connect to server.\n";
     }

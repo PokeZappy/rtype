@@ -33,7 +33,7 @@ namespace potEngine
             uint8_t packet;
             recvfrom(sockfd, &packet, sizeof(packet), 0, (struct sockaddr*)&addr, &addr_len);
 
-            int client_id_bits = std::ceil(std::log2(MAX_PLAYERS));
+            int client_id_bits = std::ceil(std::log2(MAX_PLAYERS + 1));
             int action_bits = 8 - client_id_bits;
 
             uint8_t client_id = (packet >> action_bits) & ((1 << client_id_bits) - 1);
@@ -41,5 +41,6 @@ namespace potEngine
 
             return std::make_pair(client_id, action);
         }
+
     };
 }

@@ -17,6 +17,7 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <mutex>
 
 #include "Entity.hpp"
 #include "game_config.hpp"
