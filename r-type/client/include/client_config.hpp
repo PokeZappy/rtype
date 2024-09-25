@@ -16,8 +16,7 @@
 
 #include "game_config.hpp"
 #include "NetworkComponent.hpp"
-#include "RecvNetworkSystem.hpp"
-#include "SendNetworkSystem.hpp"
+#include "NetworkSystem.hpp"
 
 namespace potEngine
 {

@@ -7,8 +7,10 @@
 
 #include "server_config.hpp"
 
-potEngine::Server::Server() : current_players(0)
+potEngine::Server::Server() : network_system(4)
 {
+    current_players = 0;
+
     if ((server_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("socket creation failed");
         exit(EXIT_FAILURE);
@@ -27,6 +29,7 @@ potEngine::Server::Server() : current_players(0)
 
     std::cout << "Server started on port " << PORT << ". Waiting for clients...\n";
 }
+
 
 potEngine::Server::~Server()
 {
@@ -78,7 +81,7 @@ void potEngine::Server::handle_action(uint8_t client_id, uint8_t action)
                 std::cout << "Client " << static_cast<int>(client_id) << " moves up.\n";
                 this->movement_system.moveUp(player_entity);
                 std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
-                this->send_system.send_message(
+                this->network_system.send_message(
                     server_fd,
                     client_addr,
                     client_id,
@@ -91,7 +94,7 @@ void potEngine::Server::handle_action(uint8_t client_id, uint8_t action)
                 std::cout << "Client " << static_cast<int>(client_id) << " moves down.\n";
                 this->movement_system.moveDown(player_entity);
                 std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
-                this->send_system.send_message(
+                this->network_system.send_message(
                     server_fd,
                     client_addr,
                     client_id,
@@ -104,7 +107,7 @@ void potEngine::Server::handle_action(uint8_t client_id, uint8_t action)
                 std::cout << "Client " << static_cast<int>(client_id) << " moves left.\n";
                 this->movement_system.moveLeft(player_entity);
                 std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
-                this->send_system.send_message(
+                this->network_system.send_message(
                     server_fd,
                     client_addr,
                     client_id,
@@ -117,7 +120,7 @@ void potEngine::Server::handle_action(uint8_t client_id, uint8_t action)
                 std::cout << "Client " << static_cast<int>(client_id) << " moves right.\n";
                 this->movement_system.moveRight(player_entity);
                 std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
-                this->send_system.send_message(
+                this->network_system.send_message(
                     server_fd,
                     client_addr,
                     client_id,
@@ -130,7 +133,7 @@ void potEngine::Server::handle_action(uint8_t client_id, uint8_t action)
                 std::cout << "Client " << static_cast<int>(client_id) << " is disconnecting.\n";
                 remove_client(client_id);
                 current_players--;
-                this->send_system.send_message(server_fd, client_addr, client_id, DISCONNECT, std::vector<uint16_t>{});
+                this->network_system.send_message(server_fd, client_addr, client_id, DISCONNECT, std::vector<uint16_t>{});
                 return;
             default:
                 std::cout << "Unknown action.\n";
@@ -144,8 +147,8 @@ void potEngine::Server::handle_action(uint8_t client_id, uint8_t action)
 void potEngine::Server::handle_client_connection(int client_id)
 {
     std::shared_ptr<Entity> player = std::make_shared<Entity>(client_id);
-    std::shared_ptr<potEngine::PositionComponent> PositionComponentPtr = std::make_shared<PositionComponent>(0, 0);
-    std::shared_ptr<potEngine::MovementComponent> MovementComponentPtr = std::make_shared<MovementComponent>(0, 0);
+    std::shared_ptr<PositionComponent> PositionComponentPtr = std::make_shared<PositionComponent>(0, 0);
+    std::shared_ptr<MovementComponent> MovementComponentPtr = std::make_shared<MovementComponent>(0, 0);
 
     player->addComponent(PositionComponentPtr);
     player->addComponent(MovementComponentPtr);
@@ -160,7 +163,7 @@ void potEngine::Server::start()
     socklen_t client_addr_len = sizeof(client_addr);
 
     while (true) {
-        auto [client_id, action, params] = recv_system.recv_message(server_fd, client_addr, client_addr_len);
+        auto [client_id, action, params] = network_system.recv_message(server_fd, client_addr, client_addr_len);
 
         if (action == CONNECTION) {
             std::lock_guard<std::mutex> lock(client_mutex);
@@ -171,7 +174,7 @@ void potEngine::Server::start()
                     current_players++;
                     handle_client_connection(client_id);
                     std::cout << "Client connected with ID: " << static_cast<int>(client_id) << std::endl;
-                    send_system.send_message(server_fd, client_addr, client_id, CONNECTION, std::vector<uint16_t>{});
+                    network_system.send_message(server_fd, client_addr, client_id, CONNECTION, std::vector<uint16_t>{});
                 } else {
                     std::cerr << "Failed to assign client ID." << std::endl;
                 }

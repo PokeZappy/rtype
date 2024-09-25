@@ -26,8 +26,7 @@
 #include "MovementComponent.hpp"
 #include "PositionComponent.hpp"
 
-#include "RecvNetworkSystem.hpp"
-#include "SendNetworkSystem.hpp"
+#include "NetworkSystem.hpp"
 #include "MovementSystem.hpp"
 
 struct ClientInfo {
@@ -38,16 +37,15 @@ struct ClientInfo {
 namespace potEngine
 {
     class Server {
+        MovementSystem movement_system;
+        NetworkSystem network_system;
+
         public:
             Server();
             ~Server();
             void start();
 
         private:
-            MovementSystem movement_system;
-            RecvNetworkSystem recv_system;
-            SendNetworkSystem send_system;
-
             int server_fd;
             struct sockaddr_in server_addr;
             std::vector<ClientInfo> clients;
