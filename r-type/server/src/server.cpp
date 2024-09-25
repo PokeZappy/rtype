@@ -109,11 +109,18 @@ void potEngine::Server::handle_action(uint8_t client_id, uint8_t action)
     }
 }
 
-void potEngine::Server::handle_client_connection(uint8_t client_id, struct sockaddr_in client_addr)
+void potEngine::Server::handle_client_connection(uint8_t client_id, struct sockaddr_in client_addr, std::vector<uint16_t> params)
 {
-    std::string player_name = "Player_" + std::to_string(static_cast<int>(client_id));
+    std::string player_name;
+
+    if (params.empty()) {
+        player_name = "Player_" + std::to_string(static_cast<int>(client_id));
+    } else {
+        player_name.assign(params.begin(), params.end());
+    }
     create_player_entity(client_id, player_name, client_addr);
 }
+
 
 
 void potEngine::Server::create_player_entity(uint8_t client_id, const std::string& username, const sockaddr_in& client_addr)
@@ -125,6 +132,7 @@ void potEngine::Server::create_player_entity(uint8_t client_id, const std::strin
     player_entity->addComponent(std::make_shared<NetworkComponent>(4, client_addr));
 
     entities[client_id] = player_entity;
+    std::cout << "New Player Entity create: {id}-[" << std::to_string(static_cast<int>(client_id)) << "], {username}-[" << username << "]" << std::endl;
 }
 
 void potEngine::Server::start()
@@ -139,7 +147,7 @@ void potEngine::Server::start()
             if (new_client_id != 0) {
                 clients.push_back({ new_client_id, client_addr });
                 network_system.send_message(server_fd, client_addr, new_client_id, CONNECTION, {});
-                handle_client_connection(new_client_id, client_addr);
+                handle_client_connection(new_client_id, client_addr, params);
                 std::cout << "New client connected with ID " << static_cast<int>(new_client_id) << ".\n";
             } else {
                 std::cout << "Server full. Cannot accept new clients.\n";

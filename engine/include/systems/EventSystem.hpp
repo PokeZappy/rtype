@@ -17,6 +17,8 @@ namespace potEngine
         EventSystem() {}
         ~EventSystem() {}
 
+        void update(float deltaTime, std::vector<std::shared_ptr<Entity>> entities) {}
+
         void handle_event(uint8_t client_id, uint8_t action, std::shared_ptr<Entity> player_entity, MovementSystem& movement_system)
         {
             switch (action) {

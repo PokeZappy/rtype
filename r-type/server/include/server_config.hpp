@@ -39,16 +39,17 @@ namespace potEngine
         ~Server();
 
         void start();
-        void handle_client_connection(uint8_t client_id, struct sockaddr_in client_addr);
+        void handle_client_connection(uint8_t client_id, struct sockaddr_in client_addr, std::vector<uint16_t> params);
 
     private:
+        MovementSystem movement_system;
+        NetworkSystem network_system;
+
         uint8_t current_players;
         int server_fd;
         struct sockaddr_in server_addr;
         std::vector<ClientInfo> clients;
         std::unordered_map<uint8_t, std::shared_ptr<Entity>> entities;
-        MovementSystem movement_system;
-        NetworkSystem network_system;
 
         uint8_t assign_client_id();
         void remove_client(uint8_t client_id);

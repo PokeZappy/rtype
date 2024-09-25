@@ -58,19 +58,46 @@ int potEngine::Client::handle_input()
     return 0;
 }
 
+void potEngine::Client::create_player_entity(uint8_t client_id, const std::string& username)
+{
+    player_entity = std::make_shared<Entity>();
+    player_entity->addComponent(std::make_shared<PlayerComponent>(username));
+    player_entity->addComponent(std::make_shared<PositionComponent>(0.0f, 0.0f));
+    player_entity->addComponent(std::make_shared<MovementComponent>(1.0f, 1.0f));
+
+    std::cout << "Player entity created for client ID: " << static_cast<int>(client_id) << std::endl;
+}
+
+void potEngine::Client::delete_player_entity()
+{
+    if (player_entity) {
+        player_entity.reset();
+        std::cout << "Player entity deleted.\n";
+    }
+}
+
+void potEngine::Client::wait_for_server_response()
+{
+    auto addr_len = static_cast<socklen_t>(sizeof(server_addr));
+    auto [client_id, action, params] = network_system.recv_message(sockfd, server_addr, addr_len);
+    if (action == CONNECTION) {
+        this->client_id = client_id;
+        std::cout << "Connection accepted. Client ID: " << static_cast<int>(client_id) << "\n";
+        create_player_entity(client_id, "Player");
+    }
+}
+
 void potEngine::Client::connect_to_server()
 {
-    network_system.send_message(sockfd, server_addr, 0x00, CONNECTION, {});
+    std::string username;
+    std::cout << "Enter your username: ";
+    std::cin >> username;
+    std::vector<uint16_t> params(username.begin(), username.end());
+    network_system.send_message(sockfd, server_addr, 0x00, CONNECTION, params);
+    wait_for_server_response();
 
-    struct sockaddr_in from_addr;
-    socklen_t from_addr_len = sizeof(from_addr);
-
-    auto [client_id, action, params] = network_system.recv_message(sockfd, from_addr, from_addr_len);
-    this->set_id(client_id);
-
-    if (action == CONNECTION) {
+    if (client_id != 0x00) {
         std::cout << "Connected to server. Client ID: " << static_cast<int>(client_id) << std::endl;
-
         std::thread receive_thread([this]() {
             struct sockaddr_in from_addr;
             socklen_t from_addr_len = sizeof(from_addr);
@@ -82,6 +109,7 @@ void potEngine::Client::connect_to_server()
                     std::cout << "Position updated to (" << x << ", " << y << ") for client " << static_cast<int>(sender_id) << ".\n";
                 } else if (action == DISCONNECT) {
                     std::cout << "Server has disconnected the client." << std::endl;
+                    delete_player_entity();
                     break;
                 }
             }
@@ -94,27 +122,6 @@ void potEngine::Client::connect_to_server()
         }
     } else {
         std::cout << "Failed to connect to server.\n";
+        delete_player_entity();
     }
 }
-
-void potEngine::Client::create_player_entity(uint8_t client_id, const std::string& username) {
-    auto player_entity = std::make_shared<Entity>();
-    player_entity->addComponent(std::make_shared<PlayerComponent>(username));
-    player_entity->addComponent(std::make_shared<PositionComponent>(0.0f, 0.0f));
-    player_entity->addComponent(std::make_shared<MovementComponent>(1.0f, 1.0f));
-
-    entities[client_id] = player_entity;
-}
-
-void potEngine::Client::wait_for_server_response()
-{
-    auto addr_len = static_cast<socklen_t>(sizeof(server_addr));
-    auto [client_id, action, params] = network_system.recv_message(sockfd, server_addr, addr_len);
-    if (action == CONNECTION) {
-        this->client_id = client_id;
-        std::cout << "Connection accepted. Client ID: " << static_cast<int>(client_id) << "\n";
-
-        create_player_entity(client_id, "Player");
-    }
-}
-

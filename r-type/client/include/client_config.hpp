@@ -16,7 +16,6 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include <unordered_map>
 #include "game_config.hpp"
 #include "NetworkSystem.hpp"
 #include "Entity.hpp"
@@ -37,13 +36,15 @@ namespace potEngine
         uint8_t get_id() const;
 
         void create_player_entity(uint8_t client_id, const std::string& username);
+        void delete_player_entity();
         void wait_for_server_response();
 
     private:
+        NetworkSystem network_system;
+
         int sockfd;
         struct sockaddr_in server_addr;
         uint8_t client_id;
-        NetworkSystem network_system;
-        std::unordered_map<uint8_t, std::shared_ptr<Entity>> entities;
+        std::shared_ptr<Entity> player_entity;
     };
 }
