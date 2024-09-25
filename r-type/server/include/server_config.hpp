@@ -11,23 +11,20 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <cstring>
-#include <cstdlib>
-#include <cctype>
-#include <sys/socket.h>
 #include <vector>
-#include <algorithm>
 #include <memory>
+#include <unordered_map>
 #include <mutex>
 
 #include "Entity.hpp"
 #include "game_config.hpp"
 
-#include "NetworkComponent.hpp"
-#include "MovementComponent.hpp"
-#include "PositionComponent.hpp"
-
 #include "NetworkSystem.hpp"
 #include "MovementSystem.hpp"
+
+#include "PositionComponent.hpp"
+#include "PlayerComponent.hpp"
+#include "NetworkComponent.hpp"
 
 struct ClientInfo {
     uint8_t client_id;
@@ -37,24 +34,25 @@ struct ClientInfo {
 namespace potEngine
 {
     class Server {
+    public:
+        Server();
+        ~Server();
+
+        void start();
+        void handle_client_connection(uint8_t client_id, struct sockaddr_in client_addr);
+
+    private:
+        uint8_t current_players;
+        int server_fd;
+        struct sockaddr_in server_addr;
+        std::vector<ClientInfo> clients;
+        std::unordered_map<uint8_t, std::shared_ptr<Entity>> entities;
         MovementSystem movement_system;
         NetworkSystem network_system;
 
-        public:
-            Server();
-            ~Server();
-            void start();
-
-        private:
-            int server_fd;
-            struct sockaddr_in server_addr;
-            std::vector<ClientInfo> clients;
-            std::unordered_map<int, std::shared_ptr<Entity>> entities;
-            uint8_t current_players;
-
-            uint8_t assign_client_id();
-            void remove_client(uint8_t client_id);
-            void handle_action(uint8_t client_id, uint8_t action);
-            void handle_client_connection(int client_id);
+        uint8_t assign_client_id();
+        void remove_client(uint8_t client_id);
+        void handle_action(uint8_t client_id, uint8_t action);
+        void create_player_entity(uint8_t client_id, const std::string& username, const sockaddr_in& client_addr);
     };
 }

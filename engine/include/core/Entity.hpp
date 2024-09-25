@@ -12,6 +12,7 @@ namespace potEngine {
     class IComponent;
     class Entity {
     public:
+        Entity() : _id(0) {}
         Entity(const std::size_t _id);
         ~Entity();
 

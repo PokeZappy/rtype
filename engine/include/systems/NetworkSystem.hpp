@@ -68,7 +68,5 @@ namespace potEngine
             }
             sendto(sockfd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
         }
-
-
     };
 }

@@ -13,9 +13,9 @@ namespace potEngine
 {
     class MovementComponent : public AComponent {
     public:
-        float velocity_x, velocity_y;
+        float _vx;
+        float _vy;
 
-        MovementComponent(float vx = 0, float vy = 0) : velocity_x(vx), velocity_y(vy) {}
+        MovementComponent(float vx = 1, float vy = 1) : _vx(vx), _vy(vy) {}
     };
 }
-

@@ -2,17 +2,15 @@
 ** EPITECH PROJECT, 2024
 ** B-CPP-500-LYN-5-1-rtype-cyprien.diederichs
 ** File description:
-** main.cpp
+** server.cpp
 */
 
 #include "server_config.hpp"
 
-potEngine::Server::Server() : network_system(4)
+potEngine::Server::Server() : current_players(0), network_system(4)
 {
-    current_players = 0;
-
     if ((server_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        perror("socket creation failed");
+        perror("Socket creation failed");
         exit(EXIT_FAILURE);
     }
 
@@ -22,14 +20,13 @@ potEngine::Server::Server() : network_system(4)
     server_addr.sin_port = htons(PORT);
 
     if (bind(server_fd, (const struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        perror("bind failed");
+        perror("Bind failed");
         close(server_fd);
         exit(EXIT_FAILURE);
     }
 
     std::cout << "Server started on port " << PORT << ". Waiting for clients...\n";
 }
-
 
 potEngine::Server::~Server()
 {
@@ -60,130 +57,95 @@ void potEngine::Server::handle_action(uint8_t client_id, uint8_t action)
 {
     auto entity_it = entities.find(client_id);
     if (entity_it != entities.end()) {
-        std::shared_ptr<Entity> player_entity = entity_it->second;
-        sockaddr_in client_addr;
-        bool client_found = false;
-
-        for (const auto& client : clients) {
-            if (client.client_id == client_id) {
-                client_addr = client.client_addr;
-                client_found = true;
-                break;
-            }
-        }
-        if (!client_found) {
-            std::cerr << "Client address not found for client ID " << static_cast<int>(client_id) << ".\n";
-            return;
-        }
+        auto player_entity = entity_it->second;
+        auto network_component = player_entity->getComponent<NetworkComponent>();
+        struct sockaddr_in client_addr = network_component->get()->_addr;
 
         switch (action) {
             case MOVE_UP:
-                std::cout << "Client " << static_cast<int>(client_id) << " moves up.\n";
-                this->movement_system.moveUp(player_entity);
-                std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
-                this->network_system.send_message(
-                    server_fd,
-                    client_addr,
-                    client_id,
-                    MOVE_UP,
-                    {static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->x),
-                    static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->y)}
-                );
+                movement_system.moveUp(player_entity);
+                network_system.send_message(server_fd, client_addr, client_id, MOVE_UP, {
+                    static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->_x),
+                    static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->_y)
+                });
                 break;
+
             case MOVE_DOWN:
-                std::cout << "Client " << static_cast<int>(client_id) << " moves down.\n";
-                this->movement_system.moveDown(player_entity);
-                std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
-                this->network_system.send_message(
-                    server_fd,
-                    client_addr,
-                    client_id,
-                    MOVE_DOWN,
-                    {static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->x),
-                    static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->y)}
-                );
+                movement_system.moveDown(player_entity);
+                network_system.send_message(server_fd, client_addr, client_id, MOVE_DOWN, {
+                    static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->_x),
+                    static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->_y)
+                });
                 break;
+
             case MOVE_LEFT:
-                std::cout << "Client " << static_cast<int>(client_id) << " moves left.\n";
-                this->movement_system.moveLeft(player_entity);
-                std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
-                this->network_system.send_message(
-                    server_fd,
-                    client_addr,
-                    client_id,
-                    MOVE_LEFT,
-                    {static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->x),
-                    static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->y)}
-                );
+                movement_system.moveLeft(player_entity);
+                network_system.send_message(server_fd, client_addr, client_id, MOVE_LEFT, {
+                    static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->_x),
+                    static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->_y)
+                });
                 break;
+
             case MOVE_RIGHT:
-                std::cout << "Client " << static_cast<int>(client_id) << " moves right.\n";
-                this->movement_system.moveRight(player_entity);
-                std::cout << "Sending position (" << player_entity->getComponent<PositionComponent>()->get()->x << ", " << player_entity->getComponent<PositionComponent>()->get()->y << ") to client " << static_cast<int>(client_id) << ".\n";
-                this->network_system.send_message(
-                    server_fd,
-                    client_addr,
-                    client_id,
-                    MOVE_DOWN,
-                    {static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->x),
-                    static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->y)}
-                );
+                movement_system.moveRight(player_entity);
+                network_system.send_message(server_fd, client_addr, client_id, MOVE_RIGHT, {
+                    static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->_x),
+                    static_cast<uint16_t>(player_entity->getComponent<PositionComponent>()->get()->_y)
+                });
                 break;
+
             case DISCONNECT:
-                std::cout << "Client " << static_cast<int>(client_id) << " is disconnecting.\n";
-                remove_client(client_id);
                 current_players--;
-                this->network_system.send_message(server_fd, client_addr, client_id, DISCONNECT, std::vector<uint16_t>{});
-                return;
+                remove_client(client_id);
+                entities.erase(client_id);
+                network_system.send_message(server_fd, client_addr, client_id, DISCONNECT, std::vector<uint16_t>{});
+                std::cout << "Client " << static_cast<int>(client_id) << " disconnected.\n";
+                break;
+
             default:
-                std::cout << "Unknown action.\n";
-                return;
+                std::cout << "Unknown action from client " << static_cast<int>(client_id) << ".\n";
+                break;
         }
-    } else {
-        std::cout << "No entity found for client " << static_cast<int>(client_id) << ".\n";
     }
 }
 
-void potEngine::Server::handle_client_connection(int client_id)
+void potEngine::Server::handle_client_connection(uint8_t client_id, struct sockaddr_in client_addr)
 {
-    std::shared_ptr<Entity> player = std::make_shared<Entity>(client_id);
-    std::shared_ptr<PositionComponent> PositionComponentPtr = std::make_shared<PositionComponent>(0, 0);
-    std::shared_ptr<MovementComponent> MovementComponentPtr = std::make_shared<MovementComponent>(0, 0);
+    std::string player_name = "Player_" + std::to_string(static_cast<int>(client_id));
+    create_player_entity(client_id, player_name, client_addr);
+}
 
-    player->addComponent(PositionComponentPtr);
-    player->addComponent(MovementComponentPtr);
-    entities[client_id] = player;
-    std::cout << "Client " << client_id << " connected and Player entity created.\n";
+
+void potEngine::Server::create_player_entity(uint8_t client_id, const std::string& username, const sockaddr_in& client_addr)
+{
+    auto player_entity = std::make_shared<Entity>(client_id);
+    player_entity->addComponent(std::make_shared<PlayerComponent>(username));
+    player_entity->addComponent(std::make_shared<PositionComponent>(0.0f, 0.0f));
+    player_entity->addComponent(std::make_shared<MovementComponent>(1.0f, 1.0f));
+    player_entity->addComponent(std::make_shared<NetworkComponent>(4, client_addr));
+
+    entities[client_id] = player_entity;
 }
 
 void potEngine::Server::start()
 {
-    std::mutex client_mutex;
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
 
     while (true) {
         auto [client_id, action, params] = network_system.recv_message(server_fd, client_addr, client_addr_len);
-
         if (action == CONNECTION) {
-            std::lock_guard<std::mutex> lock(client_mutex);
-            if (current_players < MAX_PLAYERS) {
-                client_id = assign_client_id();
-                if (client_id > 0) {
-                    clients.push_back({client_id, client_addr});
-                    current_players++;
-                    handle_client_connection(client_id);
-                    std::cout << "Client connected with ID: " << static_cast<int>(client_id) << std::endl;
-                    network_system.send_message(server_fd, client_addr, client_id, CONNECTION, std::vector<uint16_t>{});
-                } else {
-                    std::cerr << "Failed to assign client ID." << std::endl;
-                }
+            uint8_t new_client_id = assign_client_id();
+            if (new_client_id != 0) {
+                clients.push_back({ new_client_id, client_addr });
+                network_system.send_message(server_fd, client_addr, new_client_id, CONNECTION, {});
+                handle_client_connection(new_client_id, client_addr);
+                std::cout << "New client connected with ID " << static_cast<int>(new_client_id) << ".\n";
             } else {
-                std::cerr << "Maximum players reached." << std::endl;
+                std::cout << "Server full. Cannot accept new clients.\n";
             }
         } else {
             handle_action(client_id, action);
         }
     }
 }
-

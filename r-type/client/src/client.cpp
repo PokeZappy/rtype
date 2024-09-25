@@ -1,16 +1,16 @@
 /*
 ** EPITECH PROJECT, 2024
-** EPITECH
+** B-CPP-500-LYN-5-1-rtype-cyprien.diederichs
 ** File description:
-** main.cpp
+** client.cpp
 */
 
 #include "client_config.hpp"
 
-potEngine::Client::Client() : client_id(0x00)
+potEngine::Client::Client() : client_id(0x00), network_system(4)
 {
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        perror("socket creation failed");
+        perror("Socket creation failed");
         exit(EXIT_FAILURE);
     }
 
@@ -41,10 +41,8 @@ uint8_t potEngine::Client::get_id() const
 
 int potEngine::Client::handle_input()
 {
-    NetworkSystem network_system(4);
-
     char input;
-    std::cout << "Enter: ";
+    std::cout << "Enter command (w/a/s/d for movement, q to quit): ";
     std::cin >> input;
 
     uint8_t action = 0;
@@ -56,15 +54,13 @@ int potEngine::Client::handle_input()
         case 'q': action = DISCONNECT; return 1;
         default: std::cout << "Invalid input\n"; return 0;
     }
-    network_system.send_message(sockfd, server_addr, this->client_id, action, std::vector<uint16_t>{});
+    network_system.send_message(sockfd, server_addr, this->client_id, action, {});
     return 0;
 }
 
 void potEngine::Client::connect_to_server()
 {
-    NetworkSystem network_system(4);
-
-    network_system.send_message(sockfd, server_addr, 0x00, CONNECTION, std::vector<uint16_t>{});
+    network_system.send_message(sockfd, server_addr, 0x00, CONNECTION, {});
 
     struct sockaddr_in from_addr;
     socklen_t from_addr_len = sizeof(from_addr);
@@ -75,7 +71,7 @@ void potEngine::Client::connect_to_server()
     if (action == CONNECTION) {
         std::cout << "Connected to server. Client ID: " << static_cast<int>(client_id) << std::endl;
 
-        std::thread receive_thread([this, &network_system]() {
+        std::thread receive_thread([this]() {
             struct sockaddr_in from_addr;
             socklen_t from_addr_len = sizeof(from_addr);
             while (true) {
@@ -90,8 +86,9 @@ void potEngine::Client::connect_to_server()
                 }
             }
         });
+
         while (handle_input() == 0);
-        network_system.send_message(sockfd, server_addr, this->client_id, DISCONNECT, std::vector<uint16_t>{});
+        network_system.send_message(sockfd, server_addr, this->client_id, DISCONNECT, {});
         if (receive_thread.joinable()) {
             receive_thread.join();
         }
@@ -99,3 +96,25 @@ void potEngine::Client::connect_to_server()
         std::cout << "Failed to connect to server.\n";
     }
 }
+
+void potEngine::Client::create_player_entity(uint8_t client_id, const std::string& username) {
+    auto player_entity = std::make_shared<Entity>();
+    player_entity->addComponent(std::make_shared<PlayerComponent>(username));
+    player_entity->addComponent(std::make_shared<PositionComponent>(0.0f, 0.0f));
+    player_entity->addComponent(std::make_shared<MovementComponent>(1.0f, 1.0f));
+
+    entities[client_id] = player_entity;
+}
+
+void potEngine::Client::wait_for_server_response()
+{
+    auto addr_len = static_cast<socklen_t>(sizeof(server_addr));
+    auto [client_id, action, params] = network_system.recv_message(sockfd, server_addr, addr_len);
+    if (action == CONNECTION) {
+        this->client_id = client_id;
+        std::cout << "Connection accepted. Client ID: " << static_cast<int>(client_id) << "\n";
+
+        create_player_entity(client_id, "Player");
+    }
+}
+

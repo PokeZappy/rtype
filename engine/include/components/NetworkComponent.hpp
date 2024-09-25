@@ -7,13 +7,18 @@
 
 #pragma once
 
+#include <netinet/in.h>
+
 #include "AComponent.hpp"
 
 namespace potEngine
 {
     class NetworkComponent : public AComponent {
     public:
-        NetworkComponent() {}
+        int _maxP;
+        struct sockaddr_in _addr;
+
+        NetworkComponent(int maxP, struct sockaddr_in addr) : _maxP(maxP), _addr(addr) {}
         ~NetworkComponent() {}
     };
 }

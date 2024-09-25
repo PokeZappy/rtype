@@ -13,9 +13,9 @@ namespace potEngine
 {
     class PositionComponent : public AComponent {
     public:
-        int x;
-        int y;
+        float _x;
+        float _y;
 
-        PositionComponent(int x = 0, int y = 0) : x(x), y(y) {}
+        PositionComponent(float x = 0, float y = 0) : _x(x), _y(y) {}
     };
 }

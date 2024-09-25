@@ -9,6 +9,7 @@
 
 #include "ASystem.hpp"
 #include "MovementComponent.hpp"
+#include "PositionComponent.hpp"
 
 namespace potEngine
 {
@@ -21,7 +22,8 @@ namespace potEngine
         {
             if (entity->hasComponent<PositionComponent>() && entity->hasComponent<MovementComponent>()) {
                 auto position = entity->getComponent<PositionComponent>().value();
-                position->y += 1;
+                auto velocity = entity->getComponent<MovementComponent>().value()->_vy;
+                position->_y += 1 * velocity;
             }
         }
 
@@ -29,7 +31,8 @@ namespace potEngine
         {
             if (entity->hasComponent<PositionComponent>() && entity->hasComponent<MovementComponent>()) {
                 auto position = entity->getComponent<PositionComponent>().value();
-                position->y -= 1;
+                auto velocity = entity->getComponent<MovementComponent>().value()->_vy;
+                position->_y -= 1 * velocity;
             }
         }
 
@@ -37,7 +40,8 @@ namespace potEngine
         {
             if (entity->hasComponent<PositionComponent>() && entity->hasComponent<MovementComponent>()) {
                 auto position = entity->getComponent<PositionComponent>().value();
-                position->x -= 1;
+                auto velocity = entity->getComponent<MovementComponent>().value()->_vx;
+                position->_x -= 1 * velocity;
             }
         }
 
@@ -45,21 +49,12 @@ namespace potEngine
         {
             if (entity->hasComponent<PositionComponent>() && entity->hasComponent<MovementComponent>()) {
                 auto position = entity->getComponent<PositionComponent>().value();
-                position->x += 1;
+                auto velocity = entity->getComponent<MovementComponent>().value()->_vx;
+                position->_x += 1 * velocity;
             }
         }
 
-        void update(float deltaTime, std::vector<std::shared_ptr<Entity>> entities)
-        {
-            for (auto& entity : entities) {
-                if (entity->hasComponent<PositionComponent>() && entity->hasComponent<MovementComponent>()) {
-                    auto position = entity->getComponent<PositionComponent>().value();
-                    auto movement = entity->getComponent<MovementComponent>().value();
-                    position->x += movement->velocity_x * deltaTime;
-                    position->y += movement->velocity_y * deltaTime;
-                }
-            }
-        }
+        void update(float deltaTime, std::vector<std::shared_ptr<Entity>> entities) {}
     };
 
 }
