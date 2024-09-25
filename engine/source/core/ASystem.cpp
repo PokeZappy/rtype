@@ -21,7 +21,7 @@ namespace potEngine {
     //     }
     // }
 
-    std::vector<std::shared_ptr<Entity>> ASystem::getEntities() const
+    std::vector<std::shared_ptr<Entity>> &ASystem::getEntities()
     {
         return _entitiesSystem;
     }

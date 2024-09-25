@@ -26,8 +26,10 @@ int potEngine::gloop::mainPotEngine()
     window->setWindowEntity(windowEntity);
 
     std::shared_ptr<potEngine::RenderComponent> renderComponentPtr = std::make_shared<potEngine::RenderComponent>(sprite);
+    std::shared_ptr<potEngine::RenderComponent> windowRenderComponentPtr = std::make_shared<potEngine::RenderComponent>();
     std::shared_ptr<potEngine::WindowDisplayComponent> windowDisplayComponentPtr = std::make_shared<potEngine::WindowDisplayComponent>();
     test->addComponent(renderComponentPtr);
+    window->addComponent(windowRenderComponentPtr);
     window->addComponent(windowDisplayComponentPtr);
     ecsManager.registerSystem<potEngine::RenderSystem>();
 
