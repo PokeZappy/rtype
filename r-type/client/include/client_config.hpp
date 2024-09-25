@@ -16,12 +16,16 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include "game_config.hpp"
-#include "NetworkSystem.hpp"
+
 #include "Entity.hpp"
+#include "game_config.hpp"
+
+#include "NetworkSystem.hpp"
+
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
+#include "NetworkComponent.hpp"
 
 namespace potEngine
 {
