@@ -44,11 +44,10 @@ namespace potEngine
         void wait_for_server_response();
 
     private:
+        uint8_t client_id;
         NetworkSystem network_system;
-
         int sockfd;
         struct sockaddr_in server_addr;
-        uint8_t client_id;
         std::shared_ptr<Entity> player_entity;
     };
 }
