@@ -14,11 +14,15 @@ potEngine::Client::Client() : client_id(0x00), network_system(4)
         exit(EXIT_FAILURE);
     }
 
+    std::string server_ip;
+    std::cout << "Enter the server IP address (127.0.0.1 for local): ";
+    std::cin >> server_ip;
+
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
 
-    if (inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, server_ip.c_str(), &server_addr.sin_addr) <= 0) {
         std::cerr << "Invalid server IP address" << std::endl;
         exit(EXIT_FAILURE);
     }

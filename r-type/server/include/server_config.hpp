@@ -42,10 +42,9 @@ namespace potEngine
         void handle_client_connection(uint8_t client_id, struct sockaddr_in client_addr, std::vector<uint16_t> params);
 
     private:
+        uint8_t current_players;
         MovementSystem movement_system;
         NetworkSystem network_system;
-
-        uint8_t current_players;
         int server_fd;
         struct sockaddr_in server_addr;
         std::vector<ClientInfo> clients;
