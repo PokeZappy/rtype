@@ -1,7 +1,7 @@
 #include "RenderSystem.hpp"
 #include "RenderComponent.hpp"
-#include "WindowDisplayComponent.hpp"
 #include "WindowEntity.hpp"
+#include "WindowComponent.hpp"
 #include "PositionComponent.hpp"
 #include <iostream>
 
@@ -17,13 +17,12 @@ namespace potEngine {
 
     void RenderSystem::update(float deltaTime) {
         for (auto& entity : _entitiesSystem) {
-            if (entity->getComponent<WindowDisplayComponent>() == std::nullopt) {
+            auto windowEntity = entity->getComponent<WindowComponent>();
+            if (windowEntity == std::nullopt) {
                 continue;
             }
-            auto windowEntity = std::static_pointer_cast<WindowEntity>(entity);
-            if (!windowEntity)
-                continue;
-            windowEntity->getWindowEntity()->clear(sf::Color::Black);
+            auto window = windowEntity->get()->getWindow();
+            window->clear();
             for (auto& nentity : _entitiesSystem) {
                 auto render = nentity->getComponent<RenderComponent>();
                 if (render && render->get()->getSprite()) {                        
@@ -33,10 +32,10 @@ namespace potEngine {
                         auto pos = position->get()->getPosition();
                         nrender->getSprite()->setPosition(pos[0], pos[1]);
                     }
-                    windowEntity->getWindowEntity()->draw(*nrender->getSprite());
+                    window->draw(*nrender->getSprite());
                 }
             }
-            windowEntity->getWindowEntity()->display();
+            window->display();
         }
     }
 

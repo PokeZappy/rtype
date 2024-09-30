@@ -18,6 +18,8 @@ namespace potEngine {
         std::shared_ptr<AEntity> createEntity();
 
         // void addEntity(std::shared_ptr<AEntity> entity);
+        template <typename T>
+        void addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component);
 
         void removeEntity(const std::size_t id);
 
@@ -52,5 +54,11 @@ namespace potEngine {
         _systems.erase(std::remove_if(_systems.begin(), _systems.end(), [](const std::shared_ptr<ASystem>& system) {
             return typeid(T) == typeid(*system);
         }), _systems.end());
+    }
+
+    template <typename T>
+    void ECSManager::addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component) {
+        entity->addComponent<T>(component);
+        EntitySignatureChanged(entity);
     }
 }

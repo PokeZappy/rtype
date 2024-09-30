@@ -12,8 +12,6 @@ namespace potEngine
         GravitySystem() {}; 
         ~GravitySystem() = default;
 
-        void update(float deltaTime, std::vector<std::shared_ptr<AEntity>> entities) override;
-    private:
-        sf::RenderWindow* _window;
+        void update(float deltaTime) override;
     };
 }

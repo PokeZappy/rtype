@@ -17,8 +17,5 @@ namespace potEngine
         sf::RenderWindow* getWindowEntity();
         sf::Color getColorClear() const;
         void setColorClear(sf::Color color);
-    private:
-        sf::RenderWindow* _window;
-        sf::Color _color = sf::Color::Black;
     };
 }

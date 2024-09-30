@@ -33,21 +33,18 @@ int potEngine::gloop::mainPotEngine()
     sprite2 = new sf::Sprite(texture2);
     sprite2->setPosition(100, 100);
 
-    sf::RenderWindow* windowEntity = new sf::RenderWindow(sf::VideoMode(800, 600), "potEngine");
-    // window->setWindowEntity(windowEntity);
-
     std::shared_ptr<potEngine::RenderComponent> renderComponentPtr = std::make_shared<potEngine::RenderComponent>(sprite);
-    std::shared_ptr<potEngine::RenderComponent> windowRenderComponentPtr = std::make_shared<potEngine::RenderComponent>();
-    std::shared_ptr<potEngine::WindowDisplayComponent> windowDisplayComponentPtr = std::make_shared<potEngine::WindowDisplayComponent>();
+    std::shared_ptr<potEngine::RenderComponent> windowRenderPtr = std::make_shared<potEngine::RenderComponent>();
+    std::shared_ptr<potEngine::WindowComponent> WindowComponentPtr = std::make_shared<potEngine::WindowComponent>();
 
 
     std::shared_ptr<potEngine::RenderComponent> renderComponentPtr2 = std::make_shared<potEngine::RenderComponent>(sprite2);
 
-    test->addComponent(renderComponentPtr2);
-    test->addComponent(renderComponentPtr);
-    window->addComponent(windowRenderComponentPtr);
-    window->addComponent(windowDisplayComponentPtr);
     ecsManager.registerSystem<potEngine::RenderSystem>();
+    ecsManager.addComponent<potEngine::RenderComponent>(test, renderComponentPtr2);
+    ecsManager.addComponent<potEngine::RenderComponent>(test, renderComponentPtr);
+    ecsManager.addComponent<potEngine::RenderComponent>(window, windowRenderPtr);
+    ecsManager.addComponent<potEngine::WindowComponent>(window, WindowComponentPtr);
 
     // potEngine::AEntity& window = ecsManager.createEntity();
     // potEngine::window& nwindow = static_cast<potEngine::window&>(window);

@@ -1,26 +1,34 @@
 #include "WindowEntity.hpp"
+#include "WindowComponent.hpp"
 
 namespace potEngine
 {
-    WindowEntity::WindowEntity(const std::size_t id) : AEntity(id), _window(nullptr) {}
+    WindowEntity::WindowEntity(const std::size_t id) : AEntity(id)
+    {
+        auto WindowComponentPtr = std::make_shared<WindowComponent>();
+        this->addComponent<WindowComponent>(WindowComponentPtr);
+    }
 
-    WindowEntity::WindowEntity(const std::size_t id, sf::RenderWindow* window) : AEntity(id), _window(window) {}
+    WindowEntity::WindowEntity(const std::size_t id, sf::RenderWindow* window) : AEntity(id)
+    {
+        auto WindowComponentPtr = std::make_shared<WindowComponent>();
+        this->addComponent<WindowComponent>(WindowComponentPtr);
+    }
 
     WindowEntity::~WindowEntity() {}
 
     void WindowEntity::setWindowEntity(sf::RenderWindow* window) {
-        _window = window;
+        
     }
 
     sf::RenderWindow* WindowEntity::getWindowEntity() {
-        return _window;
+        return getComponent<WindowComponent>()->get()->getWindow();
     }
 
     sf::Color WindowEntity::getColorClear() const {
-        return _color;
+        return sf::Color::Black;
     }
 
     void WindowEntity::setColorClear(sf::Color color) {
-        _color = color;
     }
 }

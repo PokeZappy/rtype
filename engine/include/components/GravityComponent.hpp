@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "AComponent.hpp"
 
-namespace {
+namespace potEngine {
     class GravityComponent : public AComponent {
     public:
         GravityComponent(float gravity) : _gravity(gravity) {}

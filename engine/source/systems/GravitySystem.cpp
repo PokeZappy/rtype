@@ -4,14 +4,16 @@
 
 namespace potEngine
 {
-    void GravitySystem::update(float deltaTime, std::vector<std::shared_ptr<AEntity>> entities)
+    void GravitySystem::update(float deltaTime)
     {
-        for (auto& entity : entities) {
+        for (auto& entity : _entitiesSystem) {
             auto gravity = entity->getComponent<GravityComponent>();
             if (gravity) {
                 auto position = (entity->getComponent<PositionComponent>());
                 if (position != std::nullopt) {
-                    position->setPosition(position->getPosition()[0], position->getPosition()[1] + gravity->getGravity() * deltaTime);
+                    position->get()->setPosition(position->get()->getPosition()[0],
+                    position->get()->getPosition()[1] +
+                    gravity->get()->getGravity() * deltaTime);
                 }
             }
         }

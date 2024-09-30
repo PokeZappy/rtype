@@ -5,14 +5,14 @@
 #include "AEntity.hpp"
 #include "WindowEntity.hpp"
 #include "EventBus.hpp"
-#include "WindowDisplayComponent.hpp"
+#include "WindowComponent.hpp"
 #include "EventRender.hpp"
 
 namespace potEngine {
     class RenderSystem : public ASystem {
     public:
-        RenderSystem() {}; 
-        ~RenderSystem() = default;
+        RenderSystem();
+        ~RenderSystem();
 
         void update(float deltaTime) override;
     private:
