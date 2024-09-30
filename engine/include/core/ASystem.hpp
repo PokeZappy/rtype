@@ -8,13 +8,13 @@ namespace potEngine {
         ASystem();
         virtual ~ASystem() = default;
 
-        virtual void update(float deltaTime, std::vector<std::shared_ptr<Entity>> entities) = 0;
+        virtual void update(float deltaTime, std::vector<std::shared_ptr<AEntity>> entities) = 0;
 
-        // void addEntity(Entity& entity);
+        // void addEntity(AEntity& entity);
         // void removeEntity(const std::size_t id);
 
-        std::vector<std::shared_ptr<Entity>> getEntities() const;
+        std::vector<std::shared_ptr<AEntity>> getEntities() const;
     private:
-        std::vector<std::shared_ptr<Entity>> _entitiesSystem;
+        std::vector<std::shared_ptr<AEntity>> _entitiesSystem;
     };
 }

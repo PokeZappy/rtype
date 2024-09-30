@@ -8,7 +8,7 @@ namespace potEngine
 
     WindowDisplaySystem::~WindowDisplaySystem() {}
 
-    void WindowDisplaySystem::update(float deltaTime, std::vector<std::shared_ptr<Entity>> entities)
+    void WindowDisplaySystem::update(float deltaTime, std::vector<std::shared_ptr<AEntity>> entities)
     {
         for (auto &entity : entities) {
             auto windowDisplayComponent = static_cast<std::optional<std::shared_ptr<WindowDisplayComponent>>>(entity->getComponent<WindowDisplayComponent>());

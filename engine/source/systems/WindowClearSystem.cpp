@@ -8,7 +8,7 @@ namespace potEngine
 
     WindowClearSystem::~WindowClearSystem() {}
 
-    void WindowClearSystem::update(float deltaTime, std::vector<std::shared_ptr<Entity>> entities)
+    void WindowClearSystem::update(float deltaTime, std::vector<std::shared_ptr<AEntity>> entities)
     {
         for (auto &entity : entities) {
         auto windowClearComponent = entity->getComponent<WindowClearComponents>();

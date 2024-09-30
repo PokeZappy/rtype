@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "ECSManager.hpp"
-#include "Entity.hpp"
+#include "AEntity.hpp"
 #include "RenderComponent.hpp"
 #include "RenderSystem.hpp"
 #include "WindowEntity.hpp"

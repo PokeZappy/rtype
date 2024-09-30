@@ -6,7 +6,7 @@
 #include <typeindex>
 #include <algorithm>
 
-#include "Entity.hpp"
+#include "AEntity.hpp"
 #include "ASystem.hpp"
 
 namespace potEngine {
@@ -15,7 +15,10 @@ namespace potEngine {
         ECSManager();
         ~ECSManager();
 
-        void addEntity(std::shared_ptr<Entity> entity);
+        std::shared_ptr<AEntity> createEntity();
+
+        void addEntity(std::shared_ptr<AEntity> entity);
+
         void removeEntity(const std::size_t id);
 
         template <typename T>
@@ -30,7 +33,7 @@ namespace potEngine {
     private:
         std::size_t _entityCounter;
         std::vector<std::shared_ptr<ISystem>> _systems;
-        std::vector<std::shared_ptr<Entity>> _entities;
+        std::vector<std::shared_ptr<AEntity>> _entities;
     };
 
     template <typename T>

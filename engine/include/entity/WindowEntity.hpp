@@ -3,11 +3,11 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
 
-#include "Entity.hpp"
+#include "AEntity.hpp"
 
 namespace potEngine
 {
-    class WindowEntity : public Entity {
+    class WindowEntity : public AEntity {
     public:
         WindowEntity(const std::size_t id);
         WindowEntity(const std::size_t id, sf::RenderWindow* window);

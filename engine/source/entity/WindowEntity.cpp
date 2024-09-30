@@ -2,9 +2,9 @@
 
 namespace potEngine
 {
-    WindowEntity::WindowEntity(const std::size_t id) : Entity(id), _window(nullptr) {}
+    WindowEntity::WindowEntity(const std::size_t id) : AEntity(id), _window(nullptr) {}
 
-    WindowEntity::WindowEntity(const std::size_t id, sf::RenderWindow* window) : Entity(id), _window(window) {}
+    WindowEntity::WindowEntity(const std::size_t id, sf::RenderWindow* window) : AEntity(id), _window(window) {}
 
     WindowEntity::~WindowEntity() {}
 
