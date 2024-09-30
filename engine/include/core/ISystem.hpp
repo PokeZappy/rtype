@@ -8,7 +8,9 @@ namespace potEngine {
     public:
         virtual ~ISystem() = default;
 
-        virtual void update(float deltaTime, std::vector<std::shared_ptr<Entity>> entities) = 0;
+        virtual void update(float deltaTime) = 0;
+        virtual std::bitset<64> getSignature() = 0;
+        virtual std::vector<std::shared_ptr<Entity>> &getEntities() = 0;
 
         // virtual removeEntity(const std::size_t id) = 0;
     };

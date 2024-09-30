@@ -7,8 +7,16 @@ namespace potEngine {
     public:
         AComponent();
         ~AComponent();
-        std::uint32_t getID() const override;
-    private:
-        std::uint32_t _id;
+
+        static std::size_t generateID() {
+            static std::size_t lastID = 0;
+            return lastID++;
+        }
+
+        template <typename T>
+        static std::size_t getID() {
+            static std::size_t typeID = generateID();
+            return typeID;
+        }
     };
 }
