@@ -9,5 +9,5 @@
 
 int main()
 {
-    return MAX_PLAYERS;
+    return 0;
 }

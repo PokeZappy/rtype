@@ -17,6 +17,7 @@ const int MAX_PLAYERS = 4;
 #include "MovementComponent.hpp"
 #include "PositionComponent.hpp"
 #include "NetworkComponent.hpp"
+#include "PlayerComponent.hpp"
 
 #include "ASystem.hpp"
 #include "ISystem.hpp"

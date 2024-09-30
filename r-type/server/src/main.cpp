@@ -9,5 +9,7 @@
 
 int main()
 {
+    potEngine::Server server;
+    server.start();
     return 0;
 }

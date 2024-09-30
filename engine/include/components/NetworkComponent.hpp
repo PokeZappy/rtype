@@ -19,7 +19,7 @@ namespace polEngine
         sockaddr_in addr;
 
         ComponentNetwork(int socket, const sockaddr_in& address)
-            : AComponent("NetworkComponent"), sockfd(socket), addr(address) {}
+            : AComponent("Network"), sockfd(socket), addr(address) {}
     };
 }
 
