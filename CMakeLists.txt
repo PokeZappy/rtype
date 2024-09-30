@@ -14,23 +14,13 @@ set(SERVER_INCLUDE_DIRS r-type/server/include)
 set(GAME_INCLUDE_DIRS r-type/include)
 
 file(GLOB_RECURSE ENGINE_SOURCES
-    "engine/source/components/*.cpp"
-    "engine/source/core/*.cpp"
-    "engine/source/renderer/*.cpp"
-    "engine/source/systems/*.cpp"
-    "engine/source/*.cpp"
-    "engine/source/entity/*.cpp"
+    "engine/src/*.cpp"
 )
 
 add_library(engine SHARED ${ENGINE_SOURCES})
 
 target_include_directories(engine PUBLIC
     engine/include
-    engine/include/components
-    engine/include/core
-    engine/include/renderer
-    engine/include/systems
-    engine/include/entity
 )
 
 file(GLOB_RECURSE SERVER_SOURCES "r-type/server/src/*.cpp")
