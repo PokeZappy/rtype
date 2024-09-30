@@ -36,8 +36,8 @@ namespace polEngine
         void sendUpdateToAllClients(uint8_t client_id, EventType event_type, const std::vector<uint16_t>& params, const std::vector<std::shared_ptr<Entity>>& entities)
         {
             for (const auto& entity : entities) {
-                auto networkComponent = entity->getComponent<ComponentNetwork>();
-                if (networkComponent && entity->id != client_id) {
+                auto networkComponent = entity->getComponent<NetworkComponent>();
+                if (networkComponent && entity->getId() != client_id) {
                     send_message(networkComponent->sockfd, networkComponent->addr, client_id, event_type, params);
                 }
             }

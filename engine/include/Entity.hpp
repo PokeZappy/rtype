@@ -18,15 +18,18 @@
 namespace polEngine
 {
     class Entity {
-    public:
-        int id;
+    private:
+        uint8_t id;
         std::unordered_map<std::string, std::shared_ptr<IComponent>> components;
 
-        Entity(int entityId) : id(entityId) {}
+    public:
+        Entity(uint8_t entityId) : id(entityId) {}
 
         template <typename T>
         void addComponent(std::shared_ptr<T> component) {
-            components[typeid(T).name()] = component;
+            if (components.find(typeid(T).name()) == components.end()) {
+                components[typeid(T).name()] = component;
+            }
         }
 
         template <typename T>
@@ -35,12 +38,16 @@ namespace polEngine
         }
 
         template <typename T>
-        std::shared_ptr<T> getComponent() {
+        std::shared_ptr<T> getComponent() const {
             auto it = components.find(typeid(T).name());
             if (it != components.end()) {
                 return std::static_pointer_cast<T>(it->second);
             }
-            return nullptr;
+            throw std::runtime_error("Component not found");
+        }
+
+        uint8_t getId() const {
+            return id;
         }
     };
 }

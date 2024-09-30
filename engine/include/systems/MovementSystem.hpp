@@ -16,30 +16,23 @@ namespace polEngine
 {
     class MovementSystem : public ASystem {
     public:
-        void handleEvent(const Event& event, std::vector<std::shared_ptr<Entity>>& entities)
-        {
+        void handleEvent(const Event& event, std::vector<std::shared_ptr<Entity>>& entities) {
             for (auto& entity : entities) {
-                if (entity->id == event.clientId) {
+                if (entity->getId() == event.clientId) {
                     auto movement = entity->getComponent<MovementComponent>();
-                    auto position = entity->getComponent<PositionComponent>();
-
-                    if (movement && position) {
+                    if (movement) {
                         switch (event.action) {
                             case MOVE_UP:
                                 movement->yDirection = 1.0f;
-                                position->y += movement->speed;
                                 break;
                             case MOVE_DOWN:
                                 movement->yDirection = -1.0f;
-                                position->y -= movement->speed;
                                 break;
                             case MOVE_LEFT:
                                 movement->xDirection = -1.0f;
-                                position->x -= movement->speed;
                                 break;
                             case MOVE_RIGHT:
                                 movement->xDirection = 1.0f;
-                                position->x += movement->speed;
                                 break;
                             default:
                                 break;
@@ -48,7 +41,23 @@ namespace polEngine
                 }
             }
         }
+
+        void update(float deltaTime, std::vector<std::shared_ptr<Entity>>& entities) {
+            for (auto& entity : entities) {
+                auto movement = entity->getComponent<MovementComponent>();
+                auto position = entity->getComponent<PositionComponent>();
+
+                if (movement && position) {
+                    position->x += movement->xDirection * movement->speed * deltaTime;
+                    position->y += movement->yDirection * movement->speed * deltaTime;
+
+                    movement->xDirection = 0.0f;
+                    movement->yDirection = 0.0f;
+                }
+            }
+        }
     };
+
 }
 
 #endif // MOVEMENT_SYSTEM_HPP

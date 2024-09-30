@@ -12,7 +12,7 @@
 
 #include "AComponent.hpp"
 
-namespace potEngine
+namespace polEngine
 {
     class PlayerComponent : public AComponent {
     public:

@@ -9,7 +9,7 @@
 
 int main()
 {
-    potEngine::Server server;
+    RType::Server server;
     server.start();
     return 0;
 }

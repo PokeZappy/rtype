@@ -5,26 +5,17 @@
 ** server.hpp
 */
 
-#ifndef SERVER_CONFIG_HPP
-#define SERVER_CONFIG_HPP
-
-#include <iostream>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <cstring>
-#include <vector>
-#include <memory>
-#include <unordered_map>
-#include <mutex>
+#ifndef SERVER_HPP
+#define SERVER_HPP
 
 #include "game_config.hpp"
 
-struct ClientInfo {
-    uint8_t client_id;
-    struct sockaddr_in client_addr;
-};
+#include <memory>
+#include <vector>
+#include <netinet/in.h>
+#include <iostream>
 
-namespace potEngine
+namespace RType
 {
     class Server {
     public:
@@ -32,22 +23,22 @@ namespace potEngine
         ~Server();
 
         void start();
+        void handle_action(uint8_t client_id, uint8_t action);
         void handle_client_connection(uint8_t client_id, struct sockaddr_in client_addr, std::vector<uint16_t> params);
 
     private:
-        uint8_t current_players;
-        MovementSystem movement_system;
-        NetworkSystem network_system;
+        int current_players;
         int server_fd;
         struct sockaddr_in server_addr;
-        std::vector<ClientInfo> clients;
-        std::unordered_map<uint8_t, std::shared_ptr<Entity>> entities;
+
+        std::shared_ptr<polEngine::ECSManager> ecs_manager;
+        std::shared_ptr<polEngine::Entity> server_entity;
 
         uint8_t assign_client_id();
         void remove_client(uint8_t client_id);
-        void handle_action(uint8_t client_id, uint8_t action);
         void create_player_entity(uint8_t client_id, const std::string& username, const sockaddr_in& client_addr);
     };
 }
 
-#endif // SERVER_CONFIG_HPP
+#endif // SERVER_HPP
+
