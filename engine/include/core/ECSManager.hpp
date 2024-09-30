@@ -17,7 +17,7 @@ namespace potEngine {
 
         std::shared_ptr<AEntity> createEntity();
 
-        void addEntity(std::shared_ptr<AEntity> entity);
+        // void addEntity(std::shared_ptr<AEntity> entity);
 
         void removeEntity(const std::size_t id);
 
@@ -26,8 +26,8 @@ namespace potEngine {
         template <typename T>
         void unregisterSystem();
 
-        void EntitySignatureChanged(std::shared_ptr<Entity> entity);
-        void EraseEntitySystem(std::shared_ptr<Entity> entity);
+        void EntitySignatureChanged(std::shared_ptr<AEntity> entity);
+        void EraseEntitySystem(std::shared_ptr<AEntity> entity);
 
         void init();
         void update(float deltaTime);
