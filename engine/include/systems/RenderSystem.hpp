@@ -14,7 +14,7 @@ namespace potEngine {
         RenderSystem() {}; 
         ~RenderSystem() = default;
 
-        void update(float deltaTime, std::vector<std::shared_ptr<AEntity>> entities) override;
+        void update(float deltaTime) override;
     private:
         sf::RenderWindow* _window;
     };

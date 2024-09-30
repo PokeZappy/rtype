@@ -13,15 +13,16 @@ namespace potEngine {
 
     std::shared_ptr<AEntity> ECSManager::createEntity()
     {
-          auto entity = std::make_shared<AEntity>(_entityCounter++);
-          _entities.push_back(entity);
-          return entity;
+        auto entity = std::make_shared<AEntity>(_entityCounter++);
+        _entities.push_back(entity);
+        return entity;
     }
 
-    void ECSManager::addEntity(std::shared_ptr<AEntity> entity)
-    {
-        _entities.push_back(entity);
-    }
+//    void ECSManager::addEntity(std::shared_ptr<AEntity> entity)
+//    {
+//        _entities.push_back(entity);
+//        EntitySignatureChanged(entity);
+//    }
 
    void ECSManager::removeEntity(const std::size_t id)
    {
@@ -29,8 +30,52 @@ namespace potEngine {
             return entityPtr->getID() == id;
         });
         if (it != _entities.end()) {
+            auto entity = *it;
+
+            EraseEntitySystem(entity);
+
             _entities.erase(it);
         }
+   }
+
+   void ECSManager::EraseEntitySystem(std::shared_ptr<AEntity> entity) {
+    for (auto const &system : _systems) {
+        auto systemEntities = system->getEntities();
+        auto it = std::find(systemEntities.begin(), systemEntities.end(), entity);
+
+        if (it != systemEntities.end()) {
+            systemEntities.erase(it);
+        }
+    }
+   }
+
+   void ECSManager::EntitySignatureChanged(std::shared_ptr<AEntity> entity) {
+    auto const &entitySignature = entity->getSignature();
+    // std::cout << entitySignature << std::endl;
+
+    for (auto const &system: _systems) {
+        auto const &systemSignature = system->getSignature();
+        // std::cout << "system signature : " << systemSignature << std::endl;
+        auto &systemEntities = system->getEntities();
+
+        if ((entitySignature & systemSignature) == systemSignature)
+        {
+            auto it = std::find(systemEntities.begin(), systemEntities.end(), entity);
+
+            if (it == systemEntities.end()) {
+                systemEntities.push_back(entity);
+            }
+        }
+        else
+        {
+            auto it = std::find(systemEntities.begin(), systemEntities.end(), entity);
+
+            if (it != systemEntities.end()) {
+                systemEntities.erase(it);
+            }
+        }
+
+    }
    }
 
    void ECSManager::init()
@@ -43,7 +88,7 @@ namespace potEngine {
             if (!system) {
                 continue;
             }
-            system->update(deltaTime, _entities);
+            system->update(deltaTime);
         }
    }
 

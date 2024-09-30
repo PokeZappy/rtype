@@ -26,6 +26,9 @@ namespace potEngine {
         template <typename T>
         void unregisterSystem();
 
+        void EntitySignatureChanged(std::shared_ptr<Entity> entity);
+        void EraseEntitySystem(std::shared_ptr<Entity> entity);
+
         void init();
         void update(float deltaTime);
         void shutdown();

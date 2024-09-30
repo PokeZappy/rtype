@@ -5,8 +5,9 @@
 #include <optional>
 #include <functional>
 #include <memory>
+#include <bitset>
 
-#include "IComponent.hpp"
+#include "AComponent.hpp"
 
 namespace potEngine {
     class IComponent;
@@ -29,20 +30,25 @@ namespace potEngine {
 
         std::size_t getID() const;
 
+        std::bitset<64> getSignature() { return (_signature); }
+
     private:
         std::size_t _id;
+        std::bitset<64> _signature;
         std::unordered_map<std::type_index, std::shared_ptr<IComponent>> _components;
     };
 
     template <typename T>
     void AEntity::addComponent(std::shared_ptr<T> component)
     {
+        _signature.set(AComponent::getID<T>(), true);
         _components[typeid(T)] = component;
     }
 
     template <typename T>
     void AEntity::removeComponent()
     {
+        _signature.set(AComponent::getID<T>(), false);
         _components.erase(typeid(T));
     }
 

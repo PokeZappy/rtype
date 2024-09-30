@@ -6,9 +6,17 @@
 #include <iostream>
 
 namespace potEngine {
+    RenderSystem::RenderSystem()
+    {
+        _signature.set(AComponent::getID<RenderComponent>(), true);
+    }
 
-    void RenderSystem::update(float deltaTime, std::vector<std::shared_ptr<AEntity>> entities) {
-        for (auto& entity : entities) {
+    RenderSystem::~RenderSystem() {
+
+    }
+
+    void RenderSystem::update(float deltaTime) {
+        for (auto& entity : _entitiesSystem) {
             if (entity->getComponent<WindowDisplayComponent>() == std::nullopt) {
                 continue;
             }
@@ -16,7 +24,7 @@ namespace potEngine {
             if (!windowEntity)
                 continue;
             windowEntity->getWindowEntity()->clear(sf::Color::Black);
-            for (auto& nentity : entities) {
+            for (auto& nentity : _entitiesSystem) {
                 auto render = nentity->getComponent<RenderComponent>();
                 if (render && render->get()->getSprite()) {                        
                     auto nrender = render->get();
@@ -44,4 +52,4 @@ namespace potEngine {
     //         _entities.erase(it);
     //     }
     // }
-}
+};

@@ -3,14 +3,12 @@
 namespace potEngine {
     AComponent::AComponent()
     {
-        static std::atomic<std::uint32_t> id = 0;
-        _id = id++;
+    }
+
+    static std::size_t generateID() {
+        static std::size_t lastID = 0;
+        return lastID++;
     }
 
     AComponent::~AComponent() {}
-
-    std::uint32_t AComponent::getID() const
-    {
-        return _id;
-    }
 }
