@@ -95,10 +95,10 @@ void RType::Server::handle_action(uint8_t client_id, uint8_t action)
                 });
                 break;
 
-            case DISCONNECT:
+            case polEngine::DISCONNECT:
                 current_players--;
                 remove_client(client_id);
-                network_component->send_message(client_addr, client_id, DISCONNECT, std::vector<uint16_t>{});
+                network_component->send_message(client_addr, client_id, polEngine::DISCONNECT, std::vector<uint16_t>{});
                 std::cout << "Client " << static_cast<int>(client_id) << " disconnected.\n";
                 break;
 
@@ -144,7 +144,7 @@ void RType::Server::start()
             uint8_t new_client_id = assign_client_id();
             if (new_client_id != 0) {
                 std::cout << "[SERVER] New client connected with ID " << static_cast<int>(new_client_id) << ".\n";
-                server_entity->getComponent<polEngine::NetworkComponent>()->send_message(client_addr, new_client_id, CONNECTION, {});
+                server_entity->getComponent<polEngine::NetworkComponent>()->send_message(client_addr, new_client_id, polEngine::CONNECTION, {});
                 handle_client_connection(new_client_id, client_addr, params);
                 current_players++;
             } else {
