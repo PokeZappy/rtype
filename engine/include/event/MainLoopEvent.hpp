@@ -5,7 +5,7 @@
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "StartEvent.hpp"
-#include "EventRender.hpp"
+// #include "EventRender.hpp"
 
 namespace potEngine
 {

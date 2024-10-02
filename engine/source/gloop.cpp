@@ -48,9 +48,11 @@ int potEngine::gloop::mainPotEngine()
 
     auto tesnew = std::make_shared<potEngine::EventRender>(*window, vec);
 
+    eventBus.subscribe(tesnew.get(), &EventRender::render);
+
     auto start = std::make_shared<potEngine::StartEvent>();
     start->_mainLoopEvent->addEventMainLoop(tesnew);
-    std ::cout << "Event start " << typeid(start).name() << std::endl;
+    // std ::cout << "Event start " << typeid(start).name() << std::endl;
     eventBus.publish(start);
     
     ecsManager.addComponent<potEngine::RenderComponent>(test, renderComponentPtr2);
