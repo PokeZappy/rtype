@@ -18,8 +18,8 @@ namespace potEngine {
     }
 
     void RenderSystem::renderWindow(std::shared_ptr<EventRender> event) {
-
-            auto windowEntity = event->windows.getComponent<WindowComponent>();
+            std::cout << "coucou je render" << std::endl;
+            auto windowEntity = event->windows->getComponent<WindowComponent>();
             if (windowEntity == std::nullopt) {
                 return;
             }
@@ -27,10 +27,10 @@ namespace potEngine {
             window->clear();
             auto sprites = event->sprites;
             for (auto& sprite : sprites) {
-                auto render = sprite.getComponent<RenderComponent>();
+                auto render = sprite->getComponent<RenderComponent>();
                 if (render && render->get()->getSprite()) {                        
                     auto nrender = render->get();
-                    auto position = sprite.getComponent<PositionComponent>();
+                    auto position = sprite->getComponent<PositionComponent>();
                 if (position != std::nullopt) {
                     auto pos = position->get()->getPosition();
                     nrender->getSprite()->setPosition(pos[0], pos[1]);

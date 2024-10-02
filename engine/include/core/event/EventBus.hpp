@@ -40,7 +40,7 @@ namespace potEngine {
             for (auto& handler : *it->second)
                 if (handler != nullptr)
                     _handlers.push_back(std::make_pair(event, it->second));
-            std::cout << "Event published" << typeid(it->second).name() << std::endl;
+            std::cout << "Event published " << typeid(EventType).name() << std::endl;
         }
 
         template<class T, class EventType>

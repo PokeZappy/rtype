@@ -3,6 +3,7 @@
 #include "AEntity.hpp"
 #include "EventBus.hpp"
 #include "StartEvent.hpp"
+#include "RenderSystem.hpp"
 
 int potEngine::gloop::mainPotEngine()
 {
@@ -32,7 +33,8 @@ int potEngine::gloop::mainPotEngine()
 
     sprite = new sf::Sprite(texture);
     sprite2 = new sf::Sprite(texture2);
-    sprite2->setPosition(100, 100);
+    sprite->setPosition(500, 200);
+    sprite2->setPosition(500, 100);
 
     std::shared_ptr<potEngine::RenderComponent> renderComponentPtr = std::make_shared<potEngine::RenderComponent>(sprite);
     std::shared_ptr<potEngine::RenderComponent> windowRenderPtr = std::make_shared<potEngine::RenderComponent>();
@@ -41,23 +43,26 @@ int potEngine::gloop::mainPotEngine()
 
     std::shared_ptr<potEngine::RenderComponent> renderComponentPtr2 = std::make_shared<potEngine::RenderComponent>(sprite2);
 
-    std::vector<potEngine::AEntity> vec;
+    std::vector<std::shared_ptr<potEngine::AEntity>> vec;
 
-    vec.push_back(*test);
-    vec.push_back(*colTest);
+    vec.push_back(test);
+    vec.push_back(colTest);
 
-    auto tesnew = std::make_shared<potEngine::EventRender>(*window, vec);
+    auto tesnew = std::make_shared<potEngine::EventRender>(window, vec);
+    auto rend = std::make_shared<potEngine::RenderSystem>();
 
-    eventBus.subscribe(tesnew.get(), &EventRender::render);
+    // eventBus.subscribe(tesnew.get(), &EventRender::render);
 
     auto start = std::make_shared<potEngine::StartEvent>();
     // std ::cout << "Event start " << typeid(start).name() << std::endl;
     eventBus.publish(start);
     
-    ecsManager.addComponent<potEngine::RenderComponent>(test, renderComponentPtr2);
+    ecsManager.addComponent<potEngine::RenderComponent>(colTest, renderComponentPtr2);
     ecsManager.addComponent<potEngine::RenderComponent>(test, renderComponentPtr);
     ecsManager.addComponent<potEngine::RenderComponent>(window, windowRenderPtr);
     ecsManager.addComponent<potEngine::WindowComponent>(window, WindowComponentPtr);
+
+    start->addEvent(tesnew);
 
     
     // potEngine::AEntity& window = ecsManager.createEntity();

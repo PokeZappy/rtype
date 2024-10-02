@@ -14,6 +14,8 @@ namespace potEngine {
         RenderSystem();
         ~RenderSystem();
 
+        void update(float) override {};
+
         void renderWindow(std::shared_ptr<EventRender> event);
     };
 }
