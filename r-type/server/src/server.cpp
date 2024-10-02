@@ -43,52 +43,11 @@ void RType::Server::handle_client_disconnection(uint8_t entity_id)
     current_players--;
 }
 
-void RType::Server::handle_client_connection(struct sockaddr_in client_addr, std::vector<uint16_t> params)
-{
-    auto player_entity = ecs_manager->createEntity();
-    uint8_t player_id = player_entity->getID();
-    std::string player_name;
-
-    if (params.empty()) {
-        player_name = "Player_" + std::to_string(static_cast<int>(player_id));
-    } else {
-        player_name.assign(params.begin(), params.end());
-    }
-
-    std::shared_ptr<potEngine::PlayerComponent> playerComponent = std::make_shared<potEngine::PlayerComponent>(player_name);
-    std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(0.0f, 0.0f);
-    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(1.0f);
-    std::shared_ptr<potEngine::NetworkComponent> networkComponent = std::make_shared<potEngine::NetworkComponent>(client_addr);
-
-    ecs_manager->addComponent(player_entity, playerComponent);
-    ecs_manager->addComponent(player_entity, positionComponent);
-    ecs_manager->addComponent(player_entity, movementComponent);
-    ecs_manager->addComponent(player_entity, networkComponent);
-
-
-    std::cout << "[SERVER] Player connected: {id}-[" << std::to_string(static_cast<int>(player_id)) << "], {username}-[" << player_name << "]" << std::endl;
-    send_message(client_addr, player_id, potEngine::CONNECTION, {});
-    current_players++;
-}
-
 void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<uint16_t> params)
 {
-    // if (action == potEngine::CONNECTION) {
-    //     potEngine::ConnectionInfoEvent connectionInfo;
-    //     connectionInfo.client_addr = client_addr;
-    //     connectionInfo.params = params;
-    //     connectionInfo.ecs_manager = ecs_manager;
-
-    //     potEngine::eventBus. .publish(connectionInfo);
-    // }
-
     if (action == potEngine::CONNECTION) {
-        if (current_players < MAX_PLAYERS) {
-            handle_client_connection(client_addr, params);
-        } else {
-            std::cout << "[SERVER] Server full. Cannot accept new clients.\n";
-            // faut encore déco le client
-        }
+        auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(MAX_PLAYERS, CLIENT_SOCKET, client_addr, params, ecs_manager);
+        potEngine::eventBus.publish(connectionInfo);
     }
 
     if (action == potEngine::DISCONNECT) {
