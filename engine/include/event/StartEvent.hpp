@@ -10,7 +10,6 @@ namespace potEngine
     class StartEvent : public IEvent
     {
         public:
-        
         StartEvent() {
             eventBus.subscribe(this, &StartEvent::eventStart);
         };

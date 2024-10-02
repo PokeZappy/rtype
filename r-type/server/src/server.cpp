@@ -140,6 +140,17 @@ void RType::Server::start()
 
     // while (true) {
     //     auto [client_id, action, params] = server_entity->getComponent<potEngine::NetworkComponent>()->recv_message(client_addr, client_addr_len);
+
+
+
+            // if (action == MOVE) {
+            //     MoveInfoEvent moveInfo;
+            //     moveInfo.input = action;
+            //     eventBus.publish(moveInfo);
+            // }
+
+
+
     //     if (action == CONNECTION) {
     //         uint8_t new_client_id = assign_client_id();
     //         if (new_client_id != 0) {
