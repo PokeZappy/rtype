@@ -3,7 +3,10 @@
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "ECSManager.hpp"
-#include "SendMessageEvent.hpp"
+#include "SendMessageToAllEvent.hpp"
+#include "PlayerComponent.hpp"
+#include "PositionComponent.hpp"
+#include "MovementComponent.hpp"
 
 #include <netinet/in.h>
 #include <vector>
@@ -51,8 +54,12 @@ namespace potEngine
 
             std::cout << "[SERVER] Player connected: {id}-[" << std::to_string(static_cast<int>(player_id)) << "], {username}-[" << player_name << "]" << std::endl;
 
-            auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->socket, info->client_addr, player_id, CONNECTION, std::vector<uint16_t>{});
+            std::vector<uint16_t> _sendId = {static_cast<uint16_t>(player_id)};
+            auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->socket, info->client_addr, 0, CONNECTION, _sendId);
             eventBus.publish(sendMessageEventInfo);
+
+            auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(info->max_players, info->socket, player_id, CONNECTION, info->params, info->ecs_manager->getEntities());
+            eventBus.publish(sendMessageToAllEventInfo);
         }
     };
 }

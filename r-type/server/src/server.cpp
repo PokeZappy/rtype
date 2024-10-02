@@ -33,25 +33,19 @@ RType::Server::~Server()
     close(server_fd);
 }
 
-void RType::Server::handle_client_disconnection(uint8_t entity_id)
-{
-    std::string player_name = ecs_manager.get()->getEntity(entity_id).get()->getComponent<potEngine::PlayerComponent>()->get()->username;
-
-    std::cout << "[SERVER] Player disconnected: {id}-[" << std::to_string(static_cast<int>(entity_id)) << "], {username}-[" << player_name << "]" << std::endl;
-    ecs_manager->removeEntity(entity_id);
-    send_message_to_all(entity_id, potEngine::DISCONNECT, std::vector<uint16_t>{}, ecs_manager.get()->getEntities());
-    current_players--;
-}
 
 void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<uint16_t> params)
 {
     if (action == potEngine::CONNECTION) {
         auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(MAX_PLAYERS, CLIENT_SOCKET, client_addr, params, ecs_manager);
         potEngine::eventBus.publish(connectionInfo);
+        current_players++;
     }
 
     if (action == potEngine::DISCONNECT) {
-        handle_client_disconnection(entity_id);
+        auto disconnectInfo = std::make_shared<potEngine::DisconnectionInfoEvent>(MAX_PLAYERS, CLIENT_SOCKET, entity_id, params, ecs_manager);
+        potEngine::eventBus.publish(disconnectInfo);
+        current_players--;
     }
 }
 

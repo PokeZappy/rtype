@@ -9,5 +9,7 @@
 
 int main()
 {
+    RType::Client client;
+    client.start();
     return 0;
 }

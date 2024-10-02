@@ -5,14 +5,14 @@
 ** network.cpp
 */
 
-#include "server_config.hpp"
+#include "client_config.hpp"
 
-std::tuple<uint8_t, potEngine::EventType, std::vector<uint16_t>> RType::Server::recv_message(struct sockaddr_in& addr, socklen_t& addr_len)
+std::tuple<uint8_t, potEngine::EventType, std::vector<uint16_t>> RType::Client::recv_message(struct sockaddr_in& addr, socklen_t& addr_len)
 {
     uint8_t buffer[1024];
-    ssize_t recv_len = recvfrom(SERVER_SOCKET, buffer, sizeof(buffer), 0, (struct sockaddr*)&addr, &addr_len);
+    ssize_t recv_len = recvfrom(CLIENT_SOCKET, buffer, sizeof(buffer), 0, (struct sockaddr*)&addr, &addr_len);
 
-    if (recv_len < 0) {
+    if (recv_len < 1) {
         if (errno == EWOULDBLOCK || errno == EAGAIN) {
             return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<uint16_t>{});
         } else {

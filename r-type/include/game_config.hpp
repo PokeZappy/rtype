@@ -41,6 +41,9 @@ const int CLIENT_SOCKET = 1;
 #include "EventRender.hpp"
 #include "MainLoopEvent.hpp"
 #include "StartEvent.hpp"
+#include "SendMessageEvent.hpp"
+#include "SendMessageToAllEvent.hpp"
+#include "DisconnectionEvent.hpp"
 #include "ConnectionEvent.hpp"
 
 #endif // GAME_CONFIG_HPP
