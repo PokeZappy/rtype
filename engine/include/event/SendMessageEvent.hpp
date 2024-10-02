@@ -29,7 +29,7 @@ namespace potEngine
         };
 
         void sendMessage(std::shared_ptr<SendMessageEventInfo> info) {
-            std::cout << "[CLIENT/SERVER] sending info..." << std::endl;
+            std::cout << "[CLIENT/SERVER][sendMessage] sending info..." << std::endl;
             send_message(info->client_addr, info->entity_id, info->event_type, info->params, info->max_players, info->socket);
         }
     private:

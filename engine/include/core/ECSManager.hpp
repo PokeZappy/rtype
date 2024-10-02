@@ -47,6 +47,7 @@ namespace potEngine {
     private:
         std::size_t _entityCounter;
         StartEvent _startEvent;
+
         std::vector<std::shared_ptr<ISystem>> _systems;
         std::vector<std::shared_ptr<AEntity>> _entities;
 
