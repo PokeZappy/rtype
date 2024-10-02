@@ -18,7 +18,6 @@ namespace potEngine {
     }
 
     void RenderSystem::renderWindow(std::shared_ptr<EventRender> event) {
-            std::cout << "coucou je render" << std::endl;
             auto windowEntity = event->windows->getComponent<WindowComponent>();
             if (windowEntity == std::nullopt) {
                 return;

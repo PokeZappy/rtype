@@ -4,15 +4,16 @@
 #include "EventBus.hpp"
 #include "StartEvent.hpp"
 #include "RenderSystem.hpp"
+#include "InputSystem.hpp"
 
 int potEngine::gloop::mainPotEngine()
 {
     potEngine::ECSManager ecsManager;
 
     ecsManager.init();
-    std::shared_ptr<potEngine::AEntity> test = ecsManager.createEntity();
+    std::shared_ptr<potEngine::AEntity> redSquare = ecsManager.createEntity();
     std::shared_ptr<potEngine::AEntity> window = ecsManager.createEntity();
-    std::shared_ptr<potEngine::AEntity> colTest = ecsManager.createEntity();
+    std::shared_ptr<potEngine::AEntity> greenSquare = ecsManager.createEntity();
 
     const int cubeSize = 100;
 
@@ -45,25 +46,30 @@ int potEngine::gloop::mainPotEngine()
 
     std::vector<std::shared_ptr<potEngine::AEntity>> vec;
 
-    vec.push_back(test);
-    vec.push_back(colTest);
+    vec.push_back(redSquare);
+    vec.push_back(greenSquare);
 
+    // Events and their infos
     auto tesnew = std::make_shared<potEngine::EventRender>(window, vec);
-    auto rend = std::make_shared<potEngine::RenderSystem>();
+    auto inputInfoEvent = std::make_shared<potEngine::ComputeInputEvent>(window);
 
-    // eventBus.subscribe(tesnew.get(), &EventRender::render);
+    // Systems
+    auto renderSystem = std::make_shared<potEngine::RenderSystem>();
+    auto inputSystem = std::make_shared<potEngine::InputSystem>();
 
     auto start = std::make_shared<potEngine::StartEvent>();
     // std ::cout << "Event start " << typeid(start).name() << std::endl;
-    eventBus.publish(start);
     
-    ecsManager.addComponent<potEngine::RenderComponent>(colTest, renderComponentPtr2);
-    ecsManager.addComponent<potEngine::RenderComponent>(test, renderComponentPtr);
+    ecsManager.addComponent<potEngine::RenderComponent>(greenSquare, renderComponentPtr2);
+    ecsManager.addComponent<potEngine::RenderComponent>(redSquare, renderComponentPtr);
     ecsManager.addComponent<potEngine::RenderComponent>(window, windowRenderPtr);
     ecsManager.addComponent<potEngine::WindowComponent>(window, WindowComponentPtr);
 
-    start->addEvent(tesnew);
 
+    start->addEvent(tesnew);
+    start->addEvent(inputInfoEvent);
+
+    eventBus.publish(start);
     
     // potEngine::AEntity& window = ecsManager.createEntity();
     // potEngine::window& nwindow = static_cast<potEngine::window&>(window);

@@ -6,6 +6,7 @@
 #include "EventBus.hpp"
 #include "StartEvent.hpp"
 #include "EventRender.hpp"
+#include "InputSystem.hpp"
 
 namespace potEngine
 {
@@ -17,10 +18,19 @@ namespace potEngine
         };
 
         void eventMainLoop(std::shared_ptr<MainLoopEvent> event) {
-
-            for (auto event : events) {
-                auto test = std::static_pointer_cast<EventRender>(event);
-                eventBus.publish(test);
+            int i = 0;
+            for (auto e : events) {
+                // if (i == 0) {
+                //     auto test = std::static_pointer_cast<EventRender>(e);
+                //     eventBus.publish(test);
+                // } else {
+                //     auto test = std::static_pointer_cast<ComputeInputEvent>(e);
+                //     eventBus.publish(test);
+                // }
+                // std::cout << "event type: " << typeid(e).name() << std::endl;
+                auto renderEvent = std::static_pointer_cast<EventRender>(e);
+                eventBus.publish(renderEvent);
+                i++;
             }
             eventBus.publish(event);
         }
