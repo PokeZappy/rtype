@@ -12,14 +12,14 @@
 
 #include "AComponent.hpp"
 
-namespace polEngine
+namespace potEngine
 {
     class PlayerComponent : public AComponent {
     public:
         std::string username;
 
         PlayerComponent(std::string username = "none")
-            : AComponent("Position"), username(username) {}
+            : username(username) {}
     };
 }
 

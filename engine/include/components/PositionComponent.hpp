@@ -9,15 +9,17 @@
 #define POSITION_COMPONENT_HPP
 
 #include "AComponent.hpp"
+#include <vector>
 
-namespace polEngine
+namespace potEngine
 {
     class PositionComponent : public AComponent {
     public:
-        float x, y;
+        std::vector<float> _position = {0, 0};
 
-        PositionComponent(float posX = 0.0f, float posY = 0.0f)
-            : AComponent("Position"), x(posX), y(posY) {}
+        PositionComponent(float posX = 0.0f, float posY = 0.0f) : _position({posX, posY}) {}
+        PositionComponent() = default;
+        ~PositionComponent() = default;
     };
 }
 

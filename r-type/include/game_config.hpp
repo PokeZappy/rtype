@@ -18,14 +18,27 @@ const int MAX_PLAYERS = 4;
 #include "PositionComponent.hpp"
 #include "NetworkComponent.hpp"
 #include "PlayerComponent.hpp"
+#include "RenderComponent.hpp"
+#include "WindowComponent.hpp"
 
 #include "ASystem.hpp"
 #include "ISystem.hpp"
 #include "MovementSystem.hpp"
 #include "NetworkSystem.hpp"
+#include "RenderSystem.hpp"
+
+#include "AEventHandler.hpp"
+#include "EventBus.hpp"
+#include "IEvent.hpp"
+#include "MemberHandler.hpp"
 
 #include "ECSManager.hpp"
-#include "Entity.hpp"
-#include "Event.hpp"
+#include "AEntity.hpp"
+#include "WindowEntity.hpp"
+
+#include "EndEvent.hpp"
+#include "EventRender.hpp"
+#include "MainLoopEvent.hpp"
+#include "StartEvent.hpp"
 
 #endif // GAME_CONFIG_HPP

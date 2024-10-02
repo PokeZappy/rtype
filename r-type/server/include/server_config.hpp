@@ -31,8 +31,7 @@ namespace RType
         int server_fd;
         struct sockaddr_in server_addr;
 
-        std::shared_ptr<polEngine::ECSManager> ecs_manager;
-        std::shared_ptr<polEngine::Entity> server_entity;
+        std::shared_ptr<potEngine::ECSManager> ecs_manager;
 
         uint8_t assign_client_id();
         void remove_client(uint8_t client_id);

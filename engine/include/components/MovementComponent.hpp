@@ -10,7 +10,7 @@
 
 #include "AComponent.hpp"
 
-namespace polEngine
+namespace potEngine
 {
     class MovementComponent : public AComponent {
     public:
@@ -19,7 +19,7 @@ namespace polEngine
         float speed;
 
         MovementComponent(float speed = 1.0f)
-            : AComponent("Movement"), xDirection(0.0f), yDirection(0.0f), speed(speed) {}
+            : xDirection(0.0f), yDirection(0.0f), speed(speed) {}
     };
 }
 

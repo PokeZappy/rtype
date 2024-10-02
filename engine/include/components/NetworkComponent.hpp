@@ -12,7 +12,7 @@
 
 #include "AComponent.hpp"
 
-namespace polEngine
+namespace potEngine
 {
     class NetworkComponent : public AComponent {
     public:
@@ -20,7 +20,7 @@ namespace polEngine
         sockaddr_in addr;
 
         NetworkComponent(int socket, const sockaddr_in& address)
-            : AComponent("Network"), sockfd(socket), addr(address) {}
+            : sockfd(socket), addr(address) {}
     };
 }
 
