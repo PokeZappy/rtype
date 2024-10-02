@@ -51,7 +51,6 @@ int potEngine::gloop::mainPotEngine()
     eventBus.subscribe(tesnew.get(), &EventRender::render);
 
     auto start = std::make_shared<potEngine::StartEvent>();
-    start->_mainLoopEvent->addEventMainLoop(tesnew);
     // std ::cout << "Event start " << typeid(start).name() << std::endl;
     eventBus.publish(start);
     

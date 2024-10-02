@@ -19,9 +19,5 @@ namespace potEngine
         void eventMainLoop(std::shared_ptr<MainLoopEvent> event) {
             eventBus.publish(event);
         }
-
-        void addEventMainLoop(std::shared_ptr<IEvent> event) {
-            eventBus.publish(event);
-        };
     };
 }
