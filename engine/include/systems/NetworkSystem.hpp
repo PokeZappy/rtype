@@ -33,7 +33,7 @@ namespace potEngine
         // void update(float deltaTime, std::vector<std::shared_ptr<Entity>> entities) override
         // {}
 
-        // void sendUpdateToAllClients(uint8_t client_id, EventType event_type, const std::vector<uint16_t>& params, const std::vector<std::shared_ptr<Entity>>& entities)
+        // void send_message_to_all(uint8_t client_id, EventType event_type, const std::vector<uint16_t>& params, const std::vector<std::shared_ptr<Entity>>& entities)
         // {
         //     for (const auto& entity : entities) {
         //         auto networkComponent = entity->getComponent<NetworkComponent>();

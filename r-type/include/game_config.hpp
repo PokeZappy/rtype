@@ -11,6 +11,8 @@
 const int BUFFER_SIZE = 1024;
 const int PORT = 8080;
 const int MAX_PLAYERS = 4;
+const int SERVER_SOCKET = 1;
+const int CLIENT_SOCKET = 1;
 
 #include "AComponent.hpp"
 #include "IComponent.hpp"
@@ -23,7 +25,6 @@ const int MAX_PLAYERS = 4;
 
 #include "ASystem.hpp"
 #include "ISystem.hpp"
-#include "MovementSystem.hpp"
 #include "NetworkSystem.hpp"
 #include "RenderSystem.hpp"
 
@@ -40,5 +41,6 @@ const int MAX_PLAYERS = 4;
 #include "EventRender.hpp"
 #include "MainLoopEvent.hpp"
 #include "StartEvent.hpp"
+#include "ConnectionEvent.hpp"
 
 #endif // GAME_CONFIG_HPP

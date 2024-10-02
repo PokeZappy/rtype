@@ -102,4 +102,17 @@ namespace potEngine {
    {
 
    }
+
+    std::vector<std::shared_ptr<AEntity>> ECSManager::getEntities() const {
+        return _entities;
+    }
+
+    std::shared_ptr<AEntity> ECSManager::getEntity(uint8_t entity_id) const {
+        for (const auto& entity : _entities) {
+            if (entity->getID() == entity_id) {
+                return entity;
+            }
+        }
+        return nullptr;
+    }
 }

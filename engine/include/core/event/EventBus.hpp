@@ -47,24 +47,24 @@ namespace potEngine {
         void subscribe(T* instance, void (T::*memberFunction)(std::shared_ptr<EventType>)) {
             // auto it = _subscribers.find(typeid(EventType));
             // std::shared_ptr<HandlerList> handlers = _subscribers[typeid(EventType)];
-    auto it = _subscribers.find(std::type_index(typeid(EventType)));
-    std::shared_ptr<HandlerList> handlers;
+            auto it = _subscribers.find(std::type_index(typeid(EventType)));
+            std::shared_ptr<HandlerList> handlers;
 
-    // If no entry exists for the event type, create a new handler list
-    if (it == _subscribers.end()) {
-        handlers = std::make_shared<HandlerList>();
-        _subscribers[std::type_index(typeid(EventType))] = handlers;
-    } else {
-        handlers = it->second;
-    }
+            // If no entry exists for the event type, create a new handler list
+            if (it == _subscribers.end()) {
+                handlers = std::make_shared<HandlerList>();
+                _subscribers[std::type_index(typeid(EventType))] = handlers;
+            } else {
+                handlers = it->second;
+            }
 
-    // Add the new member handler for this event type
-    handlers->push_back(std::make_shared<MemberHandler<T, EventType>>(instance, memberFunction));
-        // if (!handlers) {
-        //         handlers = std::make_shared<HandlerList>();
-        //         _subscribers[typeid(EventType)] = handlers;
-        //     }
-        //     handlers->push_back(std::make_shared<MemberHandler<T, EventType>>(instance, memberFunction));
+            // Add the new member handler for this event type
+            handlers->push_back(std::make_shared<MemberHandler<T, EventType>>(instance, memberFunction));
+            // if (!handlers) {
+            //         handlers = std::make_shared<HandlerList>();
+            //         _subscribers[typeid(EventType)] = handlers;
+            //     }
+            //     handlers->push_back(std::make_shared<MemberHandler<T, EventType>>(instance, memberFunction));
             std::cout << "Event subscribed "  << typeid(EventType).name() << std::endl;
         }
 

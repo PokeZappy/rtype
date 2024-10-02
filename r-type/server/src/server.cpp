@@ -26,12 +26,6 @@ RType::Server::Server() : current_players(0), ecs_manager(std::make_shared<potEn
     }
 
     std::cout << "[SERVER] started on port " << PORT << ". Waiting for clients...\n";
-
-    // server_entity = std::make_shared<potEngine::Entity>(0);
-    // auto network_component = std::make_shared<potEngine::NetworkComponent>(server_fd, server_addr);
-    // server_entity->addComponent(network_component);
-
-    // ecs_manager->addEntity(server_entity);
 }
 
 RType::Server::~Server()
@@ -39,131 +33,94 @@ RType::Server::~Server()
     close(server_fd);
 }
 
-uint8_t RType::Server::assign_client_id()
+void RType::Server::handle_client_disconnection(uint8_t entity_id)
 {
-    // for (uint8_t id = 1; id <= MAX_PLAYERS; ++id) {
-    //     if (!ecs_manager->hasEntity(id)) {
-    //         return id;
-    //     }
+    std::string player_name = ecs_manager.get()->getEntity(entity_id).get()->getComponent<potEngine::PlayerComponent>()->get()->username;
+
+    std::cout << "[SERVER] Player disconnected: {id}-[" << std::to_string(static_cast<int>(entity_id)) << "], {username}-[" << player_name << "]" << std::endl;
+    ecs_manager->removeEntity(entity_id);
+    send_message_to_all(entity_id, potEngine::DISCONNECT, std::vector<uint16_t>{}, ecs_manager.get()->getEntities());
+    current_players--;
+}
+
+void RType::Server::handle_client_connection(struct sockaddr_in client_addr, std::vector<uint16_t> params)
+{
+    auto player_entity = ecs_manager->createEntity();
+    uint8_t player_id = player_entity->getID();
+    std::string player_name;
+
+    if (params.empty()) {
+        player_name = "Player_" + std::to_string(static_cast<int>(player_id));
+    } else {
+        player_name.assign(params.begin(), params.end());
+    }
+
+    std::shared_ptr<potEngine::PlayerComponent> playerComponent = std::make_shared<potEngine::PlayerComponent>(player_name);
+    std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(0.0f, 0.0f);
+    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(1.0f);
+    std::shared_ptr<potEngine::NetworkComponent> networkComponent = std::make_shared<potEngine::NetworkComponent>(client_addr);
+
+    ecs_manager->addComponent(player_entity, playerComponent);
+    ecs_manager->addComponent(player_entity, positionComponent);
+    ecs_manager->addComponent(player_entity, movementComponent);
+    ecs_manager->addComponent(player_entity, networkComponent);
+
+
+    std::cout << "[SERVER] Player connected: {id}-[" << std::to_string(static_cast<int>(player_id)) << "], {username}-[" << player_name << "]" << std::endl;
+    send_message(client_addr, player_id, potEngine::CONNECTION, {});
+    current_players++;
+}
+
+void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<uint16_t> params)
+{
+    // if (action == potEngine::CONNECTION) {
+    //     potEngine::ConnectionInfoEvent connectionInfo;
+    //     connectionInfo.client_addr = client_addr;
+    //     connectionInfo.params = params;
+    //     connectionInfo.ecs_manager = ecs_manager;
+
+    //     potEngine::eventBus. .publish(connectionInfo);
     // }
-    // return 0;
-}
 
-void RType::Server::remove_client(uint8_t client_id)
-{
-    // ecs_manager->removeEntity(client_id);
-}
+    if (action == potEngine::CONNECTION) {
+        if (current_players < MAX_PLAYERS) {
+            handle_client_connection(client_addr, params);
+        } else {
+            std::cout << "[SERVER] Server full. Cannot accept new clients.\n";
+            // faut encore déco le client
+        }
+    }
 
-void RType::Server::handle_action(uint8_t client_id, uint8_t action)
-{
-    // auto player_entity = ecs_manager->getEntity(client_id);
-    // if (player_entity) {
-    //     auto network_component = player_entity->getComponent<potEngine::NetworkComponent>();
-    //     auto movement_system = player_entity->getComponent<potEngine::MovementComponent>();
-    //     struct sockaddr_in client_addr = network_component->addr;
-
-    //     switch (action) {
-    //         case potEngine::MOVE_UP:
-    //             movement_system.moveUp(player_entity);
-    //             network_component->send_message(client_addr, client_id, potEngine::MOVE_UP, {
-    //                 static_cast<uint16_t>(player_entity->getComponent<potEngine::PositionComponent>()->get()->_x),
-    //                 static_cast<uint16_t>(player_entity->getComponent<potEngine::PositionComponent>()->get()->_y)
-    //             });
-    //             break;
-
-    //         case potEngine::MOVE_DOWN:
-    //             movement_system.moveDown(player_entity);
-    //             network_component->send_message(client_addr, client_id, potEngine::MOVE_DOWN, {
-    //                 static_cast<uint16_t>(player_entity->getComponent<potEngine::PositionComponent>()->get()->_x),
-    //                 static_cast<uint16_t>(player_entity->getComponent<potEngine::PositionComponent>()->get()->_y)
-    //             });
-    //             break;
-
-    //         case potEngine::MOVE_LEFT:
-    //             movement_system.moveLeft(player_entity);
-    //             network_component->send_message(client_addr, client_id, potEngine::MOVE_LEFT, {
-    //                 static_cast<uint16_t>(player_entity->getComponent<potEngine::PositionComponent>()->get()->_x),
-    //                 static_cast<uint16_t>(player_entity->getComponent<potEngine::PositionComponent>()->get()->_y)
-    //             });
-    //             break;
-
-    //         case potEngine::MOVE_RIGHT:
-    //             movement_system.moveRight(player_entity);
-    //             network_component->send_message(client_addr, client_id, potEngine::MOVE_RIGHT, {
-    //                 static_cast<uint16_t>(player_entity->getComponent<potEngine::PositionComponent>()->get()->_x),
-    //                 static_cast<uint16_t>(player_entity->getComponent<potEngine::PositionComponent>()->get()->_y)
-    //             });
-    //             break;
-
-    //         case potEngine::DISCONNECT:
-    //             current_players--;
-    //             remove_client(client_id);
-    //             network_component->send_message(client_addr, client_id, potEngine::DISCONNECT, std::vector<uint16_t>{});
-    //             std::cout << "Client " << static_cast<int>(client_id) << " disconnected.\n";
-    //             break;
-
-    //         default:
-    //             std::cout << "Unknown action from client " << static_cast<int>(client_id) << ".\n";
-    //             break;
-    //     }
-    // }
-}
-
-void RType::Server::handle_client_connection(uint8_t client_id, struct sockaddr_in client_addr, std::vector<uint16_t> params)
-{
-    // std::string player_name;
-
-    // if (params.empty()) {
-    //     player_name = "Player_" + std::to_string(static_cast<int>(client_id));
-    // } else {
-    //     player_name.assign(params.begin(), params.end());
-    // }
-    // create_player_entity(client_id, player_name, client_addr);
-}
-
-void RType::Server::create_player_entity(uint8_t client_id, const std::string& username, const sockaddr_in& client_addr)
-{
-    // auto player_entity = std::make_shared<potEngine::Entity>(client_id);
-    // player_entity->addComponent(std::make_shared<potEngine::PlayerComponent>(username));
-    // player_entity->addComponent(std::make_shared<potEngine::PositionComponent>(0.0f, 0.0f));
-    // player_entity->addComponent(std::make_shared<potEngine::MovementComponent>(1.0f));
-    // player_entity->addComponent(std::make_shared<potEngine::NetworkComponent>(1, client_addr));
-
-    // ecs_manager->addEntity(player_entity);
-    // std::cout << "[SERVER] New Player Entity created: {id}-[" << std::to_string(static_cast<int>(client_id)) << "], {username}-[" << username << "]" << std::endl;
+    if (action == potEngine::DISCONNECT) {
+        handle_client_disconnection(entity_id);
+    }
 }
 
 void RType::Server::start()
 {
-    // struct sockaddr_in client_addr;
-    // socklen_t client_addr_len = sizeof(client_addr);
+    struct sockaddr_in client_addr;
+    socklen_t client_addr_len = sizeof(client_addr);
 
-    // while (true) {
-    //     auto [client_id, action, params] = server_entity->getComponent<potEngine::NetworkComponent>()->recv_message(client_addr, client_addr_len);
+    const float fixedDeltaTime = 1.0f / 60.0f;
+    auto lastUpdateTime = std::chrono::high_resolution_clock::now();
 
+    int flags = fcntl(SERVER_SOCKET, F_GETFL, 0);
+    fcntl(SERVER_SOCKET, F_SETFL, flags | O_NONBLOCK);
 
+    while (true) {
+        auto [entity_id, event_type, params] = recv_message(client_addr, client_addr_len);
 
-            // if (action == MOVE) {
-            //     MoveInfoEvent moveInfo;
-            //     moveInfo.input = action;
-            //     eventBus.publish(moveInfo);
-            // }
+        if (entity_id != 0 || event_type != potEngine::EventType::UNKNOW) {
+            handle_action(entity_id, client_addr, event_type, params);
+        }
 
+        auto now = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<float> elapsedTime = now - lastUpdateTime;
 
-
-    //     if (action == CONNECTION) {
-    //         uint8_t new_client_id = assign_client_id();
-    //         if (new_client_id != 0) {
-    //             std::cout << "[SERVER] New client connected with ID " << static_cast<int>(new_client_id) << ".\n";
-    //             server_entity->getComponent<potEngine::NetworkComponent>()->send_message(client_addr, new_client_id, potEngine::CONNECTION, {});
-    //             handle_client_connection(new_client_id, client_addr, params);
-    //             current_players++;
-    //         } else {
-    //             std::cout << "[SERVER] Server full. Cannot accept new clients.\n";
-    //         }
-    //     } else {
-    //         handle_action(client_id, action);
-    //     }
-    //     ecs_manager->update(0.016f);
-    // }
+        if (elapsedTime.count() >= fixedDeltaTime) {
+            ecs_manager->update(fixedDeltaTime);
+            lastUpdateTime = now;
+        }
+    }
 }
+

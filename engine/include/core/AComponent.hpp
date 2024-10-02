@@ -2,7 +2,8 @@
 
 #include "IComponent.hpp"
 
-namespace potEngine {
+namespace potEngine
+{
     class AComponent : public IComponent {
     public:
         AComponent();

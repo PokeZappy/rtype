@@ -14,6 +14,8 @@
 #include <vector>
 #include <netinet/in.h>
 #include <iostream>
+#include <fcntl.h>
+#include <chrono>
 
 namespace RType
 {
@@ -23,8 +25,13 @@ namespace RType
         ~Server();
 
         void start();
-        void handle_action(uint8_t client_id, uint8_t action);
-        void handle_client_connection(uint8_t client_id, struct sockaddr_in client_addr, std::vector<uint16_t> params);
+        void handle_action(uint8_t client_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<uint16_t> params);
+        void handle_client_connection(struct sockaddr_in client_addr, std::vector<uint16_t> params);
+        void handle_client_disconnection(uint8_t entity_id);
+
+        void send_message_to_all(uint8_t entity_id, potEngine::EventType event_type, const std::vector<uint16_t>& params, const std::vector<std::shared_ptr<potEngine::AEntity>>& entities);
+        std::tuple<uint8_t, potEngine::EventType, std::vector<uint16_t>> recv_message(struct sockaddr_in& addr, socklen_t& addr_len);
+        void send_message(const struct sockaddr_in& addr, uint8_t entity_id, potEngine::EventType action, const std::vector<uint16_t>& params);
 
     private:
         int current_players;
@@ -32,10 +39,6 @@ namespace RType
         struct sockaddr_in server_addr;
 
         std::shared_ptr<potEngine::ECSManager> ecs_manager;
-
-        uint8_t assign_client_id();
-        void remove_client(uint8_t client_id);
-        void create_player_entity(uint8_t client_id, const std::string& username, const sockaddr_in& client_addr);
     };
 }
 
