@@ -8,6 +8,8 @@
 
 #include "AEntity.hpp"
 #include "ASystem.hpp"
+#include "EventBus.hpp"
+#include "StartEvent.hpp"
 
 namespace potEngine {
     class ECSManager {
@@ -35,10 +37,16 @@ namespace potEngine {
         void update(float deltaTime);
         void shutdown();
 
+        StartEvent getStartEvent() {
+            return _startEvent;
+        }
+
     private:
         std::size_t _entityCounter;
+        StartEvent _startEvent;
         std::vector<std::shared_ptr<ISystem>> _systems;
         std::vector<std::shared_ptr<AEntity>> _entities;
+
     };
 
     template <typename T>

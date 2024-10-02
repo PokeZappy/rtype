@@ -6,8 +6,8 @@
 
 namespace potEngine {
     struct EventRender : public IEvent {
-        EventRender(AEntity windows, AEntity sprite) : windows(windows), sprite(sprite) {}
+        EventRender(AEntity windows, std::vector<AEntity> sprites) : windows(windows), sprites(sprites) {}
         AEntity windows;
-        AEntity sprite;
+        std::vector<AEntity> sprites;
     };
 }

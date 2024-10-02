@@ -14,8 +14,6 @@ namespace potEngine {
         RenderSystem();
         ~RenderSystem();
 
-        void update(float deltaTime) override;
-    private:
-        sf::RenderWindow* _window;
+        void renderWindow(std::shared_ptr<EventRender> event);
     };
 }

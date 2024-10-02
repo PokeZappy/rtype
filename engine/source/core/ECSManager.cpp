@@ -8,7 +8,10 @@
 
 namespace potEngine {
 
-   ECSManager::ECSManager(): _entityCounter() {}
+   ECSManager::ECSManager(): _entityCounter()
+   {
+   }
+
    ECSManager::~ECSManager() {}
 
     std::shared_ptr<AEntity> ECSManager::createEntity()
@@ -80,15 +83,18 @@ namespace potEngine {
 
    void ECSManager::init()
    {
+        eventBus.publish(std::make_shared<StartEvent>(_startEvent));
    }
 
    void ECSManager::update(float deltaTime)
    {
-        for (auto& system : _systems) {
-            if (!system) {
-                continue;
+        auto handler = eventBus.getHandler();
+        while (handler != std::pair<std::shared_ptr<IEvent>, std::shared_ptr<HandlerList>>(nullptr, nullptr)) {
+            std::cout << "Event received" << std::endl;
+            for (auto event : *handler.second) {
+                event->exec(handler.first);
             }
-            system->update(deltaTime);
+            handler = eventBus.getHandler();
         }
    }
 
