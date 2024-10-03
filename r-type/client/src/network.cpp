@@ -13,7 +13,6 @@ std::tuple<uint8_t, potEngine::EventType, std::vector<uint16_t>> RType::Client::
     ssize_t recv_len = recvfrom(client_fd, buffer, sizeof(buffer), 0, (struct sockaddr*)&addr, &addr_len);
 
     if (recv_len < 0) {
-        perror("recvfrom failed");
         return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<uint16_t>{});
     }
 

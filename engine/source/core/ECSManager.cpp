@@ -8,7 +8,7 @@
 
 namespace potEngine {
 
-    ECSManager::ECSManager(): _entityCounter()
+    ECSManager::ECSManager(): _entityCounter(1)
     {
     }
 
@@ -17,6 +17,13 @@ namespace potEngine {
         std::shared_ptr<AEntity> ECSManager::createEntity()
         {
             auto entity = std::make_shared<AEntity>(_entityCounter++);
+            _entities.push_back(entity);
+            return entity;
+        }
+
+        std::shared_ptr<AEntity> ECSManager::createEntity(size_t id)
+        {
+            auto entity = std::make_shared<AEntity>(id);
             _entities.push_back(entity);
             return entity;
         }

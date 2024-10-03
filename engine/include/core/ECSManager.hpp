@@ -18,6 +18,7 @@ namespace potEngine {
         ~ECSManager();
 
         std::shared_ptr<AEntity> createEntity();
+        std::shared_ptr<AEntity> createEntity(size_t Id);
 
         // void addEntity(std::shared_ptr<AEntity> entity);
         template <typename T>

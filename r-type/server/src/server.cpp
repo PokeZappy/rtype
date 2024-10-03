@@ -49,8 +49,17 @@ void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_a
     }
 }
 
+void RType::Server::init_subscribe()
+{
+    auto connectionEvent = std::make_shared<potEngine::ConnectionEvent>();
+    auto disconnectionEvent = std::make_shared<potEngine::DisconnectionEvent>();
+    auto sendMessageToAllEvent = std::make_shared<potEngine::SendMessageToAllEvent>();
+    auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
+}
+
 void RType::Server::start()
 {
+    init_subscribe();
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
 
@@ -60,15 +69,9 @@ void RType::Server::start()
     int flags = fcntl(server_fd, F_GETFL, 0);
     fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
 
-    auto sendMessageToAllEvent = std::make_shared<potEngine::SendMessageToAllEvent>();
-
-    auto sendMessageToAllEventInfo = std::make_shared<potEngine::SendMessageToAllEventInfo>(4, 1, 0, potEngine::CONNECTION, std::vector<uint16_t>{}, ecs_manager->getEntities());
-    // std::cout << "je publish send message to all" << std::endl;
-    potEngine::eventBus.publish(sendMessageToAllEventInfo);
-    // std::cout << "fini de le publish" << std::endl;
-
     while (true) {
         auto [entity_id, event_type, params] = recv_message(client_addr, client_addr_len);
+
         if (event_type != potEngine::EventType::UNKNOW) {
             handle_action(entity_id, client_addr, event_type, params);
         }
