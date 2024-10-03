@@ -60,8 +60,12 @@ void RType::Server::start()
     int flags = fcntl(server_fd, F_GETFL, 0);
     fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
 
+    auto sendMessageToAllEvent = std::make_shared<potEngine::SendMessageToAllEvent>();
+
     auto sendMessageToAllEventInfo = std::make_shared<potEngine::SendMessageToAllEventInfo>(4, 1, 0, potEngine::CONNECTION, std::vector<uint16_t>{}, ecs_manager->getEntities());
+    // std::cout << "je publish send message to all" << std::endl;
     potEngine::eventBus.publish(sendMessageToAllEventInfo);
+    // std::cout << "fini de le publish" << std::endl;
 
     while (true) {
         auto [entity_id, event_type, params] = recv_message(client_addr, client_addr_len);
