@@ -16,6 +16,7 @@
 #include <iostream>
 #include <fcntl.h>
 #include <chrono>
+#include <cstring>
 
 namespace RType
 {

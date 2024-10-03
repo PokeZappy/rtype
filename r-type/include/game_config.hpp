@@ -25,7 +25,6 @@ const int CLIENT_SOCKET = 1;
 
 #include "ASystem.hpp"
 #include "ISystem.hpp"
-#include "NetworkSystem.hpp"
 #include "RenderSystem.hpp"
 
 #include "AEventHandler.hpp"

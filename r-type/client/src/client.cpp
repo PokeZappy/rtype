@@ -41,7 +41,7 @@ void RType::Client::start()
     potEngine::eventBus.publish(connectionEventInfo);
 
     auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
-    std::cout <<  "EVENTRECV: " << static_cast<int>(event_type) << std::endl;
+    std::cout << "EVENTRECV: " << static_cast<int>(event_type) <<  " ID: " << static_cast<int>(entity_id) << std::endl;
     if (event_type == potEngine::EventType::CONNECTION) {
         std::cout << "[CLIENT] Connected to the server with ID: " << entity_id << std::endl;
         ecs_manager->createEntity();
