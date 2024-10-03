@@ -12,3 +12,7 @@ main
 Makefile
 r-type_server
 r-type_client
+.vscode
+*.o
+*.so
+.vscode
