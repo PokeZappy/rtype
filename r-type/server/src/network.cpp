@@ -13,11 +13,7 @@ std::tuple<uint8_t, potEngine::EventType, std::vector<uint16_t>> RType::Server::
     ssize_t recv_len = recvfrom(SERVER_SOCKET, buffer, sizeof(buffer), 0, (struct sockaddr*)&addr, &addr_len);
 
     if (recv_len < 0) {
-        if (errno == EWOULDBLOCK || errno == EAGAIN) {
-            return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<uint16_t>{});
-        } else {
-            return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<uint16_t>{});
-        }
+        return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<uint16_t>{});
     }
 
     int entity_id_bits = std::ceil(std::log2(MAX_PLAYERS + 1));
