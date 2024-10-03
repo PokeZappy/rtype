@@ -10,7 +10,7 @@
 std::tuple<uint8_t, potEngine::EventType, std::vector<uint16_t>> RType::Server::recv_message(struct sockaddr_in& addr, socklen_t& addr_len)
 {
     uint8_t buffer[BUFFER_SIZE];
-    ssize_t recv_len = recvfrom(SERVER_SOCKET, buffer, sizeof(buffer), 0, (struct sockaddr*)&addr, &addr_len);
+    ssize_t recv_len = recvfrom(server_fd, buffer, sizeof(buffer), 0, (struct sockaddr*)&addr, &addr_len);
 
     if (recv_len < 0) {
         return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<uint16_t>{});

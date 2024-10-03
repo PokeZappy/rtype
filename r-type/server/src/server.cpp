@@ -57,16 +57,15 @@ void RType::Server::start()
     const float fixedDeltaTime = 1.0f / 60.0f;
     auto lastUpdateTime = std::chrono::high_resolution_clock::now();
 
-    int flags = fcntl(SERVER_SOCKET, F_GETFL, 0);
-    fcntl(SERVER_SOCKET, F_SETFL, flags | O_NONBLOCK);
+    int flags = fcntl(server_fd, F_GETFL, 0);
+    fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
 
     auto sendMessageToAllEventInfo = std::make_shared<potEngine::SendMessageToAllEventInfo>(4, 1, 0, potEngine::CONNECTION, std::vector<uint16_t>{}, ecs_manager->getEntities());
     potEngine::eventBus.publish(sendMessageToAllEventInfo);
 
     while (true) {
         auto [entity_id, event_type, params] = recv_message(client_addr, client_addr_len);
-
-        if (entity_id != 0 || event_type != potEngine::EventType::UNKNOW) {
+        if (event_type != potEngine::EventType::UNKNOW) {
             handle_action(entity_id, client_addr, event_type, params);
         }
 
@@ -79,4 +78,3 @@ void RType::Server::start()
         }
     }
 }
-

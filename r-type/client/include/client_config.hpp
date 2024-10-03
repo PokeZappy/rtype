@@ -15,6 +15,7 @@
 #include <cstring>
 #include <unistd.h>
 #include <iostream>
+#include <fcntl.h>
 
 namespace RType
 {
@@ -32,6 +33,5 @@ namespace RType
         std::shared_ptr<potEngine::ECSManager> ecs_manager;
     };
 }
-
 
 #endif // CLIENT_CONFIG_HPP

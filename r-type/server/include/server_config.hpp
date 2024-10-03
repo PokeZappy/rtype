@@ -17,6 +17,7 @@
 #include <fcntl.h>
 #include <chrono>
 #include <cstring>
+#include <unistd.h>
 
 namespace RType
 {
@@ -39,4 +40,3 @@ namespace RType
 }
 
 #endif // SERVER_HPP
-

@@ -51,27 +51,34 @@ void RType::Client::start()
         fd_set read_fds;
         FD_ZERO(&read_fds);
         FD_SET(STDIN_FILENO, &read_fds);
+        FD_SET(client_fd, &read_fds);
 
         struct timeval tv;
         tv.tv_sec = 0;
         tv.tv_usec = 500000;
 
-        int activity = select(STDIN_FILENO + 1, &read_fds, nullptr, nullptr, &tv);
+        int max_fd = std::max(STDIN_FILENO, client_fd);
 
-        if (activity > 0 && FD_ISSET(STDIN_FILENO, &read_fds)) {
-            char input;
-            std::cin >> input;
+        int activity = select(max_fd + 1, &read_fds, nullptr, nullptr, &tv);
 
-            if (input == 'q') {
-                auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, entity_id, potEngine::DISCONNECT, std::vector<uint16_t>{});
-                potEngine::eventBus.publish(disconnectEventInfo);
-                break;
+        if (activity > 0) {
+            if (FD_ISSET(STDIN_FILENO, &read_fds)) {
+                char input;
+                std::cin >> input;
+
+                if (input == 'q') {
+                    auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, entity_id, potEngine::DISCONNECT, std::vector<uint16_t>{});
+                    potEngine::eventBus.publish(disconnectEventInfo);
+                    break;
+                }
             }
-        }
 
-        auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
-        if (event_type != potEngine::EventType::UNKNOW) {
-            std::cout << "[CLIENT] Received event from server: " << event_type << std::endl;
+            if (FD_ISSET(client_fd, &read_fds)) {
+                auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
+                if (event_type != potEngine::EventType::UNKNOW) {
+                    std::cout << "[CLIENT] Received event from server: " << event_type << std::endl;
+                }
+            }
         }
     }
 
