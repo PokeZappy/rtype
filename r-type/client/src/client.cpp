@@ -30,7 +30,6 @@ RType::Client::~Client()
 
 void RType::Client::start()
 {
-    struct sockaddr_in server_addr;
     socklen_t addr_len = sizeof(server_addr);
 
     std::string username;
