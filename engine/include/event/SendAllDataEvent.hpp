@@ -3,7 +3,7 @@
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "ECSManager.hpp"
-#include "SendMessageEvent.hpp"
+#include "SendMessageToAllEvent.hpp"
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
@@ -32,13 +32,18 @@ namespace potEngine
         };
 
         void sendAllData(std::shared_ptr<SendAllDataInfoEvent> info) {
-            std::vector<std::shared_ptr<AEntity>> _entities = info->ecs_manager->getEntities();
+            // todo
 
-            for (auto entity : _entities) {
-                std::vector<uint16_t> _pos = entity->getComponent<PositionComponent>()->get()->_position;
-                auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->socket, info->client_addr, info->entity_id, GETINFO, std::vector<uint16_t>{});
-                eventBus.publish(sendMessageEventInfo);
-            }
+            // std::vector<std::shared_ptr<AEntity>> _entities = info->ecs_manager->getEntities();
+            // auto _entitiesPtr = _entities ;
+
+            // for (auto entity : _entities) {
+            //     std::vector<int> position = entity->getComponent<PositionComponent>()->get()->_position;
+            //     std::vector<uint16_t> _pos(position.begin(), position.end());
+
+            //     auto sendMessageEventInfo = std::make_shared<SendMessageToAllEvent>(info->max_players, info->socket, info->entity_id, GETINFO, _pos, info->ecs_manager);
+            //     eventBus.publish(sendMessageEventInfo);
+            // }
         }
     };
 }

@@ -44,10 +44,11 @@ const int CLIENT_SOCKET = 1;
 #include "SendMessageToAllEvent.hpp"
 #include "DisconnectionEvent.hpp"
 #include "ConnectionEvent.hpp"
+#include "MoveEvent.hpp"
 
 #endif // GAME_CONFIG_HPP
 
-// ->
+// -> envoyer data quand connection
 // -> move player
 // -> death / vie (temps d'immo quand il spawn et quand il se fait toucher)
 // -> tire
