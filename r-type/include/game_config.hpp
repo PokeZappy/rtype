@@ -23,6 +23,7 @@ const int CLIENT_SOCKET = 1;
 #include "RenderComponent.hpp"
 #include "WindowComponent.hpp"
 #include "LifeComponent.hpp"
+#include "CollisionComponent.hpp"
 
 #include "ASystem.hpp"
 #include "ISystem.hpp"
