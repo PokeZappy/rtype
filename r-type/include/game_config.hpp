@@ -48,6 +48,7 @@ const int CLIENT_SOCKET = 1;
 #include "DisconnectionEvent.hpp"
 #include "ConnectionEvent.hpp"
 #include "MoveEvent.hpp"
+#include "CollisionEvent.hpp"
 
 #endif // GAME_CONFIG_HPP
 

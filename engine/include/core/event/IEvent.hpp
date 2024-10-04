@@ -10,7 +10,9 @@ namespace potEngine
         MOVE_UP = 0x04,
         MOVE_DOWN = 0x05,
         MOVE_LEFT = 0x06,
-        MOVE_RIGHT = 0x07
+        MOVE_RIGHT = 0x07,
+        COLLISION = 0x08,
+        DEATH
     };
 
     class IEvent {

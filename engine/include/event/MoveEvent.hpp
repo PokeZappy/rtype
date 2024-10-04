@@ -7,6 +7,7 @@
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
+#include "CollisionComponent.hpp"
 
 #include <netinet/in.h>
 #include <vector>
@@ -49,7 +50,8 @@ namespace potEngine
             return nullptr;
         }
 
-        void Move(std::shared_ptr<MoveInfoEvent> info) {
+        void Move(std::shared_ptr<MoveInfoEvent> info)
+        {
             auto _entity = info->ecs_manager->getEntity(info->entity_id);
             if (!_entity) {
                 std::cout << "[SERVER] {ID}-[" << static_cast<int>(info->entity_id) << "] not found." << std::endl;
@@ -75,7 +77,7 @@ namespace potEngine
                 _entity->getComponent<PositionComponent>()->get()->_position = position;
                 _pos = {position.begin(), position.end()};
             } else {
-                // collision !
+                // collision ! -> event la
                 std::cout << "COLLISION !" << std::endl;
             }
             auto sendMessageEventInfo = std::make_shared<SendMessageToAllEventInfo>(
