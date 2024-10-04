@@ -37,15 +37,20 @@ RType::Server::~Server()
 void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<uint16_t> params)
 {
     if (action == potEngine::CONNECTION) {
-        auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(MAX_PLAYERS, CLIENT_SOCKET, client_addr, params, ecs_manager);
+        auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(MAX_PLAYERS, server_fd, client_addr, params, ecs_manager);
         potEngine::eventBus.publish(connectionInfo);
         current_players++;
     }
 
     if (action == potEngine::DISCONNECT) {
-        auto disconnectInfo = std::make_shared<potEngine::DisconnectionInfoEvent>(MAX_PLAYERS, CLIENT_SOCKET, entity_id, params, ecs_manager);
+        auto disconnectInfo = std::make_shared<potEngine::DisconnectionInfoEvent>(MAX_PLAYERS, server_fd, entity_id, params, ecs_manager);
         potEngine::eventBus.publish(disconnectInfo);
         current_players--;
+    }
+
+    if (action == potEngine::MOVE_UP || action == potEngine::MOVE_DOWN || action == potEngine::MOVE_RIGHT || action == potEngine::MOVE_LEFT) {
+        auto moveInfo = std::make_shared<potEngine::MoveInfoEvent>(MAX_PLAYERS, server_fd, action, entity_id, params, ecs_manager);
+        potEngine::eventBus.publish(moveInfo);
     }
 }
 
@@ -54,7 +59,9 @@ void RType::Server::init_subscribe()
     auto connectionEvent = std::make_shared<potEngine::ConnectionEvent>();
     auto disconnectionEvent = std::make_shared<potEngine::DisconnectionEvent>();
     auto sendMessageToAllEvent = std::make_shared<potEngine::SendMessageToAllEvent>();
+    auto sendMessageToAllExeptEvent = std::make_shared<potEngine::SendMessageToAllExeptEvent>();
     auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
+    auto moveEvent = std::make_shared<potEngine::MoveEvent>();
 }
 
 void RType::Server::start()

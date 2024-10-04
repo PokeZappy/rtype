@@ -61,8 +61,8 @@ if(MSVC)
     target_compile_options(r-type_server PRIVATE /W4)
     target_compile_options(r-type_client PRIVATE /W4)
 else()
-    target_compile_options(r-type_server PRIVATE -std=c++20 -Wall)
-    target_compile_options(r-type_client PRIVATE -std=c++20 -Wall)
+    target_compile_options(r-type_server PRIVATE -std=c++20 -g -Wall)
+    target_compile_options(r-type_client PRIVATE -std=c++20 -g -Wall)
 endif()
 
 install(TARGETS engine

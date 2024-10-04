@@ -11,7 +11,7 @@
 
 namespace potEngine
 {
-    class SendMessageToAllEventInfo : public IEvent {
+    class SendMessageToAllExeptEventInfo : public IEvent {
     public:
         int max_players;
         int socket;
@@ -20,18 +20,18 @@ namespace potEngine
         std::vector<uint16_t> params;
         std::vector<std::shared_ptr<potEngine::AEntity>> entities;
 
-        SendMessageToAllEventInfo(int maxP, int socket, uint8_t id, EventType type, std::vector<uint16_t> p, std::vector<std::shared_ptr<potEngine::AEntity>> e)
+        SendMessageToAllExeptEventInfo(int maxP, int socket, uint8_t id, EventType type, std::vector<uint16_t> p, std::vector<std::shared_ptr<potEngine::AEntity>> e)
             : max_players(maxP), socket(socket), entity_id(id), event_type(type), params(p), entities(e) {}
     };
 
-    class SendMessageToAllEvent : public IEvent {
+    class SendMessageToAllExeptEvent : public IEvent {
     public:
-        SendMessageToAllEvent() {
-            eventBus.subscribe(this, &SendMessageToAllEvent::SendMessageToAll);
+        SendMessageToAllExeptEvent() {
+            eventBus.subscribe(this, &SendMessageToAllExeptEvent::SendMessageToAllExept);
         };
 
-        void SendMessageToAll(std::shared_ptr<SendMessageToAllEventInfo> info) {
-            // std::cout << "[CLIENT/SERVER][sendMessage] sending info to all..." << std::endl;
+        void SendMessageToAllExept(std::shared_ptr<SendMessageToAllExeptEventInfo> info) {
+            std::cout << "[CLIENT/SERVER][sendMessage] sending info to all..." << std::endl;
             send_message_to_all(info->entity_id, info->event_type, info->params, info->entities, info->max_players, info->socket);
         }
     private:
@@ -57,7 +57,7 @@ namespace potEngine
         {
             for (const auto& entity : entities) {
                 auto networkComponent = entity->getComponent<potEngine::NetworkComponent>();
-                if (networkComponent) {
+                if (networkComponent && entity->getID() != entity_id) {
                     send_message(networkComponent->get()->addr, entity_id, event_type, params, maxP, networkComponent->get()->fd);
                 }
             }

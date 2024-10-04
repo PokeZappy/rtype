@@ -13,7 +13,6 @@ namespace potEngine
     {
         MainLoopEvent(std::vector<std::shared_ptr<IEvent>> eventsList) : events(eventsList) 
         {
-            eventBus.subscribe(this, &MainLoopEvent::eventMainLoop);
         };
 
         void eventMainLoop(std::shared_ptr<MainLoopEvent> event) {

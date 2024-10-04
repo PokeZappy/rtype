@@ -12,14 +12,14 @@ namespace potEngine
     class SendMessageEventInfo : public IEvent {
     public:
         int max_players;
-        int socket;
+        int fd;
         struct sockaddr_in client_addr;
         uint8_t entity_id;
         EventType event_type;
         std::vector<uint16_t> params;
 
-        SendMessageEventInfo(int maxP, int socket, struct sockaddr_in addr, uint8_t id, EventType type, std::vector<uint16_t> p)
-            : max_players(maxP), socket(socket), client_addr(addr), entity_id(id), event_type(type), params(p) {}
+        SendMessageEventInfo(int maxP, int fd, struct sockaddr_in addr, uint8_t id, EventType type, std::vector<uint16_t> p)
+            : max_players(maxP), fd(fd), client_addr(addr), entity_id(id), event_type(type), params(p) {}
     };
 
     class SendMessageEvent : public IEvent {
@@ -29,11 +29,11 @@ namespace potEngine
         };
 
         void sendMessage(std::shared_ptr<SendMessageEventInfo> info) {
-            std::cout << "[CLIENT/SERVER][sendMessage] sending info..." << std::endl;
-            send_message(info->client_addr, info->entity_id, info->event_type, info->params, info->max_players, info->socket);
+            // std::cout << "[CLIENT/SERVER][sendMessage] sending info..." << std::endl;
+            send_message(info->client_addr, info->entity_id, info->event_type, info->params, info->max_players, info->fd);
         }
     private:
-        void send_message(const struct sockaddr_in& addr, uint8_t entity_id, potEngine::EventType action, const std::vector<uint16_t>& params, int maxP, int socket)
+        void send_message(const struct sockaddr_in& addr, uint8_t entity_id, potEngine::EventType action, const std::vector<uint16_t>& params, int maxP, int fd)
         {
             int entity_id_bits = std::ceil(std::log2(maxP + 1));
             int action_bits = 8 - entity_id_bits;
@@ -47,7 +47,7 @@ namespace potEngine
                 packet[1 + 2 * i] = (params[i] >> 8) & 0xFF;
                 packet[1 + 2 * i + 1] = params[i] & 0xFF;
             }
-            sendto(socket, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
+            sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
         }
     };
 }
