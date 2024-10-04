@@ -6,8 +6,10 @@
 #include <typeindex>
 #include <algorithm>
 
-#include "Entity.hpp"
+#include "AEntity.hpp"
 #include "ASystem.hpp"
+#include "EventBus.hpp"
+#include "StartEvent.hpp"
 
 namespace potEngine {
     class ECSManager {
@@ -15,7 +17,13 @@ namespace potEngine {
         ECSManager();
         ~ECSManager();
 
-        void addEntity(std::shared_ptr<Entity> entity);
+        std::shared_ptr<AEntity> createEntity();
+        std::shared_ptr<AEntity> createEntity(size_t Id);
+
+        // void addEntity(std::shared_ptr<AEntity> entity);
+        template <typename T>
+        void addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component);
+
         void removeEntity(const std::size_t id);
 
         template <typename T>
@@ -23,17 +31,27 @@ namespace potEngine {
         template <typename T>
         void unregisterSystem();
 
-        void EntitySignatureChanged(std::shared_ptr<Entity> entity);
-        void EraseEntitySystem(std::shared_ptr<Entity> entity);
+        void EntitySignatureChanged(std::shared_ptr<AEntity> entity);
+        void EraseEntitySystem(std::shared_ptr<AEntity> entity);
 
         void init();
         void update(float deltaTime);
         void shutdown();
 
+        StartEvent getStartEvent() {
+            return _startEvent;
+        }
+
+        std::vector<std::shared_ptr<AEntity>> getEntities() const;
+        std::shared_ptr<AEntity> getEntity(uint8_t entity_id) const;
+
     private:
         std::size_t _entityCounter;
+        StartEvent _startEvent;
+
         std::vector<std::shared_ptr<ISystem>> _systems;
-        std::vector<std::shared_ptr<Entity>> _entities;
+        std::vector<std::shared_ptr<AEntity>> _entities;
+
     };
 
     template <typename T>
@@ -49,5 +67,11 @@ namespace potEngine {
         _systems.erase(std::remove_if(_systems.begin(), _systems.end(), [](const std::shared_ptr<ASystem>& system) {
             return typeid(T) == typeid(*system);
         }), _systems.end());
+    }
+
+    template <typename T>
+    void ECSManager::addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component) {
+        entity->addComponent<T>(component);
+        EntitySignatureChanged(entity);
     }
 }

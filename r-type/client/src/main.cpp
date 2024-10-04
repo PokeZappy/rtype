@@ -5,11 +5,11 @@
 ** main.cpp
 */
 
-#include "server_config.hpp"
+#include "client_config.hpp"
 
 int main()
 {
-    RType::Server server;
-    server.start();
+    RType::Client client;
+    client.start();
     return 0;
 }

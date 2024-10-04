@@ -1,6 +1,6 @@
 #include <iostream>
 #include "../include/core/ECSManager.hpp"
-#include "../include/core/Entity.hpp"
+#include "../include/core/AEntity.hpp"
 #include "../include/components/RenderComponent.hpp"
 #include <SFML/Graphics.hpp>
 
@@ -9,7 +9,7 @@ int mainPotEngine()
     potEngine::ECSManager ecsManager;
 
     ecsManager.init();
-    potEngine::Entity& test = ecsManager.createEntity();
+    potEngine::AEntity& test = ecsManager.createEntity();
 
     const int cubeSize = 100;
 

@@ -11,10 +11,10 @@
 
 namespace potEngine {
     class IComponent;
-    class Entity {
+    class AEntity {
     public:
-        Entity(const std::size_t _id);
-        ~Entity();
+        AEntity(const std::size_t _id);
+        ~AEntity();
 
         template <typename T>
         void addComponent(std::shared_ptr<T> component);
@@ -39,21 +39,21 @@ namespace potEngine {
     };
 
     template <typename T>
-    void Entity::addComponent(std::shared_ptr<T> component)
+    void AEntity::addComponent(std::shared_ptr<T> component)
     {
         _signature.set(AComponent::getID<T>(), true);
         _components[typeid(T)] = component;
     }
 
     template <typename T>
-    void Entity::removeComponent()
+    void AEntity::removeComponent()
     {
         _signature.set(AComponent::getID<T>(), false);
         _components.erase(typeid(T));
     }
 
     template <typename T>
-    std::optional<std::shared_ptr<T>> Entity::getComponent() {
+    std::optional<std::shared_ptr<T>> AEntity::getComponent() {
         auto it = _components.find(typeid(T));
         if (it != _components.end()) {
             auto component = std::dynamic_pointer_cast<T>(it->second);
@@ -65,7 +65,7 @@ namespace potEngine {
     }
 
     template <typename T>
-    bool Entity::hasComponent() const
+    bool AEntity::hasComponent() const
     {
         return _components.find(typeid(T)) != _components.end();
     }

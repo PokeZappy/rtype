@@ -11,6 +11,7 @@ vcpkg_install_packages(sfml)
 
 set(CLIENT_INCLUDE_DIRS r-type/client/include)
 set(SERVER_INCLUDE_DIRS r-type/server/include)
+set(GAME_INCLUDE_DIRS r-type/include)
 
 file(GLOB_RECURSE ENGINE_SOURCES
     "engine/source/components/*.cpp"
@@ -19,6 +20,8 @@ file(GLOB_RECURSE ENGINE_SOURCES
     "engine/source/systems/*.cpp"
     "engine/source/*.cpp"
     "engine/source/entity/*.cpp"
+    "engine/source/core/event/*.cpp"
+    "engine/source/event/*.cpp"
 )
 
 add_library(engine SHARED ${ENGINE_SOURCES})
@@ -30,16 +33,18 @@ target_include_directories(engine PUBLIC
     engine/include/renderer
     engine/include/systems
     engine/include/entity
+    engine/include/core/event
+    engine/include/event
 )
 
 file(GLOB_RECURSE SERVER_SOURCES "r-type/server/src/*.cpp")
 add_executable(r-type_server ${SERVER_SOURCES})
-target_include_directories(r-type_server PRIVATE ${SERVER_INCLUDE_DIRS})
+target_include_directories(r-type_server PRIVATE ${SERVER_INCLUDE_DIRS} ${GAME_INCLUDE_DIRS})
 target_link_libraries(r-type_server PRIVATE engine)
 
-file(GLOB_RECURSE CLIENT_SOURCES "r-type/client/source/*.cpp")
+file(GLOB_RECURSE CLIENT_SOURCES "r-type/client/src/*.cpp")
 add_executable(r-type_client ${CLIENT_SOURCES})
-target_include_directories(r-type_client PRIVATE ${CLIENT_INCLUDE_DIRS})
+target_include_directories(r-type_client PRIVATE ${CLIENT_INCLUDE_DIRS} ${GAME_INCLUDE_DIRS})
 target_link_libraries(r-type_client PRIVATE engine)
 
 file(GLOB_RECURSE SERVER_SOURCES_TEST "r-type/server/tests/*.cpp" "r-type/server/tests/*.hpp")

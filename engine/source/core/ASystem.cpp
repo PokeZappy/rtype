@@ -4,9 +4,9 @@ namespace potEngine {
 
     ASystem::ASystem()
     {
-        _entitiesSystem = std::vector<std::shared_ptr<Entity>>();
+        _entitiesSystem = std::vector<std::shared_ptr<AEntity>>();
     }
-    // void ASystem::addEntity(Entity& entity)
+    // void ASystem::addEntity(AEntity& entity)
     // {
     //     _entitiesSystem.push_back(&entity);
     // }
@@ -21,7 +21,7 @@ namespace potEngine {
     //     }
     // }
 
-    std::vector<std::shared_ptr<Entity>> &ASystem::getEntities()
+    std::vector<std::shared_ptr<AEntity>> &ASystem::getEntities()
     {
         return _entitiesSystem;
     }

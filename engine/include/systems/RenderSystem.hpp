@@ -2,9 +2,11 @@
 
 #include <SFML/Graphics.hpp>
 #include "ASystem.hpp"
-#include "Entity.hpp"
+#include "AEntity.hpp"
 #include "WindowEntity.hpp"
-#include "WindowDisplayComponent.hpp"
+#include "EventBus.hpp"
+#include "WindowComponent.hpp"
+#include "EventRender.hpp"
 
 namespace potEngine {
     class RenderSystem : public ASystem {
@@ -12,8 +14,8 @@ namespace potEngine {
         RenderSystem();
         ~RenderSystem();
 
-        void update(float deltaTime) override;
-    private:
-        sf::RenderWindow* _window;
+        void update(float) override {};
+
+        void renderWindow(std::shared_ptr<EventRender> event);
     };
 }
