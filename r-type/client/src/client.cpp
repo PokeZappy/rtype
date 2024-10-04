@@ -116,7 +116,7 @@ void RType::Client::start()
 {
     init_subscribe();
     socklen_t addr_len = sizeof(server_addr);
-    // handle_connection();
+    handle_connection();
     setNonBlockingInput();
 
     // Initialisation sprites
@@ -136,18 +136,28 @@ void RType::Client::start()
     std::vector<std::shared_ptr<potEngine::AEntity>> spriteArray;
     spriteArray.push_back(sprite);
 
-    auto renderingEventInfos = std::make_shared<potEngine::EventRender>(window, spriteArray);
+    // Datas needed when triggering events
+    auto renderingEventData = std::make_shared<potEngine::EventRender>(window, spriteArray);
+    auto inputEventData = std::make_shared<potEngine::ComputeInputEvent>(window);
+
+    // Instantiating systems needed
     auto renderingSystem = std::make_shared<potEngine::RenderSystem>();
+    auto inputSystem = std::make_shared<potEngine::InputSystem>();
+
+    // Input to server event
+    auto inputServerEvent = std::make_shared<potEngine::InputToServerEvent>(player_id, client_fd, server_addr);
+
 
     auto startEvent = std::make_shared<potEngine::StartEvent>();
 
-    startEvent->addEvent(renderingEventInfos);
+    startEvent->addEvent(renderingEventData);
+    startEvent->addEvent(inputEventData);
     potEngine::eventBus.publish(startEvent);
 
     ecsManager.update(0.016);
 
     while (true) {
-        handle_input();
+        // handle_input();
 
         auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
         if (event_type != potEngine::EventType::UNKNOW) {
