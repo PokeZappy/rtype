@@ -46,3 +46,10 @@ const int CLIENT_SOCKET = 1;
 #include "ConnectionEvent.hpp"
 
 #endif // GAME_CONFIG_HPP
+
+// ->
+// -> move player
+// -> death / vie (temps d'immo quand il spawn et quand il se fait toucher)
+// -> tire
+//
+// si client CTRL+C et que le serbveur send un message ?
