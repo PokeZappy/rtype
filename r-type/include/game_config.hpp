@@ -42,7 +42,16 @@ const int CLIENT_SOCKET = 1;
 #include "StartEvent.hpp"
 #include "SendMessageEvent.hpp"
 #include "SendMessageToAllEvent.hpp"
+#include "SendMessageToAllExeptEvent.hpp"
 #include "DisconnectionEvent.hpp"
 #include "ConnectionEvent.hpp"
+#include "MoveEvent.hpp"
 
 #endif // GAME_CONFIG_HPP
+
+// -> envoyer data quand connection
+// -> move player
+// -> death / vie (temps d'immo quand il spawn et quand il se fait toucher)
+// -> tire
+//
+// si client CTRL+C et que le serbveur send un message ?

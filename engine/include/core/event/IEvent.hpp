@@ -6,10 +6,11 @@ namespace potEngine
         UNKNOW = 0x00,
         CONNECTION = 0x01,
         DISCONNECT = 0x02,
-        MOVE_UP = 0x03,
-        MOVE_DOWN = 0x04,
-        MOVE_LEFT = 0x05,
-        MOVE_RIGHT = 0x06
+        GETINFO = 0x03,
+        MOVE_UP = 0x04,
+        MOVE_DOWN = 0x05,
+        MOVE_LEFT = 0x06,
+        MOVE_RIGHT = 0x07
     };
 
     class IEvent {

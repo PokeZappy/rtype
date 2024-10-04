@@ -27,17 +27,77 @@ RType::Client::~Client()
     close(client_fd);
 }
 
+void RType::Client::setNonBlockingInput() {
+    struct termios t;
+    tcgetattr(STDIN_FILENO, &t);
+    t.c_lflag &= ~ICANON;
+    t.c_lflag &= ~ECHO;
+    tcsetattr(STDIN_FILENO, TCSANOW, &t);
+
+    int flags = fcntl(client_fd, F_GETFL, 0);
+    fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
+    int flags_ = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, flags_ | O_NONBLOCK);
+}
+
 void RType::Client::init_subscribe()
 {
     auto connectionEvent = std::make_shared<potEngine::ConnectionEvent>();
     auto disconnectionEvent = std::make_shared<potEngine::DisconnectionEvent>();
     auto sendMessageToAllEvent = std::make_shared<potEngine::SendMessageToAllEvent>();
+    auto sendMessageToAllExeptEvent = std::make_shared<potEngine::SendMessageToAllExeptEvent>();
     auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
+    auto moveEvent = std::make_shared<potEngine::MoveEvent>();
 }
 
-void RType::Client::start()
+int RType::Client::handle_input()
 {
-    init_subscribe();
+    char input;
+    int n = read(STDIN_FILENO, &input, 1);
+
+    if (n > 0) {
+        if (input == 'x') {
+            auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::DISCONNECT, std::vector<uint16_t>{});
+            potEngine::eventBus.publish(disconnectEventInfo);
+            std::cout << "[CLIENT] Disconnected from server.\n";
+            return 1;
+        }
+        if (input == 'z') {
+            auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::MOVE_UP, std::vector<uint16_t>{});
+            potEngine::eventBus.publish(moveInfo);
+        }
+        if (input == 's') {
+            auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::MOVE_DOWN, std::vector<uint16_t>{});
+            potEngine::eventBus.publish(moveInfo);
+        }
+        if (input == 'q') {
+            auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::MOVE_LEFT, std::vector<uint16_t>{});
+            potEngine::eventBus.publish(moveInfo);
+        }
+        if (input == 'd') {
+            auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::MOVE_RIGHT, std::vector<uint16_t>{});
+            potEngine::eventBus.publish(moveInfo);
+        }
+    }
+    return 0;
+}
+
+void RType::Client::handle_create_entity_player(uint8_t entity_id, std::string username)
+{
+    player_id = entity_id;
+    auto entity = ecs_manager->createEntity(entity_id);
+
+    std::shared_ptr<potEngine::PlayerComponent> playerComponent = std::make_shared<potEngine::PlayerComponent>(username);
+    std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(0.0f, 0.0f);
+    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(1.0f);
+
+    ecs_manager->addComponent(entity, playerComponent);
+    ecs_manager->addComponent(entity, positionComponent);
+    ecs_manager->addComponent(entity, movementComponent);
+}
+
+void RType::Client::handle_connection()
+{
     socklen_t addr_len = sizeof(server_addr);
 
     std::string username;
@@ -47,9 +107,20 @@ void RType::Client::start()
     std::vector<uint16_t> params_username(username.begin(), username.end());
     auto connectionEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, 0, potEngine::CONNECTION, params_username);
     potEngine::eventBus.publish(connectionEventInfo);
+    ecs_manager->update(0.0f);
+    auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
+    if (event_type == potEngine::EventType::CONNECTION) {
+        std::cout << "[CLIENT] Connected to the server with {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
+        handle_create_entity_player(entity_id, username);
+    }
+}
 
-    int flags = fcntl(client_fd, F_GETFL, 0);
-    fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
+void RType::Client::start()
+{
+    init_subscribe();
+    socklen_t addr_len = sizeof(server_addr);
+    handle_connection();
+    setNonBlockingInput();
 
     // Initialisation sprites
     sf::Image spriteImage;
@@ -79,22 +150,27 @@ void RType::Client::start()
     ecsManager.update(0.016);
 
     while (true) {
-        char input;
-        std::cin >> input;
-        if (input == 'q') {
-            auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::DISCONNECT, std::vector<uint16_t>{});
-            potEngine::eventBus.publish(disconnectEventInfo);
-            std::cout << "[CLIENT] Disconnected from server.\n";
+        if (handle_input())
             break;
-        }
 
         auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
         if (event_type != potEngine::EventType::UNKNOW) {
-            std::cout << "[CLIENT] Received event from server: " << event_type << std::endl;
+            std::cout << "[CLIENT] Received event from server: " << static_cast<int>(event_type) << std::endl;
         }
         if (event_type == potEngine::EventType::CONNECTION) {
-            std::cout << "[CLIENT] Connected to the server with ID: " << entity_id << std::endl;
+            std::cout << "[CLIENT] New entity created {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
             ecs_manager->createEntity(entity_id);
+        }
+        if (event_type == potEngine::EventType::MOVE_UP || event_type == potEngine::EventType::MOVE_DOWN || event_type == potEngine::EventType::MOVE_LEFT || event_type == potEngine::EventType::MOVE_RIGHT) {
+            auto entity = ecs_manager->getEntity(entity_id);
+            if (!entity) {
+                std::cout << "[CLIENT] {ID}-[" << static_cast<int>(entity_id) << "] not found." << std::endl;
+                continue;
+            }
+            std::vector<int> convertedParams(params.begin(), params.end());
+            entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
+            std::cout << "[CLIENT] Entity {ID}-[" << std::to_string(static_cast<int>(entity_id))
+                << "], {username}-[" << entity->getComponent<potEngine::PlayerComponent>()->get()->username << "], has move to {" << convertedParams[0] << "," << convertedParams[1] << "}" << std::endl;
         }
         ecs_manager->update(0.0f);
     }

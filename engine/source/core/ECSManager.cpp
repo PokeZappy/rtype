@@ -10,18 +10,20 @@
 
 namespace potEngine {
 
-    ECSManager::ECSManager(): _entityCounter(1)
+    ECSManager::ECSManager()
     {
+        _entityCounter = 1;
     }
 
     ECSManager::~ECSManager() {}
 
-    std::shared_ptr<AEntity> ECSManager::createEntity()
-    {
-        auto entity = std::make_shared<AEntity>(_entityCounter++);
-        _entities.push_back(entity);
-        return entity;
-    }
+        std::shared_ptr<AEntity> ECSManager::createEntity()
+        {
+            auto entity = std::make_shared<AEntity>(_entityCounter);
+            _entities.push_back(entity);
+            _entityCounter++;
+            return entity;
+        }
 
     std::shared_ptr<AEntity> ECSManager::createEntity(size_t id)
     {
@@ -122,7 +124,7 @@ namespace potEngine {
     {
         auto handler = eventBus.getHandler();
         while (handler != std::pair<std::shared_ptr<IEvent>, std::shared_ptr<HandlerList>>(nullptr, nullptr)) {
-            // std::cout << "Event received" << std::endl;
+            // std::cout << "[ECSManager] Event received" << std::endl;
             for (auto event : *handler.second) {
                 event->exec(handler.first);
             }
