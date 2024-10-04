@@ -70,16 +70,14 @@ namespace potEngine
                 position[0] -= 1;
 
             auto entity_collide = check_collision(info, position);
-
-            if (entity_collide != nullptr) {
+            std::vector<uint16_t> _pos = {static_cast<uint16_t>(save_x), static_cast<uint16_t>(save_y)};
+            if (entity_collide == nullptr) {
                 _entity->getComponent<PositionComponent>()->get()->_position = position;
-                std::vector<uint16_t> _pos = {position.begin(), position.end()};
-                // todo pos rgl
+                _pos = {position.begin(), position.end()};
             } else {
-                std::vector<uint16_t> _pos = {static_cast<uint16_t>(save_x), static_cast<uint16_t>(save_y)};
-                // todo collisionEvent here
+                // collision !
+                std::cout << "COLLISION !" << std::endl;
             }
-            std::vector<uint16_t> _pos(position.begin(), position.end());
             auto sendMessageEventInfo = std::make_shared<SendMessageToAllEventInfo>(
                 info->max_players,
                 info->fd,
