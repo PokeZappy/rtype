@@ -16,10 +16,11 @@ namespace potEngine
 {
     class NetworkComponent : public AComponent {
     public:
+        int fd;
         sockaddr_in addr;
 
-        NetworkComponent(const sockaddr_in& address)
-            : addr(address) {}
+        NetworkComponent(const sockaddr_in& address, int filedesc)
+            : fd(filedesc), addr(address) {}
     };
 }
 

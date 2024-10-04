@@ -59,6 +59,7 @@ void RType::Server::init_subscribe()
     auto connectionEvent = std::make_shared<potEngine::ConnectionEvent>();
     auto disconnectionEvent = std::make_shared<potEngine::DisconnectionEvent>();
     auto sendMessageToAllEvent = std::make_shared<potEngine::SendMessageToAllEvent>();
+    auto sendMessageToAllExeptEvent = std::make_shared<potEngine::SendMessageToAllExeptEvent>();
     auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
     auto moveEvent = std::make_shared<potEngine::MoveEvent>();
 }

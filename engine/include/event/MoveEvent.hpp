@@ -34,7 +34,7 @@ namespace potEngine
         void Move(std::shared_ptr<MoveInfoEvent> info) {
             auto _entity = info->ecs_manager->getEntity(info->entity_id);
             if (!_entity) {
-                std::cout << "[SERVER] {ID}-[" << static_cast<int>(info->entity_id) << "] not find." << std::endl;
+                std::cout << "[SERVER] {ID}-[" << static_cast<int>(info->entity_id) << "] not found." << std::endl;
                 return;
             }
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
@@ -47,6 +47,7 @@ namespace potEngine
                 position[0] += 1;
             if (info->event == MOVE_LEFT)
                 position[0] -= 1;
+            _entity->getComponent<PositionComponent>()->get()->_position = position;
             std::vector<uint16_t> _pos(position.begin(), position.end());
 
             auto sendMessageEventInfo = std::make_shared<SendMessageToAllEventInfo>(

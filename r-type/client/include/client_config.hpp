@@ -30,6 +30,8 @@ namespace RType
         void init_subscribe();
         int handle_input();
         void setNonBlockingInput();
+        void handle_connection();
+        void handle_create_entity_player(uint8_t entity_id,  std::string username);
 
     private:
         uint8_t player_id;

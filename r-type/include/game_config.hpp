@@ -42,6 +42,7 @@ const int CLIENT_SOCKET = 1;
 #include "StartEvent.hpp"
 #include "SendMessageEvent.hpp"
 #include "SendMessageToAllEvent.hpp"
+#include "SendMessageToAllExeptEvent.hpp"
 #include "DisconnectionEvent.hpp"
 #include "ConnectionEvent.hpp"
 #include "MoveEvent.hpp"
