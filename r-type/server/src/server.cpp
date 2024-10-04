@@ -47,6 +47,11 @@ void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_a
         potEngine::eventBus.publish(disconnectInfo);
         current_players--;
     }
+
+    if (action == potEngine::MOVE_UP || action == potEngine::MOVE_DOWN || action == potEngine::MOVE_RIGHT || action == potEngine::MOVE_LEFT) {
+        auto moveInfo = std::make_shared<potEngine::MoveInfoEvent>(MAX_PLAYERS, server_fd, action, entity_id, params, ecs_manager);
+        potEngine::eventBus.publish(moveInfo);
+    }
 }
 
 void RType::Server::init_subscribe()

@@ -21,8 +21,8 @@ namespace potEngine
         uint8_t entity_id;
         std::shared_ptr<ECSManager> ecs_manager;
 
-        MoveInfoEvent(int maxP, int socket, EventType event, std::vector<uint16_t> p, std::shared_ptr<ECSManager> ecs)
-            : max_players(maxP), socket(socket), event(event), ecs_manager(ecs) {}
+        MoveInfoEvent(int maxP, int socket, EventType event, uint8_t id, std::vector<uint16_t> p, std::shared_ptr<ECSManager> ecs)
+            : max_players(maxP), socket(socket), event(event), entity_id(id), ecs_manager(ecs) {}
     };
 
     class MoveEvent : public IEvent {
@@ -33,6 +33,10 @@ namespace potEngine
 
         void Move(std::shared_ptr<MoveInfoEvent> info) {
             auto _entity = info->ecs_manager->getEntity(info->entity_id);
+            if (!_entity) {
+                std::cout << "[SERVER] {ID}-[" << static_cast<int>(info->entity_id) << "] not find." << std::endl;
+                return;
+            }
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
             auto username = _entity->getComponent<PlayerComponent>()->get()->username;
             if (info->event == MOVE_UP)

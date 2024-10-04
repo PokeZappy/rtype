@@ -83,9 +83,10 @@ void RType::Client::start()
     potEngine::eventBus.publish(connectionEventInfo);
     ecs_manager->update(0.0f);
     auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
-    if (entity_id == player_id && event_type == potEngine::EventType::CONNECTION) {
+    if (event_type == potEngine::EventType::CONNECTION) {
         std::cout << "[CLIENT] Connected to the server with {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
-        ecs_manager->createEntity(static_cast<uint8_t>(params[1]));
+        ecs_manager->createEntity(entity_id);
+        player_id = entity_id;
     }
     setNonBlockingInput();
 
