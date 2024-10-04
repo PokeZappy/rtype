@@ -50,7 +50,7 @@ void RType::Client::init_subscribe()
     auto moveEvent = std::make_shared<potEngine::MoveEvent>();
 }
 
-int RType::Client::handle_input()
+void RType::Client::handle_input()
 {
     char input;
     int n = read(STDIN_FILENO, &input, 1);
@@ -59,8 +59,6 @@ int RType::Client::handle_input()
         if (input == 'x') {
             auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::DISCONNECT, std::vector<uint16_t>{});
             potEngine::eventBus.publish(disconnectEventInfo);
-            std::cout << "[CLIENT] Disconnected from server.\n";
-            return 1;
         }
         if (input == 'z') {
             auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::MOVE_UP, std::vector<uint16_t>{});
@@ -79,7 +77,6 @@ int RType::Client::handle_input()
             potEngine::eventBus.publish(moveInfo);
         }
     }
-    return 0;
 }
 
 void RType::Client::handle_create_entity_player(uint8_t entity_id, std::string username)
@@ -150,8 +147,7 @@ void RType::Client::start()
     ecsManager.update(0.016);
 
     while (true) {
-        if (handle_input())
-            break;
+        handle_input();
 
         auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
         if (event_type != potEngine::EventType::UNKNOW) {
@@ -160,6 +156,10 @@ void RType::Client::start()
         if (event_type == potEngine::EventType::CONNECTION) {
             std::cout << "[CLIENT] New entity created {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
             ecs_manager->createEntity(entity_id);
+        }
+        if (event_type == potEngine::EventType::DISCONNECT && entity_id == player_id) {
+            std::cout << "[CLIENT] Disconnected from server.\n";
+            break;
         }
         if (event_type == potEngine::EventType::MOVE_UP || event_type == potEngine::EventType::MOVE_DOWN || event_type == potEngine::EventType::MOVE_LEFT || event_type == potEngine::EventType::MOVE_RIGHT) {
             auto entity = ecs_manager->getEntity(entity_id);

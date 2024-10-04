@@ -28,7 +28,7 @@ namespace RType
         void start();
         std::tuple<uint8_t, potEngine::EventType, std::vector<uint16_t>> recv_message(struct sockaddr_in& addr, socklen_t& addr_len);
         void init_subscribe();
-        int handle_input();
+        void handle_input();
         void setNonBlockingInput();
         void handle_connection();
         void handle_create_entity_player(uint8_t entity_id,  std::string username);
