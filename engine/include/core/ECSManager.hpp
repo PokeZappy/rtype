@@ -5,11 +5,11 @@
 #include <unordered_map>
 #include <typeindex>
 #include <algorithm>
-
 #include "AEntity.hpp"
 #include "ASystem.hpp"
 #include "EventBus.hpp"
 #include "StartEvent.hpp"
+#include <SFML/Graphics.hpp>
 
 namespace potEngine {
     class ECSManager {
@@ -19,6 +19,8 @@ namespace potEngine {
 
         std::shared_ptr<AEntity> createEntity();
         std::shared_ptr<AEntity> createEntity(size_t Id);
+        std::shared_ptr<AEntity> createWindowEntity();
+        std::shared_ptr<AEntity> createSpriteEntity(sf::Texture &texture);
 
         // void addEntity(std::shared_ptr<AEntity> entity);
         template <typename T>
