@@ -39,13 +39,13 @@ namespace potEngine
             }
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
             auto username = _entity->getComponent<PlayerComponent>()->get()->username;
-            if (info->event == MOVE_UP)
+            if (info->event == MOVE_UP && position[1] < 1920)
                 position[1] += 1;
-            if (info->event == MOVE_DOWN)
+            if (info->event == MOVE_DOWN && position[1] > 0)
                 position[1] -= 1;
-            if (info->event == MOVE_RIGHT)
+            if (info->event == MOVE_RIGHT && position[0] < 1080)
                 position[0] += 1;
-            if (info->event == MOVE_LEFT)
+            if (info->event == MOVE_LEFT && position[0] > 0)
                 position[0] -= 1;
             _entity->getComponent<PositionComponent>()->get()->_position = position;
             std::vector<uint16_t> _pos(position.begin(), position.end());
