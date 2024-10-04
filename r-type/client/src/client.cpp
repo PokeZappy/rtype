@@ -62,8 +62,8 @@ void RType::Client::start()
     // Initialisation Engine
     potEngine::ECSManager ecsManager;
 
-    std::shared_ptr<potEngine::AEntity> window = ecsManager.createWindowEntity();
     std::shared_ptr<potEngine::AEntity> sprite = ecsManager.createSpriteEntity(spriteTexture);
+    std::shared_ptr<potEngine::AEntity> window = ecsManager.createWindowEntity();
 
     std::vector<std::shared_ptr<potEngine::AEntity>> spriteArray;
     spriteArray.push_back(sprite);
@@ -76,7 +76,7 @@ void RType::Client::start()
     startEvent->addEvent(renderingEventInfos);
     potEngine::eventBus.publish(startEvent);
 
-    ecsManager.update(0.03);
+    ecsManager.update(0.016);
 
     while (true) {
         char input;

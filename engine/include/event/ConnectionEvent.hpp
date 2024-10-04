@@ -52,7 +52,7 @@ namespace potEngine
             info->ecs_manager->addComponent(player_entity, movementComponent);
             info->ecs_manager->addComponent(player_entity, networkComponent);
 
-            std::cout << "[SERVER] Player connected: {id}-[" << std::to_string(static_cast<int>(player_id)) << "], {username}-[" << player_name << "]" << std::endl;
+            // std::cout << "[SERVER] Player connected: {id}-[" << std::to_string(static_cast<int>(player_id)) << "], {username}-[" << player_name << "]" << std::endl;
 
             std::vector<uint16_t> _sendId = {static_cast<uint16_t>(player_id)};
             auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->socket, info->client_addr, 0, CONNECTION, _sendId);
