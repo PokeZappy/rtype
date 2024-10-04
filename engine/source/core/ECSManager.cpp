@@ -115,11 +115,6 @@ namespace potEngine {
         }
     }
 
-    void ECSManager::init()
-    {
-        eventBus.publish(std::make_shared<StartEvent>(_startEvent));
-    }
-
     void ECSManager::update(float deltaTime)
     {
         auto handler = eventBus.getHandler();

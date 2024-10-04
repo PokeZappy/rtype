@@ -71,6 +71,7 @@ namespace potEngine {
         std::pair<std::shared_ptr<IEvent>, std::shared_ptr<HandlerList>> getHandler() {
             if (_handlers.empty())
                 return std::make_pair(nullptr, nullptr);
+            // std::cout << "taille de la queue :" << _handlers.size() << std::endl;
             auto handler = _handlers.front();
             _handlers.erase(_handlers.begin());
             return handler;

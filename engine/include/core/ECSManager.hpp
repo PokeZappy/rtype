@@ -36,20 +36,14 @@ namespace potEngine {
         void EntitySignatureChanged(std::shared_ptr<AEntity> entity);
         void EraseEntitySystem(std::shared_ptr<AEntity> entity);
 
-        void init();
         void update(float deltaTime);
         void shutdown();
-
-        StartEvent getStartEvent() {
-            return _startEvent;
-        }
 
         std::vector<std::shared_ptr<AEntity>> getEntities() const;
         std::shared_ptr<AEntity> getEntity(uint8_t entity_id) const;
 
     private:
         std::size_t _entityCounter;
-        StartEvent _startEvent;
 
         std::vector<std::shared_ptr<ISystem>> _systems;
         std::vector<std::shared_ptr<AEntity>> _entities;

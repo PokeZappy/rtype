@@ -8,7 +8,6 @@
 int potEngine::gloop::mainPotEngine()
 {
     potEngine::ECSManager ecsManager;
-    ecsManager.init();
     
     // Sprite initialisation
     const int cubeSize = 100;
