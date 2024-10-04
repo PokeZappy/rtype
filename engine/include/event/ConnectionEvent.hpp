@@ -46,11 +46,13 @@ namespace potEngine
             std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(0.0f, 0.0f);
             std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(1.0f);
             std::shared_ptr<NetworkComponent> networkComponent = std::make_shared<NetworkComponent>(info->client_addr, info->fd);
+            std::shared_ptr<LifeComponent> lifeComponent = std::make_shared<LifeComponent>(3);
 
             info->ecs_manager->addComponent(player_entity, playerComponent);
             info->ecs_manager->addComponent(player_entity, positionComponent);
             info->ecs_manager->addComponent(player_entity, movementComponent);
             info->ecs_manager->addComponent(player_entity, networkComponent);
+            info->ecs_manager->addComponent(player_entity, lifeComponent);
 
             std::cout << "[SERVER] Player connected: {id}-[" << std::to_string(static_cast<int>(player_id)) << "], {username}-[" << player_name << "]" << std::endl;
 

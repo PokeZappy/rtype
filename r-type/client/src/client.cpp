@@ -87,10 +87,11 @@ void RType::Client::handle_create_entity_player(uint8_t entity_id, std::string u
     std::shared_ptr<potEngine::PlayerComponent> playerComponent = std::make_shared<potEngine::PlayerComponent>(username);
     std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(0.0f, 0.0f);
     std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(1.0f);
-
+    std::shared_ptr<potEngine::LifeComponent> lifeComponent = std::make_shared<potEngine::LifeComponent>(3);
     ecs_manager->addComponent(entity, playerComponent);
     ecs_manager->addComponent(entity, positionComponent);
     ecs_manager->addComponent(entity, movementComponent);
+    ecs_manager->addComponent(entity, lifeComponent);
 }
 
 void RType::Client::handle_connection()
@@ -119,7 +120,7 @@ void RType::Client::start()
     handle_connection();
     setNonBlockingInput();
 
-    while (true) {
+    while (ecs_manager->getEntity(player_id)->getComponent<potEngine::LifeComponent>()->get()->life > 0) {
         handle_input();
 
         auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);

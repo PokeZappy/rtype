@@ -22,6 +22,7 @@ const int CLIENT_SOCKET = 1;
 #include "PlayerComponent.hpp"
 #include "RenderComponent.hpp"
 #include "WindowComponent.hpp"
+#include "LifeComponent.hpp"
 
 #include "ASystem.hpp"
 #include "ISystem.hpp"
