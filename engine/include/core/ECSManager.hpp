@@ -22,6 +22,13 @@ namespace potEngine {
         std::shared_ptr<AEntity> createWindowEntity();
         std::shared_ptr<AEntity> createSpriteEntity(sf::Texture &texture);
 
+        static ECSManager& getInstance() {
+            static ECSManager instance;
+            return instance;
+        }
+        ECSManager(ECSManager const&) = delete;
+        void operator=(ECSManager const&) = delete;
+
         // void addEntity(std::shared_ptr<AEntity> entity);
         template <typename T>
         void addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component);
@@ -70,4 +77,5 @@ namespace potEngine {
         entity->addComponent<T>(component);
         EntitySignatureChanged(entity);
     }
+    static ECSManager& ecsManager = ECSManager::getInstance();
 }

@@ -27,7 +27,9 @@ const int CLIENT_SOCKET = 1;
 #include "ISystem.hpp"
 #include "RenderSystem.hpp"
 #include "InputSystem.hpp"
+#include "RecvMessageSystem.hpp"
 #include "InputInfoEvent.hpp"
+#include "RecvMessageEventData.hpp"
 
 #include "AEventHandler.hpp"
 #include "EventBus.hpp"

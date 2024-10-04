@@ -7,7 +7,7 @@
 
 #include "client_config.hpp"
 
-RType::Client::Client() : player_id(0), ecs_manager(std::make_shared<potEngine::ECSManager>())
+RType::Client::Client() : player_id(0)
 {
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("Socket creation failed");
@@ -53,15 +53,15 @@ void RType::Client::init_subscribe()
 void RType::Client::handle_create_entity_player(uint8_t entity_id, std::string username)
 {
     player_id = entity_id;
-    auto entity = ecs_manager->createEntity(entity_id);
+    auto entity = potEngine::ecsManager.createEntity(entity_id);
 
     std::shared_ptr<potEngine::PlayerComponent> playerComponent = std::make_shared<potEngine::PlayerComponent>(username);
     std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(0.0f, 0.0f);
     std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(1.0f);
 
-    ecs_manager->addComponent(entity, playerComponent);
-    ecs_manager->addComponent(entity, positionComponent);
-    ecs_manager->addComponent(entity, movementComponent);
+    potEngine::ecsManager.addComponent(entity, playerComponent);
+    potEngine::ecsManager.addComponent(entity, positionComponent);
+    potEngine::ecsManager.addComponent(entity, movementComponent);
 }
 
 void RType::Client::handle_connection()
@@ -75,7 +75,7 @@ void RType::Client::handle_connection()
     std::vector<uint16_t> params_username(username.begin(), username.end());
     auto connectionEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, 0, potEngine::CONNECTION, params_username);
     potEngine::eventBus.publish(connectionEventInfo);
-    ecs_manager->update(0.0f);
+    potEngine::ecsManager.update(0.0f);
     auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
     if (event_type == potEngine::EventType::CONNECTION) {
         std::cout << "[CLIENT] Connected to the server with {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
@@ -110,10 +110,12 @@ void RType::Client::start()
     // Datas needed when triggering events
     auto renderingEventData = std::make_shared<potEngine::EventRender>(window, spriteArray);
     auto inputEventData = std::make_shared<potEngine::ComputeInputEvent>(window);
+    auto recvMessageEventData = std::make_shared<potEngine::RecvMessageEventData>(client_fd, server_addr, addr_len, player_id);
 
     // Instantiating systems needed
     auto renderingSystem = std::make_shared<potEngine::RenderSystem>();
     auto inputSystem = std::make_shared<potEngine::InputSystem>();
+    auto recvMessageSystem = std::make_shared<potEngine::RecvMessageSystem>();
 
     // Input to server event
     auto inputServerEvent = std::make_shared<potEngine::InputToServerEvent>(player_id, client_fd, server_addr);
@@ -123,36 +125,8 @@ void RType::Client::start()
 
     startEvent->addEvent(renderingEventData);
     startEvent->addEvent(inputEventData);
+    startEvent->addEvent(recvMessageEventData);
     potEngine::eventBus.publish(startEvent);
 
     ecsManager.update(0.016);
-
-    while (true) {
-        // handle_input();
-
-        auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
-        if (event_type != potEngine::EventType::UNKNOW) {
-            std::cout << "[CLIENT] Received event from server: " << static_cast<int>(event_type) << std::endl;
-        }
-        if (event_type == potEngine::EventType::CONNECTION) {
-            std::cout << "[CLIENT] New entity created {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
-            ecs_manager->createEntity(entity_id);
-        }
-        if (event_type == potEngine::EventType::DISCONNECT && entity_id == player_id) {
-            std::cout << "[CLIENT] Disconnected from server.\n";
-            break;
-        }
-        if (event_type == potEngine::EventType::MOVE_UP || event_type == potEngine::EventType::MOVE_DOWN || event_type == potEngine::EventType::MOVE_LEFT || event_type == potEngine::EventType::MOVE_RIGHT) {
-            auto entity = ecs_manager->getEntity(entity_id);
-            if (!entity) {
-                std::cout << "[CLIENT] {ID}-[" << static_cast<int>(entity_id) << "] not found." << std::endl;
-                continue;
-            }
-            std::vector<int> convertedParams(params.begin(), params.end());
-            entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
-            std::cout << "[CLIENT] Entity {ID}-[" << std::to_string(static_cast<int>(entity_id))
-                << "], {username}-[" << entity->getComponent<potEngine::PlayerComponent>()->get()->username << "], has move to {" << convertedParams[0] << "," << convertedParams[1] << "}" << std::endl;
-        }
-        ecs_manager->update(0.0f);
-    }
 }

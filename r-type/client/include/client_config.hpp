@@ -36,7 +36,6 @@ namespace RType
         uint8_t player_id;
         int client_fd;
         struct sockaddr_in server_addr;
-        std::shared_ptr<potEngine::ECSManager> ecs_manager;
     };
 }
 
