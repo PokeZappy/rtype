@@ -116,7 +116,7 @@ void RType::Client::start()
 {
     init_subscribe();
     socklen_t addr_len = sizeof(server_addr);
-    handle_connection();
+    // handle_connection();
     setNonBlockingInput();
 
     // Initialisation sprites

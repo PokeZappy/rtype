@@ -129,16 +129,6 @@ namespace potEngine {
                 event->exec(handler.first);
             }
             handler = eventBus.getHandler();
-
-            auto entity = _entities[0];
-            auto spriteComponent = entity->getComponent<RenderComponent>();
-            if (spriteComponent) {
-                auto sprite = spriteComponent->get()->getSprite();
-                if (sprite->getPosition().x > 700)
-                    sprite->setPosition(0, sprite->getPosition().y);
-                else
-                    sprite->setPosition(sprite->getPosition().x + 1, sprite->getPosition().y);
-            }
         }
     }
 

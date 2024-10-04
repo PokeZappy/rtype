@@ -35,6 +35,11 @@ namespace potEngine
                     auto pos = position->get()->_position;
                     nrender->getSprite()->setPosition(pos[0], pos[1]);
                 }
+                auto sprite = render->get()->getSprite();
+                if (sprite->getPosition().x > 700)
+                    sprite->setPosition(0, sprite->getPosition().y);
+                else
+                    sprite->setPosition(sprite->getPosition().x + 1, sprite->getPosition().y);
                 window->draw(*nrender->getSprite());
             }
         }
