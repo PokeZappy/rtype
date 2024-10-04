@@ -51,6 +51,33 @@ void RType::Client::start()
     int flags = fcntl(client_fd, F_GETFL, 0);
     fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
 
+    // Initialisation sprites
+    sf::Image spriteImage;
+    spriteImage.create(100, 100, sf::Color::Blue);
+
+    sf::Texture spriteTexture;
+    spriteTexture.loadFromImage(spriteImage);
+
+
+    // Initialisation Engine
+    potEngine::ECSManager ecsManager;
+
+    std::shared_ptr<potEngine::AEntity> window = ecsManager.createWindowEntity();
+    std::shared_ptr<potEngine::AEntity> sprite = ecsManager.createSpriteEntity(spriteTexture);
+
+    std::vector<std::shared_ptr<potEngine::AEntity>> spriteArray;
+    spriteArray.push_back(sprite);
+
+    auto renderingEventInfos = std::make_shared<potEngine::EventRender>(window, spriteArray);
+    auto renderingSystem = std::make_shared<potEngine::RenderSystem>();
+
+    auto startEvent = std::make_shared<potEngine::StartEvent>();
+
+    startEvent->addEvent(renderingEventInfos);
+    potEngine::eventBus.publish(startEvent);
+
+    ecsManager.update(0.03);
+
     while (true) {
         char input;
         std::cin >> input;

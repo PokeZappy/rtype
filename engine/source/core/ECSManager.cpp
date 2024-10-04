@@ -34,6 +34,7 @@ namespace potEngine {
         auto entity = std::make_shared<AEntity>(_entityCounter++);
 
         sf::Sprite *sprite = new sf::Sprite(texture);
+        sprite->setPosition(100, 100);
         std::shared_ptr<potEngine::RenderComponent> renderComponent = std::make_shared<RenderComponent>(sprite);
         addComponent<RenderComponent>(entity, renderComponent);
 
