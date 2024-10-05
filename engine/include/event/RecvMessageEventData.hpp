@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "IEvent.hpp"
-#include <netinet/in.h>
+#include "cross_config.hpp"
 // #include "MainLoopEvent.hpp"
 
 namespace potEngine {

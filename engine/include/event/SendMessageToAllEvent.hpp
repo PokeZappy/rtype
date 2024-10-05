@@ -5,7 +5,7 @@
 #include "AEntity.hpp"
 #include "NetworkComponent.hpp"
 
-#include <netinet/in.h>
+#include "cross_config.hpp"
 #include <cmath>
 #include <vector>
 

@@ -8,7 +8,7 @@
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
 
-#include <netinet/in.h>
+#include "cross_config.hpp"
 #include <vector>
 
 namespace potEngine

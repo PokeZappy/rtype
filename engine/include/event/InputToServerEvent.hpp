@@ -5,7 +5,7 @@
 #include "InputInfoEvent.hpp"
 #include "SendMessageEvent.hpp"
 
-#include <netinet/in.h>
+#include "cross_config.hpp"
 #include <cmath>
 #include <vector>
 
