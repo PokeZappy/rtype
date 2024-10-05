@@ -1,5 +1,5 @@
 #include "RenderSystem.hpp"
-#include "RenderComponent.hpp"
+#include "SpriteComponent.hpp"
 #include "WindowEntity.hpp"
 #include "WindowComponent.hpp"
 #include "PositionComponent.hpp"
@@ -13,7 +13,7 @@ namespace potEngine
 {
     RenderSystem::RenderSystem()
     {
-        _signature.set(AComponent::getID<RenderComponent>(), true);
+        _signature.set(AComponent::getID<SpriteComponent>(), true);
         eventBus.subscribe(this, &RenderSystem::renderWindow);
     }
 
@@ -31,7 +31,7 @@ namespace potEngine
         window->clear();
         auto sprites = event->sprites;
         for (auto sprite : sprites) {
-            auto render = sprite->getComponent<RenderComponent>();
+            auto render = sprite->getComponent<SpriteComponent>();
             if (render) {
                 auto position = sprite->getComponent<PositionComponent>();
                 sf::Sprite &sp = render->get()->getSprite();

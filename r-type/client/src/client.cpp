@@ -67,7 +67,7 @@ void RType::Client::handle_create_entity_player(uint8_t entity_id, std::string u
     // sf::Sprite playerSprite(playerTexture);
     // playerSprite.setTextureRect(sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
 
-    std::shared_ptr<potEngine::RenderComponent> spriteComponent = std::make_shared<potEngine::RenderComponent>(playerTexture, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
+    std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>(playerTexture, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
 
     potEngine::ecsManager.addComponent(entity, playerComponent);
     potEngine::ecsManager.addComponent(entity, positionComponent);

@@ -1,14 +1,14 @@
-#include "RenderComponent.hpp"
+#include "SpriteComponent.hpp"
 
 namespace potEngine {
 
-    RenderComponent::RenderComponent(sf::Texture texture) : _texture(texture)
+    SpriteComponent::SpriteComponent(sf::Texture texture) : _texture(texture)
     {
         _sprite = sf::Sprite(_texture);
         _initialTextureRect = _sprite.getTextureRect();
     }
 
-    RenderComponent::RenderComponent(sf::Texture texture, sf::IntRect textureRect) : _texture(texture)
+    SpriteComponent::SpriteComponent(sf::Texture texture, sf::IntRect textureRect) : _texture(texture)
     {
         _sprite = sf::Sprite(_texture);
         _sprite.setTextureRect(textureRect);
@@ -16,38 +16,38 @@ namespace potEngine {
         _initialTextureRect = textureRect;
     }
 
-    RenderComponent::~RenderComponent()
+    SpriteComponent::~SpriteComponent()
     {
         // if (_sprite != nullptr)
         //     RenderComponent::shutdown();
     }
 
-    void RenderComponent::init()
+    void SpriteComponent::init()
     {
         // _sprite = new sf::Sprite();
     }
 
-    void RenderComponent::shutdown()
+    void SpriteComponent::shutdown()
     {
         // delete _sprite;
     }
 
-    void RenderComponent::setSprite(sf::Sprite sprite)
+    void SpriteComponent::setSprite(sf::Sprite sprite)
     {
         _sprite = sprite;
     }
 
-    sf::Sprite &RenderComponent::getSprite()
+    sf::Sprite &SpriteComponent::getSprite()
     {
         return _sprite;
     }
 
-    sf::Texture RenderComponent::getTexture()
+    sf::Texture SpriteComponent::getTexture()
     {
         return _texture;
     }
 
-    sf::IntRect RenderComponent::getInitialTextRect() {
+    sf::IntRect SpriteComponent::getInitialTextRect() {
         return (_initialTextureRect);
     }
 }

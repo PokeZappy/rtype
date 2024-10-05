@@ -20,7 +20,7 @@ const int CLIENT_SOCKET = 1;
 #include "PositionComponent.hpp"
 #include "NetworkComponent.hpp"
 #include "PlayerComponent.hpp"
-#include "RenderComponent.hpp"
+#include "SpriteComponent.hpp"
 #include "WindowComponent.hpp"
 
 #include "ASystem.hpp"

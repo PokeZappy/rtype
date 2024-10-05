@@ -5,7 +5,7 @@
 #include "InputInfoEvent.hpp"
 #include "SendMessageEvent.hpp"
 #include "AnimationComponent.hpp"
-#include "RenderComponent.hpp"
+#include "SpriteComponent.hpp"
 
 #include <netinet/in.h>
 #include <cmath>
@@ -52,7 +52,7 @@ namespace potEngine {
 
                         if (playerEntity->getComponent<AnimationComponent>() != std::nullopt) {
                             playerEntity->removeComponent<AnimationComponent>();
-                            auto spriteComponent = playerEntity->getComponent<RenderComponent>();
+                            auto spriteComponent = playerEntity->getComponent<SpriteComponent>();
                             if (spriteComponent != std::nullopt) {
                                 sf::Sprite &sprite = spriteComponent->get()->getSprite();
                                 sprite.setTextureRect(spriteComponent->get()->getInitialTextRect());

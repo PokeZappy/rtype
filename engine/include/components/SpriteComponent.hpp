@@ -5,11 +5,12 @@
 
 namespace potEngine
 {
-    class RenderComponent : public AComponent {
+    class SpriteComponent : public AComponent {
     public:
-        RenderComponent(sf::Texture texture);
-        RenderComponent(sf::Texture texture, sf::IntRect textureRect);
-        ~RenderComponent();
+        SpriteComponent() {};
+        SpriteComponent(sf::Texture texture);
+        SpriteComponent(sf::Texture texture, sf::IntRect textureRect);
+        ~SpriteComponent();
 
         virtual void init();
         virtual void shutdown();

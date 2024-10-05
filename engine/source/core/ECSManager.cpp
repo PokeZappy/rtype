@@ -2,7 +2,7 @@
 #include "ASystem.hpp"
 #include "AEntity.hpp"
 #include "RenderSystem.hpp"
-#include "RenderComponent.hpp"
+#include "SpriteComponent.hpp"
 #include "WindowComponent.hpp"
 
 #include <algorithm>
@@ -37,8 +37,8 @@ namespace potEngine {
 
         // sf::Sprite sprite(texture);
         // sprite.setPosition(100, 100);
-        std::shared_ptr<potEngine::RenderComponent> renderComponent = std::make_shared<RenderComponent>(texture);
-        addComponent<RenderComponent>(entity, renderComponent);
+        std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texture);
+        addComponent<SpriteComponent>(entity, spriteComponent);
 
         _entities.push_back(entity);
         return (entity);

@@ -1,5 +1,5 @@
 #include "AnimationSystem.hpp"
-#include "RenderComponent.hpp"
+#include "SpriteComponent.hpp"
 #include "EventRender.hpp"
 #include "InputInfoEvent.hpp"
 #include <iostream>
@@ -21,7 +21,7 @@ namespace potEngine {
 
         for (auto spriteEntity : sprites) {
             auto animationComponent = spriteEntity->getComponent<AnimationComponent>();
-            auto spriteComponent = spriteEntity->getComponent<RenderComponent>();
+            auto spriteComponent = spriteEntity->getComponent<SpriteComponent>();
             if (animationComponent == std::nullopt || spriteComponent == std::nullopt)
                 continue;
             float interval = animationComponent->get()->getInterval();
