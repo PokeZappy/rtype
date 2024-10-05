@@ -2,6 +2,8 @@
 #include "ASystem.hpp"
 #include "AEntity.hpp"
 #include "RenderSystem.hpp"
+#include "RenderComponent.hpp"
+#include "WindowComponent.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -23,12 +25,35 @@ namespace potEngine {
             return entity;
         }
 
-        std::shared_ptr<AEntity> ECSManager::createEntity(size_t id)
-        {
-            auto entity = std::make_shared<AEntity>(id);
-            _entities.push_back(entity);
-            return entity;
-        }
+    std::shared_ptr<AEntity> ECSManager::createEntity(size_t id)
+    {
+        auto entity = std::make_shared<AEntity>(id);
+        _entities.push_back(entity);
+        return entity;
+    }
+
+    std::shared_ptr<AEntity> ECSManager::createSpriteEntity(sf::Texture &texture) {
+        auto entity = std::make_shared<AEntity>(32);
+
+        sf::Sprite *sprite = new sf::Sprite(texture);
+        sprite->setPosition(100, 100);
+        std::shared_ptr<potEngine::RenderComponent> renderComponent = std::make_shared<RenderComponent>(sprite);
+        addComponent<RenderComponent>(entity, renderComponent);
+
+        _entities.push_back(entity);
+        return (entity);
+    }
+
+    std::shared_ptr<AEntity> ECSManager::createWindowEntity() {
+        auto entity = std::make_shared<AEntity>(30);
+
+        std::shared_ptr<potEngine::WindowComponent> windowComponent = std::make_shared<potEngine::WindowComponent>();
+
+        addComponent<WindowComponent>(entity, windowComponent);
+
+        _entities.push_back(entity);
+        return (entity);
+    }
 
     //    void ECSManager::addEntity(std::shared_ptr<AEntity> entity)
     //    {
@@ -90,16 +115,11 @@ namespace potEngine {
         }
     }
 
-    void ECSManager::init()
-    {
-        eventBus.publish(std::make_shared<StartEvent>(_startEvent));
-    }
-
     void ECSManager::update(float deltaTime)
     {
         auto handler = eventBus.getHandler();
         while (handler != std::pair<std::shared_ptr<IEvent>, std::shared_ptr<HandlerList>>(nullptr, nullptr)) {
-            std::cout << "[ECSManager] Event received" << std::endl;
+            // std::cout << "[ECSManager] Event received" << std::endl;
             for (auto event : *handler.second) {
                 event->exec(handler.first);
             }

@@ -13,7 +13,7 @@ namespace potEngine {
         std::vector<std::shared_ptr<AEntity>> sprites;
 
         void render(std::shared_ptr<MainLoopEvent>) {
-            std::cout << "render" << std::endl;
+            // std::cout << "render" << std::endl;
         }
     };
 }

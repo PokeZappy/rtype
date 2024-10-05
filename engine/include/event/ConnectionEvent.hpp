@@ -8,7 +8,7 @@
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
 
-#include <netinet/in.h>
+#include "cross_config.hpp"
 #include <vector>
 
 namespace potEngine
@@ -56,7 +56,7 @@ namespace potEngine
             info->ecs_manager->addComponent(player_entity, lifeComponent);
             info->ecs_manager->addComponent(player_entity, collisionComponent);
 
-            std::cout << "[SERVER] Player connected: {id}-[" << std::to_string(static_cast<int>(player_id)) << "], {username}-[" << player_name << "]" << std::endl;
+            // std::cout << "[SERVER] Player connected: {id}-[" << std::to_string(static_cast<int>(player_id)) << "], {username}-[" << player_name << "]" << std::endl;
 
             auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->fd, info->client_addr, player_id, CONNECTION, std::vector<uint16_t> {});
             eventBus.publish(sendMessageEventInfo);

@@ -15,4 +15,7 @@ r-type_client
 .vscode
 *.o
 *.so
+r-type_client_test
+r-type_server_test
 .vscode
+.vcpkg/

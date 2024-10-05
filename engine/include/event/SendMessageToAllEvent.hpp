@@ -5,7 +5,7 @@
 #include "AEntity.hpp"
 #include "NetworkComponent.hpp"
 
-#include <netinet/in.h>
+#include "cross_config.hpp"
 #include <cmath>
 #include <vector>
 
@@ -31,7 +31,7 @@ namespace potEngine
         };
 
         void SendMessageToAll(std::shared_ptr<SendMessageToAllEventInfo> info) {
-            std::cout << "[CLIENT/SERVER][sendMessage] sending info to all..." << std::endl;
+            // std::cout << "[CLIENT/SERVER][sendMessage] sending info to all..." << std::endl;
             send_message_to_all(info->entity_id, info->event_type, info->params, info->entities, info->max_players, info->socket);
         }
     private:
