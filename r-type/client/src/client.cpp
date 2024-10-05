@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2024
-** B-CPP-500-LYN-5-1-rtype-cyprien.diederichs
-** File description:
-** main.cpp
-*/
-
 #include "client_config.hpp"
 
 RType::Client::Client() : player_id(0), ecs_manager(std::make_shared<potEngine::ECSManager>())
@@ -92,8 +85,36 @@ void RType::Client::handle_connection()
     }
 }
 
-void RType::Client::start()
+void RType::Client::handle_input()
 {
+    char input;
+    int n = read(STDIN_FILENO, &input, 1);
+
+    if (n > 0) {
+        if (input == 'x') {
+            auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::DISCONNECT, std::vector<uint16_t>{});
+            potEngine::eventBus.publish(disconnectEventInfo);
+        }
+        if (input == 'z') {
+            auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::MOVE_UP, std::vector<uint16_t>{});
+            potEngine::eventBus.publish(moveInfo);
+        }
+        if (input == 's') {
+            auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::MOVE_DOWN, std::vector<uint16_t>{});
+            potEngine::eventBus.publish(moveInfo);
+        }
+        if (input == 'q') {
+            auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::MOVE_LEFT, std::vector<uint16_t>{});
+            potEngine::eventBus.publish(moveInfo);
+        }
+        if (input == 'd') {
+            auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::MOVE_RIGHT, std::vector<uint16_t>{});
+            potEngine::eventBus.publish(moveInfo);
+        }
+    }
+}
+
+void RType::Client::start() {
     init_subscribe();
     socklen_t addr_len = sizeof(server_addr);
     handle_connection();
@@ -128,16 +149,17 @@ void RType::Client::start()
     while (ecs_manager->getEntity(player_id)->getComponent<potEngine::LifeComponent>()->get()->life > 0) {
         handle_input();
 
-    // Input to server event
-    auto inputServerEvent = std::make_shared<potEngine::InputToServerEvent>(player_id, client_fd, server_addr);
+        // Input to server event
+        auto inputServerEvent = std::make_shared<potEngine::InputToServerEvent>(player_id, client_fd, server_addr);
 
 
-    auto startEvent = std::make_shared<potEngine::StartEvent>();
+        auto startEvent = std::make_shared<potEngine::StartEvent>();
 
-    startEvent->addEvent(renderingEventData);
-    startEvent->addEvent(inputEventData);
-    startEvent->addEvent(recvMessageEventData);
-    potEngine::eventBus.publish(startEvent);
+        startEvent->addEvent(renderingEventData);
+        startEvent->addEvent(inputEventData);
+        startEvent->addEvent(recvMessageEventData);
+        potEngine::eventBus.publish(startEvent);
 
-    potEngine::ecsManager.update(0.016);
+        potEngine::ecsManager.update(0.016);
+    }
 }

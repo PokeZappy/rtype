@@ -50,15 +50,14 @@
         fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 
     #define SET_SOCK_NONBLOCKING(fd)\
-    struct termios t;
-    tcgetattr(STDIN_FILENO, &t);
-    t.c_lflag &= ~ICANON;
-    t.c_lflag &= ~ECHO;
-    tcsetattr(STDIN_FILENO, TCSANOW, &t);
-
-    int flags = fcntl(client_fd, F_GETFL, 0);
-    fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
-    int flags_ = fcntl(STDIN_FILENO, F_GETFL, 0);
+    struct termios t{}; \
+    tcgetattr(STDIN_FILENO, &t); \
+    t.c_lflag &= ~ICANON; \
+    t.c_lflag &= ~ECHO; \
+    tcsetattr(STDIN_FILENO, TCSANOW, &t); \
+    int flags = fcntl(client_fd, F_GETFL, 0); \
+    fcntl(client_fd, F_SETFL, flags | O_NONBLOCK); \
+    int flags_ = fcntl(STDIN_FILENO, F_GETFL, 0); \
     fcntl(STDIN_FILENO, F_SETFL, flags_ | O_NONBLOCK);
 
     #define RECVFROM(clientFd, buffer, buffer_size, flags, addr, addr_len) \
