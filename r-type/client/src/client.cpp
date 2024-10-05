@@ -7,7 +7,7 @@
 
 #include "client_config.hpp"
 
-RType::Client::Client() : player_id(0), , ecs_manager(std::make_shared<potEngine::ECSManager>())
+RType::Client::Client() : player_id(0), ecs_manager(std::make_shared<potEngine::ECSManager>())
 {
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("Socket creation failed");
@@ -24,20 +24,11 @@ RType::Client::Client() : player_id(0), , ecs_manager(std::make_shared<potEngine
 
 RType::Client::~Client()
 {
-    close(client_fd);
+    CLOSESOCKET(client_fd);
 }
 
 void RType::Client::setNonBlockingInput() {
-    struct termios t;
-    tcgetattr(STDIN_FILENO, &t);
-    t.c_lflag &= ~ICANON;
-    t.c_lflag &= ~ECHO;
-    tcsetattr(STDIN_FILENO, TCSANOW, &t);
-
-    int flags = fcntl(client_fd, F_GETFL, 0);
-    fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
-    int flags_ = fcntl(STDIN_FILENO, F_GETFL, 0);
-    fcntl(STDIN_FILENO, F_SETFL, flags_ | O_NONBLOCK);
+    SET_SOCK_NONBLOCKING(client_fd);
 }
 
 void RType::Client::init_subscribe()

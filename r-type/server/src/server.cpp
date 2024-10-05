@@ -70,11 +70,12 @@ void RType::Server::start()
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
 
+    INIT_WINSOCK();
+
     const float fixedDeltaTime = 1.0f / 60.0f;
     auto lastUpdateTime = std::chrono::high_resolution_clock::now();
 
-    int flags = fcntl(server_fd, F_GETFL, 0);
-    fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
+    SET_NONBLOCKING(server_fd);
 
     while (true) {
         auto [entity_id, event_type, params] = recv_message(client_addr, client_addr_len);

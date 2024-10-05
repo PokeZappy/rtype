@@ -50,7 +50,7 @@ namespace potEngine
                 packet[1 + 2 * i] = (params[i] >> 8) & 0xFF;
                 packet[1 + 2 * i + 1] = params[i] & 0xFF;
             }
-            sendto(socket, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
+            SENDTO(socket, packet.data(), packet.size(), 0, (const struct sockaddr *)&addr, sizeof(addr));
         }
 
         void send_message_to_all(uint8_t entity_id, potEngine::EventType event_type, const std::vector<uint16_t>& params, const std::vector<std::shared_ptr<potEngine::AEntity>>& entities, int maxP, int socket)

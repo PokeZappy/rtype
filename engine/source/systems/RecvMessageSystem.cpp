@@ -18,8 +18,9 @@ namespace potEngine
 
     std::tuple<uint8_t, potEngine::EventType, std::vector<uint16_t>> RecvMessageSystem::recv_message(int clientFd, struct sockaddr_in& addr, socklen_t& addr_len)
 {
-    uint8_t buffer[1024]; // TODO mettre BUFFER_SIZE macro
-    ssize_t recv_len = recvfrom(clientFd, buffer, sizeof(buffer), 0, (struct sockaddr*)&addr, &addr_len);
+    uint8_t buffer[BUFFER_SIZE];
+
+    ssize_t recv_len = RECVFROM(clientFd, buffer, BUFFER_SIZE, 0, &addr, &addr_len);
 
     if (recv_len < 0) {
         return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<uint16_t>{});

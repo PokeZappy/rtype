@@ -47,7 +47,7 @@ namespace potEngine
                 packet[1 + 2 * i] = (params[i] >> 8) & 0xFF;
                 packet[1 + 2 * i + 1] = params[i] & 0xFF;
             }
-            sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
+            SENDTO(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
         }
     };
 }

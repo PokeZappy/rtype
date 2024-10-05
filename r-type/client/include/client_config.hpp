@@ -9,8 +9,8 @@
 #define CLIENT_CONFIG_HPP
 
 #include "game_config.hpp"
-
 #include "cross_config.hpp"
+
 #include <cstring>
 #include <unistd.h>
 #include <iostream>
