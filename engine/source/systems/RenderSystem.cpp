@@ -36,26 +36,9 @@ namespace potEngine
                     nrender->getSprite()->setPosition(pos[0], pos[1]);
                 }
                 auto sprite = render->get()->getSprite();
-                if (sprite->getPosition().x > 700)
-                    sprite->setPosition(0, sprite->getPosition().y);
-                else
-                    sprite->setPosition(sprite->getPosition().x + 1, sprite->getPosition().y);
                 window->draw(*nrender->getSprite());
             }
         }
         window->display();
     }
-
-    // void RenderSystem::addEntity(AEntity* entity)
-    // {
-    //     _entities.push_back(entity);
-    // }
-
-    // void RenderSystem::removeEntity(AEntity* entity)
-    // {
-    //     auto it = std::find(_entities.begin(), _entities.end(), entity);
-    //     if (it != _entities.end()) {
-    //         _entities.erase(it);
-    //     }
-    // }
 }

@@ -33,7 +33,7 @@ namespace potEngine {
     }
 
     std::shared_ptr<AEntity> ECSManager::createSpriteEntity(sf::Texture &texture) {
-        auto entity = std::make_shared<AEntity>(_entityCounter++);
+        auto entity = std::make_shared<AEntity>(32);
 
         sf::Sprite *sprite = new sf::Sprite(texture);
         sprite->setPosition(100, 100);
@@ -45,7 +45,7 @@ namespace potEngine {
     }
 
     std::shared_ptr<AEntity> ECSManager::createWindowEntity() {
-        auto entity = std::make_shared<AEntity>(_entityCounter++);
+        auto entity = std::make_shared<AEntity>(30);
 
         std::shared_ptr<potEngine::WindowComponent> windowComponent = std::make_shared<potEngine::WindowComponent>();
 

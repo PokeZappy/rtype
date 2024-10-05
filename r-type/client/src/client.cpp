@@ -59,9 +59,20 @@ void RType::Client::handle_create_entity_player(uint8_t entity_id, std::string u
     std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(0.0f, 0.0f);
     std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(1.0f);
 
+    sf::Image spriteImage;
+    spriteImage.create(100, 100, sf::Color::Blue);
+
+    sf::Texture spriteTexture;
+    spriteTexture.loadFromImage(spriteImage);
+    sf::Sprite *sprite = new sf::Sprite(spriteTexture);
+    sprite->setPosition(100, 100);
+
+    std::shared_ptr<potEngine::RenderComponent> spriteComponent = std::make_shared<potEngine::RenderComponent>(sprite);
+
     potEngine::ecsManager.addComponent(entity, playerComponent);
     potEngine::ecsManager.addComponent(entity, positionComponent);
     potEngine::ecsManager.addComponent(entity, movementComponent);
+    potEngine::ecsManager.addComponent<potEngine::RenderComponent>(entity, spriteComponent);    
 }
 
 void RType::Client::handle_connection()
@@ -91,21 +102,21 @@ void RType::Client::start()
     setNonBlockingInput();
 
     // Initialisation sprites
-    sf::Image spriteImage;
-    spriteImage.create(100, 100, sf::Color::Blue);
+    // sf::Image spriteImage;
+    // spriteImage.create(100, 100, sf::Color::Blue);
 
-    sf::Texture spriteTexture;
-    spriteTexture.loadFromImage(spriteImage);
+    // sf::Texture spriteTexture;
+    // spriteTexture.loadFromImage(spriteImage);
 
 
     // Initialisation Engine
-    potEngine::ECSManager ecsManager;
-
-    std::shared_ptr<potEngine::AEntity> sprite = ecsManager.createSpriteEntity(spriteTexture);
-    std::shared_ptr<potEngine::AEntity> window = ecsManager.createWindowEntity();
+    // std::shared_ptr<potEngine::AEntity> sprite = ecsManager.createSpriteEntity(spriteTexture);
+    std::shared_ptr<potEngine::AEntity> window = potEngine::ecsManager.createWindowEntity();
 
     std::vector<std::shared_ptr<potEngine::AEntity>> spriteArray;
-    spriteArray.push_back(sprite);
+    // spriteArray.push_back(sprite);
+    std::cout << "player id : " << static_cast<int>(player_id) << std::endl;
+    spriteArray.push_back(potEngine::ecsManager.getEntity(player_id));
 
     // Datas needed when triggering events
     auto renderingEventData = std::make_shared<potEngine::EventRender>(window, spriteArray);
@@ -128,5 +139,5 @@ void RType::Client::start()
     startEvent->addEvent(recvMessageEventData);
     potEngine::eventBus.publish(startEvent);
 
-    ecsManager.update(0.016);
+    potEngine::ecsManager.update(0.016);
 }
