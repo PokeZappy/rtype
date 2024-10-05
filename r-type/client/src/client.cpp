@@ -62,17 +62,17 @@ void RType::Client::handle_create_entity_player(uint8_t entity_id, std::string u
     std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(1.0f);
 
     sf::Texture playerTexture;
-    playerTexture.loadFromFile(assetFinder() + "/sprites/ol.png");
-    sf::Sprite playerSprite(playerTexture);
-    playerSprite.setPosition(100, 100);
-    playerSprite.setTextureRect(sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
+    if (!playerTexture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif"))
+        std::cout << assetFinder() << std::endl;
+    // sf::Sprite playerSprite(playerTexture);
+    // playerSprite.setTextureRect(sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
 
-    std::shared_ptr<potEngine::RenderComponent> spriteComponent = std::make_shared<potEngine::RenderComponent>(playerSprite);
+    std::shared_ptr<potEngine::RenderComponent> spriteComponent = std::make_shared<potEngine::RenderComponent>(playerTexture, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
 
     potEngine::ecsManager.addComponent(entity, playerComponent);
     potEngine::ecsManager.addComponent(entity, positionComponent);
     potEngine::ecsManager.addComponent(entity, movementComponent);
-    potEngine::ecsManager.addComponent<potEngine::RenderComponent>(entity, spriteComponent);    
+    potEngine::ecsManager.addComponent(entity, spriteComponent);    
 }
 
 void RType::Client::handle_connection()

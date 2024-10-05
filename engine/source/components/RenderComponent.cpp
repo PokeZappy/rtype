@@ -1,14 +1,17 @@
 #include "RenderComponent.hpp"
 
 namespace potEngine {
-    RenderComponent::RenderComponent()
+
+    RenderComponent::RenderComponent(sf::Texture texture) : _texture(texture)
     {
-        // _sprite = nullptr;
+        _sprite = sf::Sprite(_texture);
     }
 
-    RenderComponent::RenderComponent(sf::Sprite sprite)
+    RenderComponent::RenderComponent(sf::Texture texture, sf::IntRect textureRect) : _texture(texture)
     {
-        _sprite = sprite;
+        _sprite = sf::Sprite(_texture);
+        _sprite.setTextureRect(textureRect);
+        _sprite.setScale(sf::Vector2f(3, 3));
     }
 
     RenderComponent::~RenderComponent()
@@ -35,6 +38,11 @@ namespace potEngine {
     sf::Sprite &RenderComponent::getSprite()
     {
         return _sprite;
+    }
+
+    sf::Texture RenderComponent::getTexture()
+    {
+        return _texture;
     }
 }
 

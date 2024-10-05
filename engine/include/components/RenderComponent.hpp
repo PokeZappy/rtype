@@ -7,15 +7,17 @@ namespace potEngine
 {
     class RenderComponent : public AComponent {
     public:
-        RenderComponent();
-        RenderComponent(sf::Sprite sprite);
+        RenderComponent(sf::Texture texture);
+        RenderComponent(sf::Texture texture, sf::IntRect textureRect);
         ~RenderComponent();
 
         virtual void init();
         virtual void shutdown();
         void setSprite(sf::Sprite sprite);
         sf::Sprite &getSprite();
-    private:
+        sf::Texture getTexture();
+        private:
         sf::Sprite _sprite;
+        sf::Texture _texture;
     };
 }

@@ -124,7 +124,7 @@ void title_screen(const std::string& assetPath) {
     view = adjustAspectWithBlackBars( view, 1920.f, 1080.f);
     sf::RenderWindow window(sf::VideoMode(1920,1080), "MVP R-TYPE by Pol Pot", (sf::Style::Resize + sf::Style::Close));
     sf::Texture texture;
-    texture.loadFromFile(assetPath + "/sprites/r-typesheet45.png");
+    texture.loadFromFile(assetPath + "/sprites/r-typesheet45.gif");
     sf::Music musique;
     musique.openFromFile(assetPath + "/Soundtracks/ambient_music/01. Title.wav");
     musique.setLoop(true);
