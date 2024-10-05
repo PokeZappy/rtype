@@ -8,6 +8,7 @@
 #include "EventRender.hpp"
 #include "InputSystem.hpp"
 #include "RecvMessageEventData.hpp"
+#include "AnimationSystem.hpp"
 
 namespace potEngine
 {
@@ -29,8 +30,14 @@ namespace potEngine
                         eventBus.publish(inputSystem);
                     } else {
                         auto recvMessageSystem = std::dynamic_pointer_cast<RecvMessageEventData>(evt);
-                        if (recvMessageSystem)
+                        if (recvMessageSystem) {
                             eventBus.publish(recvMessageSystem);
+                        } else {
+                            auto animationSystem = std::dynamic_pointer_cast<AnimationEventData>(evt);
+                            if (animationSystem) {
+                                eventBus.publish(animationSystem);
+                            }
+                        }
                     }
                 }
             }

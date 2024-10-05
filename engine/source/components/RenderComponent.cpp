@@ -5,6 +5,7 @@ namespace potEngine {
     RenderComponent::RenderComponent(sf::Texture texture) : _texture(texture)
     {
         _sprite = sf::Sprite(_texture);
+        _initialTextureRect = _sprite.getTextureRect();
     }
 
     RenderComponent::RenderComponent(sf::Texture texture, sf::IntRect textureRect) : _texture(texture)
@@ -12,6 +13,7 @@ namespace potEngine {
         _sprite = sf::Sprite(_texture);
         _sprite.setTextureRect(textureRect);
         _sprite.setScale(sf::Vector2f(3, 3));
+        _initialTextureRect = textureRect;
     }
 
     RenderComponent::~RenderComponent()
@@ -43,6 +45,10 @@ namespace potEngine {
     sf::Texture RenderComponent::getTexture()
     {
         return _texture;
+    }
+
+    sf::IntRect RenderComponent::getInitialTextRect() {
+        return (_initialTextureRect);
     }
 }
 

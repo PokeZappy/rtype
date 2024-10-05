@@ -31,9 +31,9 @@ std::string assetFinder() {
         std::filesystem::path projectRoot = findRootPath(execPath.parent_path(), ".git");
         std::filesystem::path assetsRoot = projectRoot / "r-type" / "assets";
 
-        std::cout << "Executable Path: " << execPath << std::endl;
-        std::cout << "Project Root Path: " << projectRoot << std::endl;
-        std::cout << "Assets Root Path: " << assetsRoot << std::endl;
+        // std::cout << "Executable Path: " << execPath << std::endl;
+        // std::cout << "Project Root Path: " << projectRoot << std::endl;
+        // std::cout << "Assets Root Path: " << assetsRoot << std::endl;
 
         if (!std::filesystem::exists(assetsRoot)) {
             std::cerr << "Folder assets not found, please make sure the assets are in the correct folder." << std::endl;

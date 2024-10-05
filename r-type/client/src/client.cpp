@@ -121,22 +121,27 @@ void RType::Client::start()
     // Datas needed when triggering events
     auto renderingEventData = std::make_shared<potEngine::EventRender>(window, spriteArray);
     auto inputEventData = std::make_shared<potEngine::ComputeInputEvent>(window);
+    auto animationEventData = std::make_shared<potEngine::AnimationEventData>(spriteArray);
     auto recvMessageEventData = std::make_shared<potEngine::RecvMessageEventData>(client_fd, server_addr, addr_len, player_id);
 
     // Instantiating systems needed
     auto renderingSystem = std::make_shared<potEngine::RenderSystem>();
     auto inputSystem = std::make_shared<potEngine::InputSystem>();
     auto recvMessageSystem = std::make_shared<potEngine::RecvMessageSystem>();
+    auto animationSystem = std::make_shared<potEngine::AnimationSystem>();
 
     // Input to server event
     auto inputServerEvent = std::make_shared<potEngine::InputToServerEvent>(player_id, client_fd, server_addr);
 
+    // Ship animation event
+    auto shipAnimationEvent = std::make_shared<potEngine::ShipAnimationEvent>(player_id);
 
     auto startEvent = std::make_shared<potEngine::StartEvent>();
 
     startEvent->addEvent(renderingEventData);
     startEvent->addEvent(inputEventData);
     startEvent->addEvent(recvMessageEventData);
+    startEvent->addEvent(animationEventData);
     potEngine::eventBus.publish(startEvent);
 
     potEngine::ecsManager.update(0.016);

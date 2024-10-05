@@ -16,8 +16,10 @@ namespace potEngine
         void setSprite(sf::Sprite sprite);
         sf::Sprite &getSprite();
         sf::Texture getTexture();
+        sf::IntRect getInitialTextRect();
         private:
         sf::Sprite _sprite;
         sf::Texture _texture;
+        sf::IntRect _initialTextureRect;
     };
 }
