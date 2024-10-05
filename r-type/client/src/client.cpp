@@ -7,6 +7,8 @@
 
 #include "client_config.hpp"
 
+std::string assetFinder();
+
 RType::Client::Client() : player_id(0)
 {
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -59,15 +61,13 @@ void RType::Client::handle_create_entity_player(uint8_t entity_id, std::string u
     std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(0.0f, 0.0f);
     std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(1.0f);
 
-    sf::Image spriteImage;
-    spriteImage.create(100, 100, sf::Color::Blue);
+    sf::Texture playerTexture;
+    playerTexture.loadFromFile(assetFinder() + "/sprites/ol.png");
+    sf::Sprite playerSprite(playerTexture);
+    playerSprite.setPosition(100, 100);
+    playerSprite.setTextureRect(sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
 
-    sf::Texture spriteTexture;
-    spriteTexture.loadFromImage(spriteImage);
-    sf::Sprite *sprite = new sf::Sprite(spriteTexture);
-    sprite->setPosition(100, 100);
-
-    std::shared_ptr<potEngine::RenderComponent> spriteComponent = std::make_shared<potEngine::RenderComponent>(sprite);
+    std::shared_ptr<potEngine::RenderComponent> spriteComponent = std::make_shared<potEngine::RenderComponent>(playerSprite);
 
     potEngine::ecsManager.addComponent(entity, playerComponent);
     potEngine::ecsManager.addComponent(entity, positionComponent);

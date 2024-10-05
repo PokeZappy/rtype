@@ -35,8 +35,8 @@ namespace potEngine {
     std::shared_ptr<AEntity> ECSManager::createSpriteEntity(sf::Texture &texture) {
         auto entity = std::make_shared<AEntity>(32);
 
-        sf::Sprite *sprite = new sf::Sprite(texture);
-        sprite->setPosition(100, 100);
+        sf::Sprite sprite(texture);
+        sprite.setPosition(100, 100);
         std::shared_ptr<potEngine::RenderComponent> renderComponent = std::make_shared<RenderComponent>(sprite);
         addComponent<RenderComponent>(entity, renderComponent);
 

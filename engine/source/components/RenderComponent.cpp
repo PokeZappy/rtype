@@ -3,36 +3,36 @@
 namespace potEngine {
     RenderComponent::RenderComponent()
     {
-        _sprite = nullptr;
+        // _sprite = nullptr;
     }
 
-    RenderComponent::RenderComponent(sf::Sprite* sprite)
+    RenderComponent::RenderComponent(sf::Sprite sprite)
     {
         _sprite = sprite;
     }
 
     RenderComponent::~RenderComponent()
     {
-        if (_sprite != nullptr)
-            RenderComponent::shutdown();
+        // if (_sprite != nullptr)
+        //     RenderComponent::shutdown();
     }
 
     void RenderComponent::init()
     {
-        _sprite = new sf::Sprite();
+        // _sprite = new sf::Sprite();
     }
 
     void RenderComponent::shutdown()
     {
-        delete _sprite;
+        // delete _sprite;
     }
 
-    void RenderComponent::setSprite(sf::Sprite* sprite)
+    void RenderComponent::setSprite(sf::Sprite sprite)
     {
         _sprite = sprite;
     }
 
-    sf::Sprite* RenderComponent::getSprite() const
+    sf::Sprite &RenderComponent::getSprite()
     {
         return _sprite;
     }
