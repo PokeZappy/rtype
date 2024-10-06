@@ -22,14 +22,21 @@ namespace potEngine {
         std::shared_ptr<AEntity> createWindowEntity();
         std::shared_ptr<AEntity> createSpriteEntity(sf::Texture &texture);
 
+        static ECSManager& getInstance() {
+            static ECSManager instance;
+            return instance;
+        }
+        ECSManager(ECSManager const&) = delete;
+        void operator=(ECSManager const&) = delete;
+
         // void addEntity(std::shared_ptr<AEntity> entity);
         template <typename T>
         void addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component);
 
         void removeEntity(const std::size_t id);
 
-        template <typename T>
-        void registerSystem();
+        template <typename T, typename... Args>
+        void registerSystem(Args&&... args);
         template <typename T>
         void unregisterSystem();
 
@@ -50,11 +57,11 @@ namespace potEngine {
 
     };
 
-    template <typename T>
-    void ECSManager::registerSystem()
+    template <typename T, typename...Args>
+    void ECSManager::registerSystem(Args&&... args)
     {
         static_assert(std::is_base_of<ISystem, T>::value, "T must derive from ISystem");
-        _systems.push_back(std::make_shared<T>());
+        _systems.push_back(std::make_shared<T>(std::forward<Args>(args)...));
     }
 
     template <typename T>
@@ -70,4 +77,5 @@ namespace potEngine {
         entity->addComponent<T>(component);
         EntitySignatureChanged(entity);
     }
+    static ECSManager& ecsManager = ECSManager::getInstance();
 }

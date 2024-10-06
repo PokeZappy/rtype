@@ -1,16 +1,18 @@
 #include "RenderSystem.hpp"
-#include "RenderComponent.hpp"
+#include "SpriteComponent.hpp"
 #include "WindowEntity.hpp"
 #include "WindowComponent.hpp"
 #include "PositionComponent.hpp"
-#include "EventRender.hpp"
 #include <iostream>
+#include <filesystem>
+#include <stdexcept>
+#include <unistd.h>
 
 namespace potEngine
 {
     RenderSystem::RenderSystem()
     {
-        _signature.set(AComponent::getID<RenderComponent>(), true);
+        _signature.set(AComponent::getID<SpriteComponent>(), true);
         eventBus.subscribe(this, &RenderSystem::renderWindow);
     }
 
@@ -18,44 +20,29 @@ namespace potEngine
 
     }
 
-    void RenderSystem::renderWindow(std::shared_ptr<EventRender> event) {
-        auto windowEntity = event->windows->getComponent<WindowComponent>();
-        if (windowEntity == std::nullopt) {
-            return;
-        }
-        auto window = windowEntity->get()->getWindow();
-        window->clear();
-        auto sprites = event->sprites;
-        for (auto& sprite : sprites) {
-            auto render = sprite->getComponent<RenderComponent>();
-            if (render && render->get()->getSprite()) {
-                auto nrender = render->get();
-                auto position = sprite->getComponent<PositionComponent>();
-                if (position != std::nullopt) {
-                    auto pos = position->get()->_position;
-                    nrender->getSprite()->setPosition(pos[0], pos[1]);
+    void RenderSystem::renderWindow(std::shared_ptr<BlcEvent> event) {
+        // std::cout << "RENDER" << std::endl;
+        // std::cout << _entitiesSystem.size() << std::endl;
+        for (auto entity : _entitiesSystem) {
+            auto windowComponent = entity->getComponent<WindowComponent>();
+            if (windowComponent == std::nullopt)
+                continue;
+            auto window = windowComponent->get()->getWindow();
+            window->clear();
+            for (auto spriteEntity : _entitiesSystem) {
+                auto spriteComponent = spriteEntity->getComponent<SpriteComponent>();
+                auto windowComponent = spriteEntity->getComponent<WindowComponent>();
+                if (spriteComponent && !windowComponent) {
+                    auto position = spriteEntity->getComponent<PositionComponent>();
+                    sf::Sprite &sprite = spriteComponent->get()->getSprite();
+                    if (position != std::nullopt) {
+                        auto pos = position->get()->_position;
+                        sprite.setPosition(pos[0], pos[1]);
+                    }
+                    window->draw(sprite);
                 }
-                auto sprite = render->get()->getSprite();
-                if (sprite->getPosition().x > 700)
-                    sprite->setPosition(0, sprite->getPosition().y);
-                else
-                    sprite->setPosition(sprite->getPosition().x + 1, sprite->getPosition().y);
-                window->draw(*nrender->getSprite());
             }
+            window->display();
         }
-        window->display();
     }
-
-    // void RenderSystem::addEntity(AEntity* entity)
-    // {
-    //     _entities.push_back(entity);
-    // }
-
-    // void RenderSystem::removeEntity(AEntity* entity)
-    // {
-    //     auto it = std::find(_entities.begin(), _entities.end(), entity);
-    //     if (it != _entities.end()) {
-    //         _entities.erase(it);
-    //     }
-    // }
 }

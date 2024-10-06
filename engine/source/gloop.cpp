@@ -7,42 +7,42 @@
 
 int potEngine::gloop::mainPotEngine()
 {
-    potEngine::ECSManager ecsManager;
+    // potEngine::ECSManager ecsManager;
     
-    // Sprite initialisation
-    const int cubeSize = 100;
+    // // Sprite initialisation
+    // const int cubeSize = 100;
 
-    sf::Image redSquareImage;
-    redSquareImage.create(cubeSize, cubeSize, sf::Color::Red);
+    // sf::Image redSquareImage;
+    // redSquareImage.create(cubeSize, cubeSize, sf::Color::Red);
 
-    sf::Image greenSquareImage;
-    greenSquareImage.create(cubeSize, cubeSize, sf::Color::Green);
+    // sf::Image greenSquareImage;
+    // greenSquareImage.create(cubeSize, cubeSize, sf::Color::Green);
 
-    sf::Texture redSquareTexture;
-    redSquareTexture.loadFromImage(redSquareImage);
+    // sf::Texture redSquareTexture;
+    // redSquareTexture.loadFromImage(redSquareImage);
 
-    sf::Texture greenSquareTexture;
-    greenSquareTexture.loadFromImage(greenSquareImage);
+    // sf::Texture greenSquareTexture;
+    // greenSquareTexture.loadFromImage(greenSquareImage);
 
-    std::shared_ptr<potEngine::AEntity> redSquareEntity = ecsManager.createSpriteEntity(redSquareTexture);
-    std::shared_ptr<potEngine::AEntity> greenSquareEntity = ecsManager.createSpriteEntity(greenSquareTexture);
-    std::shared_ptr<potEngine::AEntity> window = ecsManager.createWindowEntity();
+    // std::shared_ptr<potEngine::AEntity> redSquareEntity = ecsManager.createSpriteEntity(redSquareTexture);
+    // std::shared_ptr<potEngine::AEntity> greenSquareEntity = ecsManager.createSpriteEntity(greenSquareTexture);
+    // std::shared_ptr<potEngine::AEntity> window = ecsManager.createWindowEntity();
 
-    std::vector<std::shared_ptr<potEngine::AEntity>> spriteArray;
+    // std::vector<std::shared_ptr<potEngine::AEntity>> spriteArray;
 
-    spriteArray.push_back(redSquareEntity);
-    spriteArray.push_back(greenSquareEntity);
+    // spriteArray.push_back(redSquareEntity);
+    // spriteArray.push_back(greenSquareEntity);
 
-    auto tesnew = std::make_shared<potEngine::EventRender>(window, spriteArray);
-    auto rend = std::make_shared<potEngine::RenderSystem>();
+    // auto tesnew = std::make_shared<potEngine::EventRender>(window, spriteArray);
+    // auto rend = std::make_shared<potEngine::RenderSystem>();
 
-    // eventBus.subscribe(tesnew.get(), &EventRender::render);
+    // // eventBus.subscribe(tesnew.get(), &EventRender::render);
 
-    auto start = std::make_shared<potEngine::StartEvent>();
-    // std ::cout << "Event start " << typeid(start).name() << std::endl;
-    eventBus.publish(start);
+    // auto start = std::make_shared<potEngine::StartEvent>();
+    // // std ::cout << "Event start " << typeid(start).name() << std::endl;
+    // eventBus.publish(start);
     
-    start->addEvent(tesnew);
+    // start->addEvent(tesnew);
 
     
     // potEngine::AEntity& window = ecsManager.createEntity();
@@ -50,8 +50,8 @@ int potEngine::gloop::mainPotEngine()
     // nwindow.setWindow(new sf::RenderWindow(sf::VideoMode(800, 600), "potEngine"));
 
     // TODO: Add a window entity to the ECSManager and its component and its system
-    ecsManager.update(0.03);
+    // ecsManager.update(0.03);
 
-    ecsManager.shutdown();
+    // ecsManager.shutdown();
     return 0;
 }

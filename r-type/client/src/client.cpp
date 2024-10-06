@@ -7,7 +7,9 @@
 
 #include "client_config.hpp"
 
-RType::Client::Client() : player_id(0), ecs_manager(std::make_shared<potEngine::ECSManager>())
+std::string assetFinder();
+
+RType::Client::Client() : player_id(0)
 {
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("Socket creation failed");
@@ -18,6 +20,10 @@ RType::Client::Client() : player_id(0), ecs_manager(std::make_shared<potEngine::
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+    potEngine::ecsManager.registerSystem<potEngine::RenderSystem>();
+    potEngine::ecsManager.registerSystem<potEngine::InputSystem>();
+    potEngine::ecsManager.registerSystem<potEngine::AnimationSystem>();
 
     std::cout << "[CLIENT] Ready to connect to the server...\n";
 }
@@ -50,47 +56,27 @@ void RType::Client::init_subscribe()
     auto moveEvent = std::make_shared<potEngine::MoveEvent>();
 }
 
-void RType::Client::handle_input()
-{
-    char input;
-    int n = read(STDIN_FILENO, &input, 1);
-
-    if (n > 0) {
-        if (input == 'x') {
-            auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::DISCONNECT, std::vector<uint16_t>{});
-            potEngine::eventBus.publish(disconnectEventInfo);
-        }
-        if (input == 'z') {
-            auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::MOVE_UP, std::vector<uint16_t>{});
-            potEngine::eventBus.publish(moveInfo);
-        }
-        if (input == 's') {
-            auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::MOVE_DOWN, std::vector<uint16_t>{});
-            potEngine::eventBus.publish(moveInfo);
-        }
-        if (input == 'q') {
-            auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::MOVE_LEFT, std::vector<uint16_t>{});
-            potEngine::eventBus.publish(moveInfo);
-        }
-        if (input == 'd') {
-            auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, player_id, potEngine::MOVE_RIGHT, std::vector<uint16_t>{});
-            potEngine::eventBus.publish(moveInfo);
-        }
-    }
-}
-
 void RType::Client::handle_create_entity_player(uint8_t entity_id, std::string username)
 {
     player_id = entity_id;
-    auto entity = ecs_manager->createEntity(entity_id);
+    auto entity = potEngine::ecsManager.createEntity(entity_id);
 
     std::shared_ptr<potEngine::PlayerComponent> playerComponent = std::make_shared<potEngine::PlayerComponent>(username);
     std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(0.0f, 0.0f);
     std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(1.0f);
 
-    ecs_manager->addComponent(entity, playerComponent);
-    ecs_manager->addComponent(entity, positionComponent);
-    ecs_manager->addComponent(entity, movementComponent);
+    sf::Texture playerTexture;
+    if (!playerTexture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif"))
+        std::cout << assetFinder() << std::endl;
+    // sf::Sprite playerSprite(playerTexture);
+    // playerSprite.setTextureRect(sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
+
+    std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>(playerTexture, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
+
+    potEngine::ecsManager.addComponent(entity, playerComponent);
+    potEngine::ecsManager.addComponent(entity, positionComponent);
+    potEngine::ecsManager.addComponent(entity, movementComponent);
+    potEngine::ecsManager.addComponent(entity, spriteComponent);    
 }
 
 void RType::Client::handle_connection()
@@ -104,7 +90,7 @@ void RType::Client::handle_connection()
     std::vector<uint16_t> params_username(username.begin(), username.end());
     auto connectionEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, 0, potEngine::CONNECTION, params_username);
     potEngine::eventBus.publish(connectionEventInfo);
-    ecs_manager->update(0.0f);
+    potEngine::ecsManager.update(0.0f);
     auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
     if (event_type == potEngine::EventType::CONNECTION) {
         std::cout << "[CLIENT] Connected to the server with {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
@@ -116,62 +102,52 @@ void RType::Client::start()
 {
     init_subscribe();
     socklen_t addr_len = sizeof(server_addr);
-    // handle_connection();
+    handle_connection();
     setNonBlockingInput();
 
     // Initialisation sprites
-    sf::Image spriteImage;
-    spriteImage.create(100, 100, sf::Color::Blue);
+    // sf::Image spriteImage;
+    // spriteImage.create(100, 100, sf::Color::Blue);
 
-    sf::Texture spriteTexture;
-    spriteTexture.loadFromImage(spriteImage);
+    // sf::Texture spriteTexture;
+    // spriteTexture.loadFromImage(spriteImage);
 
 
     // Initialisation Engine
-    potEngine::ECSManager ecsManager;
+    // std::shared_ptr<potEngine::AEntity> sprite = ecsManager.createSpriteEntity(spriteTexture);
+    std::shared_ptr<potEngine::AEntity> window = potEngine::ecsManager.createWindowEntity();
 
-    std::shared_ptr<potEngine::AEntity> sprite = ecsManager.createSpriteEntity(spriteTexture);
-    std::shared_ptr<potEngine::AEntity> window = ecsManager.createWindowEntity();
+    // std::vector<std::shared_ptr<potEngine::AEntity>> spriteArray;
+    // spriteArray.push_back(sprite);
+    std::cout << "player id : " << static_cast<int>(player_id) << std::endl;
+    potEngine::ecsManager.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
+    // spriteArray.push_back(potEngine::ecsManager.getEntity(player_id));
 
-    std::vector<std::shared_ptr<potEngine::AEntity>> spriteArray;
-    spriteArray.push_back(sprite);
+    // Datas needed when triggering events
+    // auto renderingEventData = std::make_shared<potEngine::EventRender>(window, spriteArray);
+    // auto inputEventData = std::make_shared<potEngine::ComputeInputEvent>(window);
+    // auto animationEventData = std::make_shared<potEngine::AnimationEventData>(spriteArray);
+    // auto recvMessageEventData = std::make_shared<potEngine::RecvMessageEventData>(client_fd, server_addr, addr_len, player_id);
 
-    auto renderingEventInfos = std::make_shared<potEngine::EventRender>(window, spriteArray);
-    auto renderingSystem = std::make_shared<potEngine::RenderSystem>();
+    // Instantiating systems needed
+    // auto renderingSystem = std::make_shared<potEngine::RenderSystem>();
+    // auto inputSystem = std::make_shared<potEngine::InputSystem>();
+    // auto recvMessageSystem = std::make_shared<potEngine::RecvMessageSystem>();
+    // auto animationSystem = std::make_shared<potEngine::AnimationSystem>();
+
+    // Input to server event
+    auto inputServerEvent = std::make_shared<potEngine::InputToServerEvent>(player_id, client_fd, server_addr);
+
+    // Ship animation event
+    auto shipAnimationEvent = std::make_shared<potEngine::ShipAnimationEvent>(player_id);
 
     auto startEvent = std::make_shared<potEngine::StartEvent>();
 
-    startEvent->addEvent(renderingEventInfos);
+    // startEvent->addEvent(renderingEventData);
+    // startEvent->addEvent(inputEventData);
+    // startEvent->addEvent(recvMessageEventData);
+    // startEvent->addEvent(animationEventData);
     potEngine::eventBus.publish(startEvent);
 
-    ecsManager.update(0.016);
-
-    while (true) {
-        handle_input();
-
-        auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
-        if (event_type != potEngine::EventType::UNKNOW) {
-            std::cout << "[CLIENT] Received event from server: " << static_cast<int>(event_type) << std::endl;
-        }
-        if (event_type == potEngine::EventType::CONNECTION) {
-            std::cout << "[CLIENT] New entity created {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
-            ecs_manager->createEntity(entity_id);
-        }
-        if (event_type == potEngine::EventType::DISCONNECT && entity_id == player_id) {
-            std::cout << "[CLIENT] Disconnected from server.\n";
-            break;
-        }
-        if (event_type == potEngine::EventType::MOVE_UP || event_type == potEngine::EventType::MOVE_DOWN || event_type == potEngine::EventType::MOVE_LEFT || event_type == potEngine::EventType::MOVE_RIGHT) {
-            auto entity = ecs_manager->getEntity(entity_id);
-            if (!entity) {
-                std::cout << "[CLIENT] {ID}-[" << static_cast<int>(entity_id) << "] not found." << std::endl;
-                continue;
-            }
-            std::vector<int> convertedParams(params.begin(), params.end());
-            entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
-            std::cout << "[CLIENT] Entity {ID}-[" << std::to_string(static_cast<int>(entity_id))
-                << "], {username}-[" << entity->getComponent<potEngine::PlayerComponent>()->get()->username << "], has move to {" << convertedParams[0] << "," << convertedParams[1] << "}" << std::endl;
-        }
-        ecs_manager->update(0.0f);
-    }
+    potEngine::ecsManager.update(0.016);
 }

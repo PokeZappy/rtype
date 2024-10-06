@@ -2,7 +2,7 @@
 #include "ASystem.hpp"
 #include "AEntity.hpp"
 #include "RenderSystem.hpp"
-#include "RenderComponent.hpp"
+#include "SpriteComponent.hpp"
 #include "WindowComponent.hpp"
 
 #include <algorithm>
@@ -33,23 +33,25 @@ namespace potEngine {
     }
 
     std::shared_ptr<AEntity> ECSManager::createSpriteEntity(sf::Texture &texture) {
-        auto entity = std::make_shared<AEntity>(_entityCounter++);
+        auto entity = std::make_shared<AEntity>(32);
 
-        sf::Sprite *sprite = new sf::Sprite(texture);
-        sprite->setPosition(100, 100);
-        std::shared_ptr<potEngine::RenderComponent> renderComponent = std::make_shared<RenderComponent>(sprite);
-        addComponent<RenderComponent>(entity, renderComponent);
+        // sf::Sprite sprite(texture);
+        // sprite.setPosition(100, 100);
+        std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texture);
+        addComponent<SpriteComponent>(entity, spriteComponent);
 
         _entities.push_back(entity);
         return (entity);
     }
 
     std::shared_ptr<AEntity> ECSManager::createWindowEntity() {
-        auto entity = std::make_shared<AEntity>(_entityCounter++);
+        auto entity = std::make_shared<AEntity>(30);
 
         std::shared_ptr<potEngine::WindowComponent> windowComponent = std::make_shared<potEngine::WindowComponent>();
+        std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>();
 
         addComponent<WindowComponent>(entity, windowComponent);
+        addComponent<SpriteComponent>(entity, spriteComponent);
 
         _entities.push_back(entity);
         return (entity);
@@ -88,7 +90,7 @@ namespace potEngine {
 
     void ECSManager::EntitySignatureChanged(std::shared_ptr<AEntity> entity) {
         auto const &entitySignature = entity->getSignature();
-        // std::cout << entitySignature << std::endl;
+        // std::cout << "entity signature : " << entitySignature << std::endl;
 
         for (auto const &system: _systems) {
             auto const &systemSignature = system->getSignature();
