@@ -35,8 +35,8 @@ namespace potEngine {
 
         void removeEntity(const std::size_t id);
 
-        template <typename T>
-        void registerSystem();
+        template <typename T, typename... Args>
+        void registerSystem(Args&&... args);
         template <typename T>
         void unregisterSystem();
 
@@ -57,11 +57,11 @@ namespace potEngine {
 
     };
 
-    template <typename T>
-    void ECSManager::registerSystem()
+    template <typename T, typename...Args>
+    void ECSManager::registerSystem(Args&&... args)
     {
         static_assert(std::is_base_of<ISystem, T>::value, "T must derive from ISystem");
-        _systems.push_back(std::make_shared<T>());
+        _systems.push_back(std::make_shared<T>(std::forward<Args>(args)...));
     }
 
     template <typename T>

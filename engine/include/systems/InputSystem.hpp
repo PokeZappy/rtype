@@ -6,13 +6,10 @@
 #include "WindowEntity.hpp"
 #include "EventBus.hpp"
 #include "WindowComponent.hpp"
-#include "EventRender.hpp"
+#include "MainLoopEvent.hpp"
+#include "BlcEvent.hpp"
 
 namespace potEngine {
-    struct ComputeInputEvent : public IEvent {
-        ComputeInputEvent(std::shared_ptr<AEntity> windowPtr) : window(windowPtr) {}
-        std::shared_ptr<AEntity> window;
-    };
     class InputSystem : public ASystem {
     public:
         InputSystem();
@@ -20,6 +17,6 @@ namespace potEngine {
 
         void update(float) override {};
 
-        void pollInputs(std::shared_ptr<ComputeInputEvent> event);
+        void pollInputs(std::shared_ptr<BlcEvent> event);
     };
 }

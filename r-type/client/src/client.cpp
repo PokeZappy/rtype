@@ -21,6 +21,10 @@ RType::Client::Client() : player_id(0)
     server_addr.sin_port = htons(PORT);
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
+    potEngine::ecsManager.registerSystem<potEngine::RenderSystem>();
+    potEngine::ecsManager.registerSystem<potEngine::InputSystem>();
+    potEngine::ecsManager.registerSystem<potEngine::AnimationSystem>();
+
     std::cout << "[CLIENT] Ready to connect to the server...\n";
 }
 
@@ -113,22 +117,23 @@ void RType::Client::start()
     // std::shared_ptr<potEngine::AEntity> sprite = ecsManager.createSpriteEntity(spriteTexture);
     std::shared_ptr<potEngine::AEntity> window = potEngine::ecsManager.createWindowEntity();
 
-    std::vector<std::shared_ptr<potEngine::AEntity>> spriteArray;
+    // std::vector<std::shared_ptr<potEngine::AEntity>> spriteArray;
     // spriteArray.push_back(sprite);
     std::cout << "player id : " << static_cast<int>(player_id) << std::endl;
-    spriteArray.push_back(potEngine::ecsManager.getEntity(player_id));
+    potEngine::ecsManager.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
+    // spriteArray.push_back(potEngine::ecsManager.getEntity(player_id));
 
     // Datas needed when triggering events
-    auto renderingEventData = std::make_shared<potEngine::EventRender>(window, spriteArray);
-    auto inputEventData = std::make_shared<potEngine::ComputeInputEvent>(window);
-    auto animationEventData = std::make_shared<potEngine::AnimationEventData>(spriteArray);
-    auto recvMessageEventData = std::make_shared<potEngine::RecvMessageEventData>(client_fd, server_addr, addr_len, player_id);
+    // auto renderingEventData = std::make_shared<potEngine::EventRender>(window, spriteArray);
+    // auto inputEventData = std::make_shared<potEngine::ComputeInputEvent>(window);
+    // auto animationEventData = std::make_shared<potEngine::AnimationEventData>(spriteArray);
+    // auto recvMessageEventData = std::make_shared<potEngine::RecvMessageEventData>(client_fd, server_addr, addr_len, player_id);
 
     // Instantiating systems needed
-    auto renderingSystem = std::make_shared<potEngine::RenderSystem>();
-    auto inputSystem = std::make_shared<potEngine::InputSystem>();
-    auto recvMessageSystem = std::make_shared<potEngine::RecvMessageSystem>();
-    auto animationSystem = std::make_shared<potEngine::AnimationSystem>();
+    // auto renderingSystem = std::make_shared<potEngine::RenderSystem>();
+    // auto inputSystem = std::make_shared<potEngine::InputSystem>();
+    // auto recvMessageSystem = std::make_shared<potEngine::RecvMessageSystem>();
+    // auto animationSystem = std::make_shared<potEngine::AnimationSystem>();
 
     // Input to server event
     auto inputServerEvent = std::make_shared<potEngine::InputToServerEvent>(player_id, client_fd, server_addr);
@@ -138,10 +143,10 @@ void RType::Client::start()
 
     auto startEvent = std::make_shared<potEngine::StartEvent>();
 
-    startEvent->addEvent(renderingEventData);
-    startEvent->addEvent(inputEventData);
-    startEvent->addEvent(recvMessageEventData);
-    startEvent->addEvent(animationEventData);
+    // startEvent->addEvent(renderingEventData);
+    // startEvent->addEvent(inputEventData);
+    // startEvent->addEvent(recvMessageEventData);
+    // startEvent->addEvent(animationEventData);
     potEngine::eventBus.publish(startEvent);
 
     potEngine::ecsManager.update(0.016);

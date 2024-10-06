@@ -3,7 +3,6 @@
 #include "WindowEntity.hpp"
 #include "WindowComponent.hpp"
 #include "PositionComponent.hpp"
-#include "EventRender.hpp"
 #include "InputInfoEvent.hpp"
 #include <iostream>
 
@@ -11,7 +10,7 @@ namespace potEngine {
 
     InputSystem::InputSystem()
     {
-        // _signature.set(AComponent::getID<RenderComponent>(), true);
+        _signature.set(AComponent::getID<WindowComponent>(), true);
         eventBus.subscribe(this, &InputSystem::pollInputs);
     }
 
@@ -19,18 +18,21 @@ namespace potEngine {
 
     }
 
-    void InputSystem::pollInputs(std::shared_ptr<ComputeInputEvent> event) {
-        auto windowComponent = event->window->getComponent<WindowComponent>();
-        if (!windowComponent)
-            return;
-        auto window = windowComponent->get()->getWindow();
-        
-        sf::Event sfmlEvent;
+    void InputSystem::pollInputs(std::shared_ptr<BlcEvent> event) {
+        // std::cout << "INPUT" << std::endl;
+        for (auto entity : _entitiesSystem) {
+            auto windowComponent = entity->getComponent<WindowComponent>();
+            if (!windowComponent)
+                return;
+            auto window = windowComponent->get()->getWindow();
+            sf::Event sfmlEvent;
 
-        while (window->pollEvent(sfmlEvent))
-        {
-            std::shared_ptr<InputInfoEvent> input = std::make_shared<InputInfoEvent>(sfmlEvent.type, sfmlEvent.key.code);
-            eventBus.publish(input);
+            while (window->pollEvent(sfmlEvent))
+            {
+                std::shared_ptr<InputInfoEvent> input = std::make_shared<InputInfoEvent>(sfmlEvent.type, sfmlEvent.key.code);
+                eventBus.publish(input);
+            }
+        }
             // if (sfmlEvent.type == sf::Event::Closed)
             //     window->close();
 
@@ -44,6 +46,5 @@ namespace potEngine {
             //         }
             //     }
             // }
-        }
     }
 }

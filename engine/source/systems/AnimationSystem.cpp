@@ -1,6 +1,5 @@
 #include "AnimationSystem.hpp"
 #include "SpriteComponent.hpp"
-#include "EventRender.hpp"
 #include "InputInfoEvent.hpp"
 #include <iostream>
 
@@ -8,7 +7,8 @@ namespace potEngine {
 
     AnimationSystem::AnimationSystem()
     {
-        // _signature.set(AComponent::getID<RenderComponent>(), true);
+        _signature.set(AComponent::getID<SpriteComponent>(), true);
+        _signature.set(AComponent::getID<AnimationComponent>(), true);
         eventBus.subscribe(this, &AnimationSystem::updateAnimations);
     }
 
@@ -16,12 +16,11 @@ namespace potEngine {
 
     }
 
-    void AnimationSystem::updateAnimations(std::shared_ptr<AnimationEventData> event) {
-        auto sprites = event->sprites;
-
-        for (auto spriteEntity : sprites) {
-            auto animationComponent = spriteEntity->getComponent<AnimationComponent>();
-            auto spriteComponent = spriteEntity->getComponent<SpriteComponent>();
+    void AnimationSystem::updateAnimations(std::shared_ptr<BlcEvent> event) {
+        // std::cout << "ANIMATION" << std::endl;
+        for (auto entity : _entitiesSystem) {
+            auto animationComponent = entity->getComponent<AnimationComponent>();
+            auto spriteComponent = entity->getComponent<SpriteComponent>();
             if (animationComponent == std::nullopt || spriteComponent == std::nullopt)
                 continue;
             float interval = animationComponent->get()->getInterval();

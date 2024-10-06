@@ -6,7 +6,8 @@
 #include "WindowEntity.hpp"
 #include "EventBus.hpp"
 #include "WindowComponent.hpp"
-#include "EventRender.hpp"
+#include "MainLoopEvent.hpp"
+#include "BlcEvent.hpp"
 
 namespace potEngine {
     class RenderSystem : public ASystem {
@@ -16,6 +17,6 @@ namespace potEngine {
 
         void update(float) override {};
 
-        void renderWindow(std::shared_ptr<EventRender> event);
+        void renderWindow(std::shared_ptr<BlcEvent> event);
     };
 }

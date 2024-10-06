@@ -2,4 +2,4 @@
 
 sf::View adjustAspectWithBlackBars(sf::View view, float windowWidth, float windowHeight);
 
-std::string  assetFinder();
+std::string assetFinder();

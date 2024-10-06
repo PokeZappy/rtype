@@ -31,7 +31,6 @@ const int CLIENT_SOCKET = 1;
 #include "AnimationSystem.hpp"
 #include "ShipAnimationEvent.hpp"
 #include "InputInfoEvent.hpp"
-#include "RecvMessageEventData.hpp"
 
 #include "AEventHandler.hpp"
 #include "EventBus.hpp"
@@ -43,7 +42,6 @@ const int CLIENT_SOCKET = 1;
 #include "WindowEntity.hpp"
 
 #include "EndEvent.hpp"
-#include "EventRender.hpp"
 #include "MainLoopEvent.hpp"
 #include "StartEvent.hpp"
 #include "SendMessageEvent.hpp"

@@ -6,7 +6,7 @@
 
 namespace potEngine
 {
-    RecvMessageSystem::RecvMessageSystem()
+    RecvMessageSystem::RecvMessageSystem(int cliFd, struct sockaddr_in servAddr, socklen_t adLen, uint8_t id) : _clientFd(cliFd), _addrLen(adLen), _playerId(id)
     {
         // _signature.set(AComponent::getID<RenderComponent>(), true);
         eventBus.subscribe(this, &RecvMessageSystem::updateSystem);
@@ -16,10 +16,10 @@ namespace potEngine
 
     }
 
-    std::tuple<uint8_t, potEngine::EventType, std::vector<uint16_t>> RecvMessageSystem::recv_message(int clientFd, struct sockaddr_in& addr, socklen_t& addr_len)
+    std::tuple<uint8_t, potEngine::EventType, std::vector<uint16_t>> RecvMessageSystem::recv_message()
 {
     uint8_t buffer[1024]; // TODO mettre BUFFER_SIZE macro
-    ssize_t recv_len = recvfrom(clientFd, buffer, sizeof(buffer), 0, (struct sockaddr*)&addr, &addr_len);
+    ssize_t recv_len = recvfrom(_clientFd, buffer, sizeof(buffer), 0, (struct sockaddr*)&_addr, &_addrLen);
 
     if (recv_len < 0) {
         return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<uint16_t>{});
@@ -42,13 +42,9 @@ namespace potEngine
     return std::make_tuple(entity_id, event_type, params);
 }
 
-    void RecvMessageSystem::updateSystem(std::shared_ptr<RecvMessageEventData> event) {
-        struct sockaddr_in addr = event->serverAddr;
-        socklen_t len = event->addrLen;
-        uint8_t playerId = event->playerId;
-        int clientFd = event->clientFd;
-
-        auto [entity_id, event_type, params] = recv_message(clientFd, addr, len);
+    void RecvMessageSystem::updateSystem(std::shared_ptr<BlcEvent> event) {
+        // std::cout << "RECEIVE" << std::endl;
+        auto [entity_id, event_type, params] = recv_message();
         if (event_type != potEngine::EventType::UNKNOW) {
             std::cout << "[CLIENT] Received event from server: " << static_cast<int>(event_type) << std::endl;
         }
@@ -56,7 +52,7 @@ namespace potEngine
             std::cout << "[CLIENT] New entity created {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
             ecsManager.createEntity(entity_id);
         }
-        if (event_type == potEngine::EventType::DISCONNECT && entity_id == playerId) {
+        if (event_type == potEngine::EventType::DISCONNECT && entity_id == _playerId) {
             std::cout << "[CLIENT] Disconnected from server.\n";
             return;
         }
