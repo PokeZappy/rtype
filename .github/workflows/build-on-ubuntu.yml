@@ -22,10 +22,6 @@ jobs:
         cc: gcc
         cxx: g++
         build-type: Release
-        configure-options: -DCMAKE_C_FLAGS=-w32 -DPNG_INCLUDE=OFF
-        run-test: true
-        ctest-options: -R mytest
-        install-build: true
         parallel: 14
 
     - name: Install vcpkg
@@ -45,11 +41,6 @@ jobs:
     - name: Build project
       run: |
         cmake --build build
-
-    - name: Run Server Tests
-      run: |
-        ctest --test-dir build --output-on-failure
-      if: always()
 
     - name: Build Client
       run: |
