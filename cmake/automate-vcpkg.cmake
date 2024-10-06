@@ -163,9 +163,9 @@ macro(vcpkg_install_packages)
 #        set(ENV{VCPKG_DEFAULT_TRIPLET} "${VCPKG_TRIPLET}")
 #    endif()
 
-    set(VCPKG_TRIPLET "x64-mingw-dynamic")
+#    set(VCPKG_TRIPLET "x64-mingw-dynamic")
     set(ENV{VCPKG_DEFAULT_TRIPLET} "${VCPKG_TRIPLET}")
-    message(STATUS "INSTALLINFG ${VCPKG_TRIPLET} ${VCPKG_DEFAULT_TRIPLET} rekeke ${VCPKG_EXEC} ROROR ${ARGN}")
+#    message(STATUS "INSTALLINFG ${VCPKG_TRIPLET} ${VCPKG_DEFAULT_TRIPLET} rekeke ${VCPKG_EXEC} ROROR ${ARGN}")
     if(NOT VCPKG_LIST_OUTPUT MATCHES "sfml")
         message(STATUS "SFML is not installed. Installing SFML...")
         execute_process(
