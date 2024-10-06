@@ -48,7 +48,7 @@ namespace potEngine
 
     std::string assetFinder();
 
-    static void createPlayerEntity(std::vector<uint16_t> params, uint8_t entity_id)
+    void RecvMessageSystem::createPlayerEntity(std::vector<uint16_t> params, uint8_t entity_id)
     {
         uint16_t username_length = params[1];
         std::string username;
@@ -80,12 +80,12 @@ namespace potEngine
             << "] {username}-[" << username <<  "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
     }
 
-    static void handleCreateEntity(std::vector<uint16_t> params, uint8_t entity_id)
+    void handleCreateEntity(std::vector<uint16_t> params, uint8_t entity_id)
     {
         uint16_t type = params[0];
 
         if (type == EntityType::PLAYER)
-            return createPlayerEntity(params, entity_id);
+            return RecvMessageSystem::createPlayerEntity(params, entity_id);
     }
 
     void RecvMessageSystem::updateSystem(std::shared_ptr<BlcEvent> event) {

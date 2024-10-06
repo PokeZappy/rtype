@@ -6,6 +6,7 @@
 */
 
 #include "client_config.hpp"
+#include "RecvMessageSystem.hpp"
 
 std::string assetFinder();
 
@@ -60,29 +61,6 @@ void RType::Client::init_subscribe()
     auto collisionEvent = std::make_shared<potEngine::CollisionEvent>();
 }
 
-void RType::Client::handle_create_entity_player(uint8_t entity_id, std::string username)
-{
-    player_id = entity_id;
-    auto entity = potEngine::ecsManager.createEntity(entity_id);
-
-    sf::Texture playerTexture;
-    if (!playerTexture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif"))
-        std::cout << assetFinder() << std::endl;
-
-    std::shared_ptr<potEngine::PlayerComponent> playerComponent = std::make_shared<potEngine::PlayerComponent>(username);
-    std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(0, 0);
-    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(5.0f);
-    std::shared_ptr<potEngine::LifeComponent> lifeComponent = std::make_shared<potEngine::LifeComponent>(3);
-    std::shared_ptr<potEngine::CollisionComponent> collisionComponent = std::make_shared<potEngine::CollisionComponent>();
-    std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>(playerTexture, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
-    potEngine::ecsManager.addComponent(entity, playerComponent);
-    potEngine::ecsManager.addComponent(entity, positionComponent);
-    potEngine::ecsManager.addComponent(entity, movementComponent);
-    potEngine::ecsManager.addComponent(entity, lifeComponent);
-    potEngine::ecsManager.addComponent(entity, collisionComponent);
-    potEngine::ecsManager.addComponent(entity, spriteComponent);
-}
-
 void RType::Client::handle_connection()
 {
     socklen_t addr_len = sizeof(server_addr);
@@ -98,7 +76,17 @@ void RType::Client::handle_connection()
     auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
     if (event_type == potEngine::EventType::CONNECTION) {
         std::cout << "[CLIENT] Connected to the server with {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
-        handle_create_entity_player(entity_id, username);
+        player_id = entity_id;
+        std::string player_name = username;
+        std::vector<int> position = {0, 0};
+        std::vector<uint16_t> _pos;
+        _pos.push_back(potEngine::EntityType::PLAYER);
+        _pos.push_back(static_cast<uint16_t>(player_name.size()));
+        for (char c : player_name) {
+            _pos.push_back(static_cast<uint16_t>(c));
+        }
+        _pos.insert(_pos.end(), position.begin(), position.end());
+        potEngine::RecvMessageSystem::createPlayerEntity(_pos, entity_id);
     }
 }
 

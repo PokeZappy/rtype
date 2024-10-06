@@ -16,7 +16,7 @@ namespace potEngine {
     public:
         RecvMessageSystem(int cliFd, struct sockaddr_in servAddr, socklen_t adLen, uint8_t id);
         ~RecvMessageSystem();
-
+        static void createPlayerEntity(std::vector<uint16_t> params, uint8_t entity_id);
         void update(float) override {};
 
         void updateSystem(std::shared_ptr<BlcEvent> event);
