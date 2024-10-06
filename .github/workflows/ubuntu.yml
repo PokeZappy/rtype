@@ -2,8 +2,7 @@ name: CMake Build
 
 on:
   push:
-    branches:
-      - '*'
+    branches: ["dev_server", "dev_client", "feat_updage_cmake", "cross/feat/server"]
 
 jobs:
   build:
