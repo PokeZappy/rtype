@@ -22,6 +22,7 @@ file(GLOB_RECURSE ENGINE_SOURCES
     "engine/source/entity/*.cpp"
     "engine/source/core/event/*.cpp"
     "engine/source/event/*.cpp"
+    "engine/source/config/*.cpp"
 )
 
 add_library(engine SHARED ${ENGINE_SOURCES})
@@ -35,6 +36,7 @@ target_include_directories(engine PUBLIC
     engine/include/entity
     engine/include/core/event
     engine/include/event
+    engine/include/config
 )
 
 file(GLOB_RECURSE SERVER_SOURCES "r-type/server/src/*.cpp")

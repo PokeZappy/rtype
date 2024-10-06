@@ -29,6 +29,7 @@ const int CLIENT_SOCKET = 1;
 
 #include "AEventHandler.hpp"
 #include "EventBus.hpp"
+#include "Config.hpp"
 #include "IEvent.hpp"
 #include "MemberHandler.hpp"
 
