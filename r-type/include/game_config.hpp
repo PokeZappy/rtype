@@ -22,6 +22,7 @@ const int CLIENT_SOCKET = 1;
 #include "PlayerComponent.hpp"
 #include "SpriteComponent.hpp"
 #include "WindowComponent.hpp"
+#include "AudioComponent.hpp"
 #include "LifeComponent.hpp"
 #include "CollisionComponent.hpp"
 
@@ -30,6 +31,7 @@ const int CLIENT_SOCKET = 1;
 #include "RenderSystem.hpp"
 #include "InputSystem.hpp"
 #include "RecvMessageSystem.hpp"
+#include "AudioSystem.hpp"
 #include "AnimationSystem.hpp"
 #include "ShipAnimationEvent.hpp"
 #include "InputInfoEvent.hpp"
