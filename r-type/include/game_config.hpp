@@ -57,9 +57,3 @@ const int CLIENT_SOCKET = 1;
 
 #endif // GAME_CONFIG_HPP
 
-// -> envoyer data quand connection
-// -> move player
-// -> death / vie (temps d'immo quand il spawn et quand il se fait toucher)
-// -> tire
-//
-// si client CTRL+C et que le serbveur send un message ?
