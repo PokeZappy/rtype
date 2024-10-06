@@ -35,9 +35,10 @@ RType::Server::~Server()
 
 void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<uint16_t> params)
 {
-    if (action == potEngine::CONNECTION) {
+    if (action == potEngine::CONNECTION && MAX_PLAYERS > current_players) {
         auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(
-            MAX_PLAYERS, server_fd, client_addr, params);
+            MAX_PLAYERS, server_fd, client_addr, params
+        );
         potEngine::eventBus.publish(connectionInfo);
         current_players++;
     }
