@@ -4,12 +4,12 @@ project(RType)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(cmake/auto-vcpkg.cmake)
-#include(cmake/automate-vcpkg.cmake)
+#include(cmake/auto-vcpkg.cmake)
+include(cmake/automate-vcpkg.cmake)
 
-#vcpkg_bootstrap()
-#vcpkg_install_packages(sfml)
-vcpkg_add_package(sfml)
+vcpkg_bootstrap()
+vcpkg_install_packages(sfml)
+#vcpkg_add_package(sfml)
 
 set(CLIENT_INCLUDE_DIRS r-type/client/include)
 set(SERVER_INCLUDE_DIRS r-type/server/include)
