@@ -4,6 +4,7 @@
 #include "EventBus.hpp"
 #include "ECSManager.hpp"
 #include "SendMessageToAllExeptEvent.hpp"
+#include "SendAllDataEvent.hpp"
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
@@ -61,8 +62,25 @@ namespace potEngine
             auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->fd, info->client_addr, player_id, CONNECTION, std::vector<uint16_t> {});
             eventBus.publish(sendMessageEventInfo);
 
-            auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllExeptEventInfo>(info->max_players, info->fd, player_id, CONNECTION, info->params, ecsManager.getEntities());
+            std::vector<int> position = {0, 0};
+            std::vector<uint16_t> _pos;
+            _pos.push_back(EntityType::PLAYER);
+            _pos.push_back(static_cast<uint16_t>(player_name.size()));
+            for (char c : player_name) {
+                _pos.push_back(static_cast<uint16_t>(c));
+            }
+            _pos.insert(_pos.end(), position.begin(), position.end());
+
+            auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllExeptEventInfo>(info->max_players, info->fd, player_id, CONNECTION, _pos, ecsManager.getEntities());
             eventBus.publish(sendMessageToAllEventInfo);
+
+            auto sendDataEventInfo = std::make_shared<SendAllDataInfoEvent>(
+                info->max_players,
+                info->fd,
+                info->client_addr,
+                player_id
+            );
+            eventBus.publish(sendDataEventInfo);
         }
     };
 }

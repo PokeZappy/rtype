@@ -18,10 +18,10 @@ namespace potEngine
         int max_players;
         int fd;
         struct sockaddr_in client_addr;
-        uint8_t entity_id;
+        uint8_t player_id;
 
-        SendAllDataInfoEvent(int maxP, int fd, struct sockaddr_in c_addr)
-            : max_players(maxP), fd(fd), client_addr(c_addr) {}
+        SendAllDataInfoEvent(int maxP, int fd, struct sockaddr_in addr, uint8_t id)
+            : max_players(maxP), fd(fd), client_addr(addr), player_id(id) {}
     };
 
     class SendAllDataEvent : public IEvent {
@@ -30,22 +30,53 @@ namespace potEngine
             eventBus.subscribe(this, &SendAllDataEvent::sendAllData);
         };
 
+        EntityType checkEntity(std::shared_ptr<potEngine::AEntity> entity)
+        {
+            if (entity->getComponent<PlayerComponent>())
+                return EntityType::PLAYER;
+            else
+                return EntityType::TOM;
+        }
+
         void sendAllData(std::shared_ptr<SendAllDataInfoEvent> info)
         {
-            if (ecsManager.getEntity(info->entity_id) == nullptr)
+            if (ecsManager.getEntity(info->player_id) == nullptr)
                 return;
-            // todo
+            std::vector<std::shared_ptr<AEntity>> _entities = ecsManager.getEntities();
+            auto _entitiesPtr = _entities ;
 
-            // std::vector<std::shared_ptr<AEntity>> _entities = ecsManager.getEntities();
-            // auto _entitiesPtr = _entities ;
+            for (auto entity : _entities) {
+                if (entity->getID() == info->player_id)
+                    continue;
+                std::vector<int> position = entity->getComponent<PositionComponent>()->get()->_position;
+                EntityType _entityType = checkEntity(entity);
+                std::vector<uint16_t> _pos;
 
-            // for (auto entity : _entities) {
-            //     std::vector<int> position = entity->getComponent<PositionComponent>()->get()->_position;
-            //     std::vector<uint16_t> _pos(position.begin(), position.end());
+                if (_entityType == EntityType::PLAYER) {
+                    auto username = entity->getComponent<PlayerComponent>()->get()->username;
+                    _pos.push_back(_entityType);
+                    _pos.push_back(static_cast<uint16_t>(username.size()));
+                    for (char c : username) {
+                        _pos.push_back(static_cast<uint16_t>(c));
+                    }
+                    _pos.insert(_pos.end(), position.begin(), position.end());
+                } else {
+                    _pos.push_back(_entityType);
+                    _pos.insert(_pos.end(), position.begin(), position.end());
+                }
 
-            //     auto sendMessageEventInfo = std::make_shared<SendMessageToAllEvent>(info->max_players, info->fd, info->entity_id, GETINFO, _pos, info->ecs_manager);
-            //     eventBus.publish(sendMessageEventInfo);
-            // }
+                auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(
+                    info->max_players,
+                    info->fd,
+                    info->client_addr,
+                    entity->getID(),
+                    INFORMATION,
+                    _pos
+                );
+                eventBus.publish(sendMessageEventInfo);
+                std::cout << "[SERVER] Sending data of entity {ID}-[" << static_cast<int>(entity->getID())
+                    << "] to {ID}-[" << static_cast<int>(info->player_id) << "]." << std::endl;
+            }
         }
     };
 }
