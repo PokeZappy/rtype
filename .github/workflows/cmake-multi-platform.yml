@@ -64,7 +64,7 @@ jobs:
     - name: Set VCPKG_ROOT environment variable (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
       shell: bash
-      run: echo "VCPKG_ROOT_UBUNTU=${{ steps.strings_ubuntu.outputs.build-output-dir }}/vcpkg" >> $GITHUB_ENV
+      run: echo "VCPKG_ROOT=${{ steps.strings_ubuntu.outputs.build-output-dir }}/vcpkg" >> $GITHUB_ENV
 
 
     - name: Clone vcpkg
@@ -77,6 +77,8 @@ jobs:
       if: matrix.os == 'windows-latest'
       shell: pwsh
       run: |
+          mkdir ${{ steps.strings_win.outcome.build-output-dir }}
+          mkdir ${{ steps.strings_win.outcome.build-output-dir }}\vcpkg
           ${{ steps.strings_win.outputs.build-output-dir }}\vcpkg\bootstrap-vcpkg.bat
           ${{ steps.strings_win.outputs.build-output-dir }}\vcpkg\vcpkg.exe install sfml:x64-windows
 
