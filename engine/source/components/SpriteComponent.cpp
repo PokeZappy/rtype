@@ -2,7 +2,7 @@
 
 namespace potEngine {
 
-    SpriteComponent::SpriteComponent(sf::Texture texture) : _texture(texture)
+    SpriteComponent::SpriteComponent(sf::Texture &texture) : _texture(texture)
     {
         _sprite = sf::Sprite(_texture);
         _initialTextureRect = _sprite.getTextureRect();
