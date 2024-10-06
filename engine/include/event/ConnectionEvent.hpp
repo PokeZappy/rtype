@@ -19,10 +19,9 @@ namespace potEngine
         int fd;
         struct sockaddr_in client_addr;
         std::vector<uint16_t> params;
-        std::shared_ptr<ECSManager> ecs_manager;
 
-        ConnectionInfoEvent(int maxP, int fd, struct sockaddr_in c_addr, std::vector<uint16_t> p, std::shared_ptr<ECSManager> ecs)
-            : max_players(maxP), fd(fd), client_addr(c_addr), params(p), ecs_manager(ecs) {}
+        ConnectionInfoEvent(int maxP, int fd, struct sockaddr_in c_addr, std::vector<uint16_t> p)
+            : max_players(maxP), fd(fd), client_addr(c_addr), params(p) {}
     };
 
     class ConnectionEvent : public IEvent {
@@ -32,7 +31,7 @@ namespace potEngine
         };
 
         void connect(std::shared_ptr<ConnectionInfoEvent> info) {
-            auto player_entity = info->ecs_manager->createEntity();
+            auto player_entity = ecsManager.createEntity();
             uint8_t player_id = player_entity->getID();
             std::string player_name;
 
@@ -49,19 +48,20 @@ namespace potEngine
             std::shared_ptr<LifeComponent> lifeComponent = std::make_shared<LifeComponent>(3);
             std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
 
-            info->ecs_manager->addComponent(player_entity, playerComponent);
-            info->ecs_manager->addComponent(player_entity, positionComponent);
-            info->ecs_manager->addComponent(player_entity, movementComponent);
-            info->ecs_manager->addComponent(player_entity, networkComponent);
-            info->ecs_manager->addComponent(player_entity, lifeComponent);
-            info->ecs_manager->addComponent(player_entity, collisionComponent);
+            ecsManager.addComponent(player_entity, playerComponent);
+            ecsManager.addComponent(player_entity, positionComponent);
+            ecsManager.addComponent(player_entity, movementComponent);
+            ecsManager.addComponent(player_entity, networkComponent);
+            ecsManager.addComponent(player_entity, lifeComponent);
+            ecsManager.addComponent(player_entity, collisionComponent);
 
-            std::cout << "[SERVER] Player connected: {id}-[" << std::to_string(static_cast<int>(player_id)) << "], {username}-[" << player_name << "]" << std::endl;
+            std::cout << "[SERVER] Player connected: {id}-[" << std::to_string(static_cast<int>(player_id))
+                << "], {username}-[" << player_name << "]" << std::endl;
 
             auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->fd, info->client_addr, player_id, CONNECTION, std::vector<uint16_t> {});
             eventBus.publish(sendMessageEventInfo);
 
-            auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllExeptEventInfo>(info->max_players, info->fd, player_id, CONNECTION, info->params, info->ecs_manager->getEntities());
+            auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllExeptEventInfo>(info->max_players, info->fd, player_id, CONNECTION, info->params, ecsManager.getEntities());
             eventBus.publish(sendMessageToAllEventInfo);
         }
     };

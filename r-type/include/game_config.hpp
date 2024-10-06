@@ -20,7 +20,7 @@ const int CLIENT_SOCKET = 1;
 #include "PositionComponent.hpp"
 #include "NetworkComponent.hpp"
 #include "PlayerComponent.hpp"
-#include "RenderComponent.hpp"
+#include "SpriteComponent.hpp"
 #include "WindowComponent.hpp"
 #include "LifeComponent.hpp"
 #include "CollisionComponent.hpp"
@@ -28,6 +28,11 @@ const int CLIENT_SOCKET = 1;
 #include "ASystem.hpp"
 #include "ISystem.hpp"
 #include "RenderSystem.hpp"
+#include "InputSystem.hpp"
+#include "RecvMessageSystem.hpp"
+#include "AnimationSystem.hpp"
+#include "ShipAnimationEvent.hpp"
+#include "InputInfoEvent.hpp"
 
 #include "AEventHandler.hpp"
 #include "EventBus.hpp"
@@ -39,7 +44,6 @@ const int CLIENT_SOCKET = 1;
 #include "WindowEntity.hpp"
 
 #include "EndEvent.hpp"
-#include "EventRender.hpp"
 #include "MainLoopEvent.hpp"
 #include "StartEvent.hpp"
 #include "SendMessageEvent.hpp"
@@ -49,6 +53,7 @@ const int CLIENT_SOCKET = 1;
 #include "ConnectionEvent.hpp"
 #include "MoveEvent.hpp"
 #include "CollisionEvent.hpp"
+#include "InputToServerEvent.hpp"
 
 #endif // GAME_CONFIG_HPP
 

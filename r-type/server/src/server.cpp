@@ -7,7 +7,7 @@
 
 #include "server_config.hpp"
 
-RType::Server::Server() : current_players(0), ecs_manager(std::make_shared<potEngine::ECSManager>())
+RType::Server::Server() : current_players(0)
 {
     if ((server_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("Socket creation failed");
@@ -33,23 +33,23 @@ RType::Server::~Server()
     close(server_fd);
 }
 
-
 void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<uint16_t> params)
 {
     if (action == potEngine::CONNECTION) {
-        auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(MAX_PLAYERS, server_fd, client_addr, params, ecs_manager);
+        auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(
+            MAX_PLAYERS, server_fd, client_addr, params);
         potEngine::eventBus.publish(connectionInfo);
         current_players++;
     }
 
     if (action == potEngine::DISCONNECT) {
-        auto disconnectInfo = std::make_shared<potEngine::DisconnectionInfoEvent>(MAX_PLAYERS, server_fd, entity_id, params, ecs_manager);
+        auto disconnectInfo = std::make_shared<potEngine::DisconnectionInfoEvent>(MAX_PLAYERS, server_fd, entity_id, params);
         potEngine::eventBus.publish(disconnectInfo);
         current_players--;
     }
 
     if (action == potEngine::MOVE_UP || action == potEngine::MOVE_DOWN || action == potEngine::MOVE_RIGHT || action == potEngine::MOVE_LEFT) {
-        auto moveInfo = std::make_shared<potEngine::MoveInfoEvent>(MAX_PLAYERS, server_fd, action, entity_id, params, ecs_manager);
+        auto moveInfo = std::make_shared<potEngine::MoveInfoEvent>(MAX_PLAYERS, server_fd, action, entity_id, params);
         potEngine::eventBus.publish(moveInfo);
     }
 }
@@ -71,9 +71,6 @@ void RType::Server::start()
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
 
-    const float fixedDeltaTime = 1.0f / 60.0f;
-    auto lastUpdateTime = std::chrono::high_resolution_clock::now();
-
     int flags = fcntl(server_fd, F_GETFL, 0);
     fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
 
@@ -83,13 +80,6 @@ void RType::Server::start()
         if (event_type != potEngine::EventType::UNKNOW) {
             handle_action(entity_id, client_addr, event_type, params);
         }
-
-        auto now = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<float> elapsedTime = now - lastUpdateTime;
-
-        if (elapsedTime.count() >= fixedDeltaTime) {
-            ecs_manager->update(fixedDeltaTime);
-            lastUpdateTime = now;
-        }
+        potEngine::ecsManager.update(0.0f);
     }
 }

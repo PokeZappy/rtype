@@ -20,13 +20,13 @@ namespace potEngine {
         }
         EventBus(EventBus const&) = delete;
         void operator=(EventBus const&) = delete;
-    
+
         template<class EventType>
         void publish(std::shared_ptr<EventType> event) {
             auto it = _subscribers.find(std::type_index(typeid(EventType)));
-            
+
             if (it == _subscribers.end() || !it->second) {
-                std::cout << "[EVENTBUS] No handler for event type: " << typeid(EventType).name() << std::endl;
+                // std::cout << "[EVENTBUS] No handler for event type: " << typeid(EventType).name() << std::endl;
                 return;
             }
             // std::shared_ptr<HandlerList> handlers = _subscribers[typeid(EventType)];
@@ -37,10 +37,12 @@ namespace potEngine {
             //     std::cout << "No handler" << std::endl;
             //     return;
             // }
-            for (auto& handler : *it->second)
-                if (handler != nullptr)
+            for (auto& handler : *it->second) {
+                if (handler != nullptr) {
                     _handlers.push_back(std::make_pair(event, it->second));
-            std::cout << "[EVENTBUS] Event published " << typeid(EventType).name() << std::endl;
+                    // std::cout << "[EVENTBUS] Event published " << typeid(EventType).name() << std::endl;
+                }
+            }
         }
 
         template<class T, class EventType>
@@ -71,6 +73,7 @@ namespace potEngine {
         std::pair<std::shared_ptr<IEvent>, std::shared_ptr<HandlerList>> getHandler() {
             if (_handlers.empty())
                 return std::make_pair(nullptr, nullptr);
+            // std::cout << "taille de la queue :" << _handlers.size() << std::endl;
             auto handler = _handlers.front();
             _handlers.erase(_handlers.begin());
             return handler;

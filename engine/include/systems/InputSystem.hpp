@@ -10,13 +10,13 @@
 #include "BlcEvent.hpp"
 
 namespace potEngine {
-    class RenderSystem : public ASystem {
+    class InputSystem : public ASystem {
     public:
-        RenderSystem();
-        ~RenderSystem();
+        InputSystem();
+        ~InputSystem();
 
         void update(float) override {};
 
-        void renderWindow(std::shared_ptr<BlcEvent> event);
+        void pollInputs(std::shared_ptr<BlcEvent> event);
     };
 }

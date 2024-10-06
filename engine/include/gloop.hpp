@@ -5,7 +5,7 @@
 
 #include "ECSManager.hpp"
 #include "AEntity.hpp"
-#include "RenderComponent.hpp"
+#include "SpriteComponent.hpp"
 #include "RenderSystem.hpp"
 #include "WindowEntity.hpp"
 

@@ -16,13 +16,12 @@ namespace potEngine
     class SendAllDataInfoEvent : public IEvent {
     public:
         int max_players;
-        int socket;
+        int fd;
         struct sockaddr_in client_addr;
         uint8_t entity_id;
-        std::shared_ptr<ECSManager> ecs_manager;
 
-        SendAllDataInfoEvent(int maxP, int socket, struct sockaddr_in c_addr, std::vector<uint16_t> p, std::shared_ptr<ECSManager> ecs)
-            : max_players(maxP), socket(socket), client_addr(c_addr), ecs_manager(ecs) {}
+        SendAllDataInfoEvent(int maxP, int fd, struct sockaddr_in c_addr)
+            : max_players(maxP), fd(fd), client_addr(c_addr) {}
     };
 
     class SendAllDataEvent : public IEvent {
@@ -31,17 +30,20 @@ namespace potEngine
             eventBus.subscribe(this, &SendAllDataEvent::sendAllData);
         };
 
-        void sendAllData(std::shared_ptr<SendAllDataInfoEvent> info) {
+        void sendAllData(std::shared_ptr<SendAllDataInfoEvent> info)
+        {
+            if (ecsManager.getEntity(info->entity_id) == nullptr)
+                return;
             // todo
 
-            // std::vector<std::shared_ptr<AEntity>> _entities = info->ecs_manager->getEntities();
+            // std::vector<std::shared_ptr<AEntity>> _entities = ecsManager.getEntities();
             // auto _entitiesPtr = _entities ;
 
             // for (auto entity : _entities) {
             //     std::vector<int> position = entity->getComponent<PositionComponent>()->get()->_position;
             //     std::vector<uint16_t> _pos(position.begin(), position.end());
 
-            //     auto sendMessageEventInfo = std::make_shared<SendMessageToAllEvent>(info->max_players, info->socket, info->entity_id, GETINFO, _pos, info->ecs_manager);
+            //     auto sendMessageEventInfo = std::make_shared<SendMessageToAllEvent>(info->max_players, info->fd, info->entity_id, GETINFO, _pos, info->ecs_manager);
             //     eventBus.publish(sendMessageEventInfo);
             // }
         }

@@ -6,17 +6,18 @@
 #include "WindowEntity.hpp"
 #include "EventBus.hpp"
 #include "WindowComponent.hpp"
+#include "AnimationComponent.hpp"
 #include "MainLoopEvent.hpp"
 #include "BlcEvent.hpp"
 
 namespace potEngine {
-    class RenderSystem : public ASystem {
+    class AnimationSystem : public ASystem {
     public:
-        RenderSystem();
-        ~RenderSystem();
+        AnimationSystem();
+        ~AnimationSystem();
 
         void update(float) override {};
 
-        void renderWindow(std::shared_ptr<BlcEvent> event);
+        void updateAnimations(std::shared_ptr<BlcEvent> event);
     };
 }

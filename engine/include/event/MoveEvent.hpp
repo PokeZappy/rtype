@@ -21,10 +21,9 @@ namespace potEngine
         int fd;
         EventType event;
         uint8_t entity_id;
-        std::shared_ptr<ECSManager> ecs_manager;
 
-        MoveInfoEvent(int maxP, int fd, EventType event, uint8_t id, std::vector<uint16_t> p, std::shared_ptr<ECSManager> ecs)
-            : max_players(maxP), fd(fd), event(event), entity_id(id), ecs_manager(ecs) {}
+        MoveInfoEvent(int maxP, int fd, EventType event, uint8_t id, std::vector<uint16_t> p)
+            : max_players(maxP), fd(fd), event(event), entity_id(id) {}
     };
 
     class MoveEvent : public IEvent {
@@ -35,11 +34,11 @@ namespace potEngine
 
         std::shared_ptr<AEntity> check_collision(std::shared_ptr<MoveInfoEvent> info, std::vector<int> current_pos)
         {
-            auto current_entity = info->ecs_manager->getEntity(info->entity_id);
+            auto current_entity = ecsManager.getEntity(info->entity_id);
             if (current_entity->getComponent<CollisionComponent>() == nullptr || current_entity->getComponent<PositionComponent>() == nullptr)
                 return nullptr;
 
-            for (auto entity : info->ecs_manager->getEntities()) {
+            for (auto entity : ecsManager.getEntities()) {
                 if (entity->getComponent<CollisionComponent>() == nullptr || entity->getComponent<PositionComponent>() == nullptr || entity->getID() == info->entity_id)
                     continue;
                 int entity_x = entity->getComponent<PositionComponent>()->get()->_position[0];
@@ -53,7 +52,7 @@ namespace potEngine
 
         void Move(std::shared_ptr<MoveInfoEvent> info)
         {
-            auto _entity = info->ecs_manager->getEntity(info->entity_id);
+            auto _entity = ecsManager.getEntity(info->entity_id);
             if (!_entity) {
                 std::cout << "[SERVER] {ID}-[" << static_cast<int>(info->entity_id) << "] not found." << std::endl;
                 return;
@@ -83,8 +82,7 @@ namespace potEngine
                     info->max_players,
                     info->fd,
                     info->entity_id,
-                    static_cast<uint8_t>(entity_collide->getID()),
-                    info->ecs_manager
+                    static_cast<uint8_t>(entity_collide->getID())
                 );
                 eventBus.publish(collisionEventInfo);
             }
@@ -94,7 +92,7 @@ namespace potEngine
                 info->entity_id,
                 info->event,
                 _pos,
-                info->ecs_manager->getEntities()
+                ecsManager.getEntities()
             );
             eventBus.publish(sendMessageEventInfo);
             std::cout << "[SERVER] Entity {ID}-[" << std::to_string(static_cast<int>(info->entity_id))
