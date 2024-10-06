@@ -14,12 +14,10 @@ namespace potEngine
 {
     class MovementComponent : public AComponent {
     public:
-        int xDirection;
-        int yDirection;
         int speed;
 
         MovementComponent(int speed = 1)
-            : xDirection(0), yDirection(0), speed(speed) {}
+            : speed(speed) {}
     };
 }
 

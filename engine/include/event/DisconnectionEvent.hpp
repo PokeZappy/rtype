@@ -18,10 +18,9 @@ namespace potEngine
         int fd;
         uint8_t entity_id;
         std::vector<uint16_t> params;
-        std::shared_ptr<ECSManager> ecs_manager;
 
-        DisconnectionInfoEvent(int maxP, int fd, uint8_t id, std::vector<uint16_t> p, std::shared_ptr<ECSManager> ecs)
-            : max_players(maxP), fd(fd), entity_id(id), params(p), ecs_manager(ecs) {}
+        DisconnectionInfoEvent(int maxP, int fd, uint8_t id, std::vector<uint16_t> p)
+            : max_players(maxP), fd(fd), entity_id(id), params(p) {}
     };
 
     class DisconnectionEvent : public IEvent {
@@ -31,12 +30,20 @@ namespace potEngine
         };
 
         void disconnect(std::shared_ptr<DisconnectionInfoEvent> info) {
-            std::string player_name = info->ecs_manager.get()->getEntity(info->entity_id).get()->getComponent<potEngine::PlayerComponent>()->get()->username;
+            if (ecsManager.getEntity(info->entity_id) == nullptr)
+                return;
+            std::string player_name = ecsManager.getEntity(info->entity_id).get()->getComponent<potEngine::PlayerComponent>()->get()->username;
             std::cout << "[SERVER] Player disconnected: {id}-[" << std::to_string(static_cast<int>(info->entity_id)) << "], {username}-[" << player_name << "]" << std::endl;
 
-            auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(info->max_players, info->fd, info->entity_id, DISCONNECT, info->params, info->ecs_manager->getEntities());
+            auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(
+                info->max_players,
+                info->fd,
+                info->entity_id,
+                DISCONNECT,
+                info->params,
+                ecsManager.getEntities()
+            );
             eventBus.publish(sendMessageToAllEventInfo);
-            info->ecs_manager->removeEntity(info->entity_id);
         }
     };
 }

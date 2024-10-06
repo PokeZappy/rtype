@@ -28,8 +28,10 @@ namespace potEngine
             eventBus.subscribe(this, &SendMessageEvent::sendMessage);
         };
 
-        void sendMessage(std::shared_ptr<SendMessageEventInfo> info) {
-            // std::cout << "[CLIENT/SERVER][sendMessage] sending info..." << std::endl;
+        void sendMessage(std::shared_ptr<SendMessageEventInfo> info)
+        {
+            if (info->entity_id != 0 && ecsManager.getEntity(info->entity_id) == nullptr)
+                return;
             send_message(info->client_addr, info->entity_id, info->event_type, info->params, info->max_players, info->fd);
         }
     private:

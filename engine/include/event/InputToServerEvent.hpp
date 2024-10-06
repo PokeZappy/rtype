@@ -18,23 +18,23 @@ namespace potEngine {
             void handleInputs(std::shared_ptr<InputInfoEvent> event) {
                 if (event->type == sf::Event::KeyPressed) {
                     if (event->key == sf::Keyboard::X) {
-                        auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(4, _clientFd, _serverAddr, _playerId, potEngine::DISCONNECT, std::vector<uint16_t>{});
+                        auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::DISCONNECT, std::vector<uint16_t>{});
                         potEngine::eventBus.publish(disconnectEventInfo);
                     }
                     if (event->key == sf::Keyboard::Z) {
-                        auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(4, _clientFd, _serverAddr, _playerId, potEngine::MOVE_UP, std::vector<uint16_t>{});
+                        auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_UP, std::vector<uint16_t>{});
                         potEngine::eventBus.publish(moveInfo);
                     }
                     if (event->key == sf::Keyboard::S) {
-                        auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(4, _clientFd, _serverAddr, _playerId, potEngine::MOVE_DOWN, std::vector<uint16_t>{});
+                        auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_DOWN, std::vector<uint16_t>{});
                         potEngine::eventBus.publish(moveInfo);
                     }
                     if (event->key == sf::Keyboard::Q) {
-                        auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(4, _clientFd, _serverAddr, _playerId, potEngine::MOVE_LEFT, std::vector<uint16_t>{});
+                        auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_LEFT, std::vector<uint16_t>{});
                         potEngine::eventBus.publish(moveInfo);
                     }
                     if (event->key == sf::Keyboard::D) {
-                        auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(4, _clientFd, _serverAddr, _playerId, potEngine::MOVE_RIGHT, std::vector<uint16_t>{});
+                        auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_RIGHT, std::vector<uint16_t>{});
                         potEngine::eventBus.publish(moveInfo);
                     }
                 }

@@ -21,9 +21,12 @@ RType::Client::Client() : player_id(0)
     server_addr.sin_port = htons(PORT);
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
+    socklen_t addr_len = sizeof(server_addr);
+
     potEngine::ecsManager.registerSystem<potEngine::RenderSystem>();
     potEngine::ecsManager.registerSystem<potEngine::InputSystem>();
     potEngine::ecsManager.registerSystem<potEngine::AnimationSystem>();
+    potEngine::ecsManager.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
 
     std::cout << "[CLIENT] Ready to connect to the server...\n";
 }
@@ -54,6 +57,7 @@ void RType::Client::init_subscribe()
     auto sendMessageToAllExeptEvent = std::make_shared<potEngine::SendMessageToAllExeptEvent>();
     auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
     auto moveEvent = std::make_shared<potEngine::MoveEvent>();
+    auto collisionEvent = std::make_shared<potEngine::CollisionEvent>();
 }
 
 void RType::Client::handle_create_entity_player(uint8_t entity_id, std::string username)
@@ -61,22 +65,22 @@ void RType::Client::handle_create_entity_player(uint8_t entity_id, std::string u
     player_id = entity_id;
     auto entity = potEngine::ecsManager.createEntity(entity_id);
 
-    std::shared_ptr<potEngine::PlayerComponent> playerComponent = std::make_shared<potEngine::PlayerComponent>(username);
-    std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(0.0f, 0.0f);
-    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(1.0f);
-
     sf::Texture playerTexture;
     if (!playerTexture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif"))
         std::cout << assetFinder() << std::endl;
-    // sf::Sprite playerSprite(playerTexture);
-    // playerSprite.setTextureRect(sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
 
+    std::shared_ptr<potEngine::PlayerComponent> playerComponent = std::make_shared<potEngine::PlayerComponent>(username);
+    std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(0, 0);
+    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(5.0f);
+    std::shared_ptr<potEngine::LifeComponent> lifeComponent = std::make_shared<potEngine::LifeComponent>(3);
+    std::shared_ptr<potEngine::CollisionComponent> collisionComponent = std::make_shared<potEngine::CollisionComponent>();
     std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>(playerTexture, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
-
     potEngine::ecsManager.addComponent(entity, playerComponent);
     potEngine::ecsManager.addComponent(entity, positionComponent);
     potEngine::ecsManager.addComponent(entity, movementComponent);
-    potEngine::ecsManager.addComponent(entity, spriteComponent);    
+    potEngine::ecsManager.addComponent(entity, lifeComponent);
+    potEngine::ecsManager.addComponent(entity, collisionComponent);
+    potEngine::ecsManager.addComponent(entity, spriteComponent);
 }
 
 void RType::Client::handle_connection()
@@ -101,7 +105,6 @@ void RType::Client::handle_connection()
 void RType::Client::start()
 {
     init_subscribe();
-    socklen_t addr_len = sizeof(server_addr);
     handle_connection();
     setNonBlockingInput();
 
@@ -120,7 +123,6 @@ void RType::Client::start()
     // std::vector<std::shared_ptr<potEngine::AEntity>> spriteArray;
     // spriteArray.push_back(sprite);
     std::cout << "player id : " << static_cast<int>(player_id) << std::endl;
-    potEngine::ecsManager.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
     // spriteArray.push_back(potEngine::ecsManager.getEntity(player_id));
 
     // Datas needed when triggering events

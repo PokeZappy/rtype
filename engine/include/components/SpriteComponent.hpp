@@ -8,8 +8,8 @@ namespace potEngine
     class SpriteComponent : public AComponent {
     public:
         SpriteComponent() {};
-        SpriteComponent(sf::Texture texture);
-        SpriteComponent(sf::Texture texture, sf::IntRect textureRect);
+        SpriteComponent(sf::Texture &texture);
+        SpriteComponent(sf::Texture &texture, sf::IntRect textureRect);
         ~SpriteComponent();
 
         virtual void init();

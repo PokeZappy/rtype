@@ -22,6 +22,8 @@ const int CLIENT_SOCKET = 1;
 #include "PlayerComponent.hpp"
 #include "SpriteComponent.hpp"
 #include "WindowComponent.hpp"
+#include "LifeComponent.hpp"
+#include "CollisionComponent.hpp"
 
 #include "ASystem.hpp"
 #include "ISystem.hpp"
@@ -51,6 +53,7 @@ const int CLIENT_SOCKET = 1;
 #include "DisconnectionEvent.hpp"
 #include "ConnectionEvent.hpp"
 #include "MoveEvent.hpp"
+#include "CollisionEvent.hpp"
 #include "InputToServerEvent.hpp"
 
 #endif // GAME_CONFIG_HPP

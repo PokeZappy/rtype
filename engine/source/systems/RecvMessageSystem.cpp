@@ -3,6 +3,10 @@
 #include <cmath>
 #include "PositionComponent.hpp"
 #include "PlayerComponent.hpp"
+#include "MovementComponent.hpp"
+#include "LifeComponent.hpp"
+#include "CollisionComponent.hpp"
+#include "SpriteComponent.hpp"
 
 namespace potEngine
 {
@@ -17,46 +21,91 @@ namespace potEngine
     }
 
     std::tuple<uint8_t, potEngine::EventType, std::vector<uint16_t>> RecvMessageSystem::recv_message()
-{
-    uint8_t buffer[1024]; // TODO mettre BUFFER_SIZE macro
-    ssize_t recv_len = recvfrom(_clientFd, buffer, sizeof(buffer), 0, (struct sockaddr*)&_addr, &_addrLen);
+    {
+        uint8_t buffer[1024]; // TODO mettre BUFFER_SIZE macro
+        ssize_t recv_len = recvfrom(_clientFd, buffer, sizeof(buffer), 0, (struct sockaddr*)&_addr, &_addrLen);
 
-    if (recv_len < 0) {
-        return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<uint16_t>{});
+        if (recv_len < 0) {
+            return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<uint16_t>{});
+        }
+
+        int entity_id_bits = std::ceil(std::log2(4 + 1)); // TODO mettre macro MAX_PLAYERS
+        int action_bits = 8 - entity_id_bits;
+
+        uint8_t entity_id = (buffer[0] >> action_bits) & ((1 << entity_id_bits) - 1);
+        uint8_t action = buffer[0] & ((1 << action_bits) - 1);
+
+        potEngine::EventType event_type = static_cast<potEngine::EventType>(action);
+
+        std::vector<uint16_t> params;
+        for (ssize_t i = 1; i + 1 < recv_len; i += 2) {
+            uint16_t param = (buffer[i] << 8) | buffer[i + 1];
+            params.push_back(param);
+        }
+
+        return std::make_tuple(entity_id, event_type, params);
     }
 
-    int entity_id_bits = std::ceil(std::log2(4 + 1)); // TODO mettre macro MAX_PLAYERS
-    int action_bits = 8 - entity_id_bits;
+    std::string assetFinder();
 
-    uint8_t entity_id = (buffer[0] >> action_bits) & ((1 << entity_id_bits) - 1);
-    uint8_t action = buffer[0] & ((1 << action_bits) - 1);
+    static void createPlayerEntity(std::vector<uint16_t> params, uint8_t entity_id)
+    {
+        uint16_t username_length = params[1];
+        std::string username;
+        for (size_t i = 0; i < username_length; ++i) {
+            username += static_cast<char>(params[2 + i]);
+        }
+        std::vector<uint16_t> position(params.begin() + 2 + username_length, params.end());
 
-    potEngine::EventType event_type = static_cast<potEngine::EventType>(action);
+        auto entity = ecsManager.createEntity(entity_id);
 
-    std::vector<uint16_t> params;
-    for (ssize_t i = 1; i + 1 < recv_len; i += 2) {
-        uint16_t param = (buffer[i] << 8) | buffer[i + 1];
-        params.push_back(param);
+        sf::Texture playerTexture;
+        if (!playerTexture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif"))
+            std::cout << assetFinder() << std::endl;
+
+        std::shared_ptr<PlayerComponent> playerComponent = std::make_shared<PlayerComponent>(username);
+        std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(position[0], position[1]);
+        std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(5.0f);
+        std::shared_ptr<LifeComponent> lifeComponent = std::make_shared<LifeComponent>(3);
+        std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
+        std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(playerTexture, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
+        ecsManager.addComponent(entity, playerComponent);
+        ecsManager.addComponent(entity, positionComponent);
+        ecsManager.addComponent(entity, movementComponent);
+        ecsManager.addComponent(entity, lifeComponent);
+        ecsManager.addComponent(entity, collisionComponent);
+        ecsManager.addComponent(entity, spriteComponent);
+
+        std::cout << "[CLIENT] New entity created {ID}-[" << static_cast<int>(entity_id)
+            << "] {username}-[" << username <<  "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
     }
 
-    return std::make_tuple(entity_id, event_type, params);
-}
+    static void handleCreateEntity(std::vector<uint16_t> params, uint8_t entity_id)
+    {
+        uint16_t type = params[0];
+
+        if (type == EntityType::PLAYER)
+            return createPlayerEntity(params, entity_id);
+    }
 
     void RecvMessageSystem::updateSystem(std::shared_ptr<BlcEvent> event) {
         // std::cout << "RECEIVE" << std::endl;
         auto [entity_id, event_type, params] = recv_message();
-        if (event_type != potEngine::EventType::UNKNOW) {
+        if (event_type != EventType::UNKNOW) {
             std::cout << "[CLIENT] Received event from server: " << static_cast<int>(event_type) << std::endl;
         }
-        if (event_type == potEngine::EventType::CONNECTION) {
-            std::cout << "[CLIENT] New entity created {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
-            ecsManager.createEntity(entity_id);
+        if (event_type == EventType::CONNECTION) {
+            createPlayerEntity(params, entity_id);
         }
-        if (event_type == potEngine::EventType::DISCONNECT && entity_id == _playerId) {
-            std::cout << "[CLIENT] Disconnected from server.\n";
-            return;
+        if (event_type == EventType::DISCONNECT) {
+            if (entity_id == _playerId) {
+                std::cout << "[CLIENT] Disconnected from server." << std::endl;
+                // TODO fermer le client ici.
+                return;
+            }
+            std::cout << "[CLIENT] Client with {ID}-[" << static_cast<int>(entity_id) << "] disconnected from server." << std::endl;
         }
-        if (event_type == potEngine::EventType::MOVE_UP || event_type == potEngine::EventType::MOVE_DOWN || event_type == potEngine::EventType::MOVE_LEFT || event_type == potEngine::EventType::MOVE_RIGHT) {
+        if (event_type == EventType::MOVE_UP || event_type == EventType::MOVE_DOWN || event_type == EventType::MOVE_LEFT || event_type == EventType::MOVE_RIGHT) {
             auto entity = ecsManager.getEntity(entity_id);
             if (!entity) {
                 std::cout << "[CLIENT] {ID}-[" << static_cast<int>(entity_id) << "] not found." << std::endl;
@@ -66,6 +115,10 @@ namespace potEngine
             entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
             std::cout << "[CLIENT] Entity {ID}-[" << std::to_string(static_cast<int>(entity_id))
                 << "], {username}-[" << entity->getComponent<potEngine::PlayerComponent>()->get()->username << "], has move to {" << convertedParams[0] << "," << convertedParams[1] << "}" << std::endl;
+        }
+        if (event_type == EventType::INFORMATION) {
+            // ici le joueur recoit les informations de toutes les entities déja présente
+            handleCreateEntity(params, entity_id);
         }
     }
 }
