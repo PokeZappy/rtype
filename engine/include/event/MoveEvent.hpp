@@ -64,13 +64,13 @@ namespace potEngine
             auto username = _entity->getComponent<PlayerComponent>()->get()->username;
             int speed = _entity->getComponent<MovementComponent>()->get()->speed;
             if (info->event == MOVE_UP && position[1] > 0)
-                position[1] -= 1 * speed;
+                position[1] = (position[1] > speed) ? position[1] - speed : 0;
             if (info->event == MOVE_DOWN && position[1] < 1080)
-                position[1] += 1 * speed;
+                position[1] = (position[1] + speed < 1080) ? position[1] + speed : 1080;
             if (info->event == MOVE_RIGHT && position[0] < 1920)
-                position[0] += 1 * speed;
+                position[0] = (position[0] + speed < 1920) ? position[0] + speed : 1920;
             if (info->event == MOVE_LEFT && position[0] > 0)
-                position[0] -= 1 * speed;
+                position[0] = (position[0] > speed) ? position[0] - speed : 0;
 
             auto entity_collide = check_collision(info, position);
             std::vector<uint16_t> _pos = {static_cast<uint16_t>(save_x), static_cast<uint16_t>(save_y)};
