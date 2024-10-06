@@ -44,7 +44,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential cmake libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev ninja-build
+        sudo apt-get install -y build-essential base-devel cmake libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev
 
     - name: Set reusable strings
       id: strings
@@ -52,14 +52,33 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
+    - name: Set VCPKG_ROOT environment variable
+      run: |
+        echo "VCPKG_ROOT_UBUNTU=${{ steps.strings.outputs.build-output-dir }}vcpkg" >> $GITHUB_ENV
+        echo "VCPKG_ROOT_WIN=${{ steps.strings.outputs.build-output-dir }}\vcpkg" >> $GITHUB_ENV
+
+    - name: Install SFML with vcpkg Windows
+      if: matrix.os == 'windows-latest'
+      shell: pwsh
+      run: |
+          ${{ steps.strings.outputs.build-output-dir }}\bootstrap-vcpkg.bat
+          ${{ steps.strings.outputs.build-output-dir }}\vcpkg\vcpkg.exe install sfml:x64-windows
+
+    - name: Install SFML with vcpkg ubuntu
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+          ${{ steps.strings.outputs.build-output-dir }}/vcpkg/bootstrap-vcpkg.sh
+          ${{ steps.strings.outputs.build-output-dir }}/vcpkg/vcpkg install sfml
+
+
     - name: Configure CMake (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        cmake -B ${{ github.workspace }}/build \
+        cmake -B ${{ steps.strings.outputs.build-output-dir }} \
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/build/vcpkg/scripts/buildsystems/vcpkg.cmake \
+        -DCMAKE_TOOLCHAIN_FILE=${{ steps.strings.outputs.build-output-dir }}/vcpkg/scripts/buildsystems/vcpkg.cmake \
         -S ${{ github.workspace }}
 
 
@@ -67,11 +86,11 @@ jobs:
       if: matrix.os == 'windows-latest'
       shell: pwsh
       run: |
-        cmake -B ${{ github.workspace }}\build
+        cmake -B ${{ steps.strings.outputs.build-output-dir }} `
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} `
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} `
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
-        -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\build\vcpkg\scripts\buildsystems\vcpkg.cmake" `
+        -DCMAKE_TOOLCHAIN_FILE="${{ steps.strings.outputs.build-output-dir }}\vcpkg\scripts\buildsystems\vcpkg.cmake" `
         -G "Visual Studio 17 2022" `
         -S ${{ github.workspace }}
 
