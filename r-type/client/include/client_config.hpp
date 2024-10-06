@@ -3,13 +3,10 @@
 
 #include "game_config.hpp"
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <cstring>
 #include <unistd.h>
 #include <iostream>
 #include <fcntl.h>
-#include <termios.h>
 
 namespace RType
 {

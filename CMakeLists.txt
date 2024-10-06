@@ -4,10 +4,12 @@ project(RType)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+#include(cmake/auto-vcpkg.cmake)
 include(cmake/automate-vcpkg.cmake)
 
 vcpkg_bootstrap()
 vcpkg_install_packages(sfml)
+#vcpkg_add_package(sfml)
 
 set(CLIENT_INCLUDE_DIRS r-type/client/include)
 set(SERVER_INCLUDE_DIRS r-type/server/include)
@@ -98,28 +100,38 @@ add_custom_target(re_client
 
 # SFML
 if(WIN32)
+#    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_BINARY_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
+#    set(SFML_DIR "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/share/SFML")
     include_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/include")
     link_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/lib")
-
-
-    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_BINARY_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
-    set(SFML_DIR "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/share/SFML")
 
     find_package(SFML COMPONENTS system window graphics audio  REQUIRED)
 
     if(SFML_FOUND)
         message(STATUS "SFML found: ${SFML_LIBRARIES}.")
-        target_link_libraries(engine PRIVATE sfml-system sfml-window sfml-graphics sfml-audio)
-        target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-audio)
+        target_link_libraries(engine PRIVATE sfml-system sfml-window sfml-graphics sfml-audio ws2_32 winmm)
+        target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-audio ws2_32 winmm)
+        target_link_libraries(r-type_server PRIVATE ws2_32)
     else()
         message(FATAL_ERROR "SFML not found!")
     endif()
+    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_BINARY_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
+    set(SFML_DIR "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/share/SFML")
+    include_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/include")
+#    link_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/lib")
 
-    if(SFML_STATIC_LIBRARIES)
-        target_link_libraries(engine PRIVATE sfml-system sfml-window sfml-graphics sfml-audio)
-        target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-audio)
-        target_link_libraries(r-type_client PRIVATE opengl32 freetype winmm gdi32)
+    find_package(SFML COMPONENTS system window graphics audio)
+
+    if(NOT SFML_FOUND)
+        message(FATAL_ERROR "SFML not found!")
+    else()
+        message(STATUS "SFML found: ${SFML_LIBRARIES}.")
+        message(STATUS "SFML include dir: ${SFML_INCLUDE_DIR}.")
+        target_link_libraries(engine PRIVATE sfml-system sfml-audio sfml-window sfml-graphics winmm)
+        target_link_libraries(r-type_server PRIVATE sfml-system sfml-audio sfml-window sfml-graphics)
+        target_link_libraries(r-type_client PRIVATE sfml-system sfml-audio sfml-window sfml-graphics)
     endif()
+
 
 else()
     find_package(SFML COMPONENTS system window graphics network audio REQUIRED)

@@ -78,6 +78,7 @@ if (WIN32)
         message(STATUS "Using Vcpkg triplet 'x64-windows'")
         
         set(VCPKG_TRIPLET x64-windows)
+#        set(VCPKG_TRIPLET x64-mingw)
     endif()
 endif()
 
@@ -123,7 +124,7 @@ macro(_install_or_update_vcpkg)
         # execute_process(COMMAND git checkout 745a0aea597771a580d0b0f4886ea1e3a94dbca6 WORKING_DIRECTORY ${VCPKG_ROOT})
     else()
         # The following command has no effect if the vcpkg repository is in a detached head state.
-        message(STATUS "Auto-updating vcpkg in ${VCPKG_ROOT}")
+        message(WARNING "Auto-updating vcpkg in ${VCPKG_ROOT}")
         execute_process(COMMAND git pull WORKING_DIRECTORY ${VCPKG_ROOT})
     endif()
 
@@ -158,14 +159,22 @@ macro(vcpkg_install_packages)
 
     message(STATUS "Installing/Updating the following vcpkg-packages: ${PACKAGES_LIST_STR}")
 
-    if (VCPKG_TRIPLET)
-        set(ENV{VCPKG_DEFAULT_TRIPLET} "${VCPKG_TRIPLET}")
-    endif()
+#    if (VCPKG_TRIPLET)
+#        set(ENV{VCPKG_DEFAULT_TRIPLET} "${VCPKG_TRIPLET}")
+#    endif()
 
-    execute_process(
-        COMMAND ${VCPKG_EXEC} install ${ARGN}
-        WORKING_DIRECTORY ${VCPKG_ROOT}
+    set(VCPKG_TRIPLET "x64-mingw-dynamic")
+    set(ENV{VCPKG_DEFAULT_TRIPLET} "${VCPKG_TRIPLET}")
+    message(STATUS "INSTALLINFG ${VCPKG_TRIPLET} ${VCPKG_DEFAULT_TRIPLET} rekeke ${VCPKG_EXEC} ROROR ${ARGN}")
+    if(NOT VCPKG_LIST_OUTPUT MATCHES "sfml")
+        message(STATUS "SFML is not installed. Installing SFML...")
+        execute_process(
+                COMMAND ${VCPKG_EXEC} install sfml
+                WORKING_DIRECTORY ${VCPKG_ROOT}
         )
+    else()
+        message(STATUS "SFML is already installed.")
+    endif()
 endmacro()
     
 # MIT License
