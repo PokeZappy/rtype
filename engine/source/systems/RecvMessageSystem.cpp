@@ -91,13 +91,13 @@ namespace potEngine
     void RecvMessageSystem::updateSystem(std::shared_ptr<BlcEvent> event) {
         // std::cout << "RECEIVE" << std::endl;
         auto [entity_id, event_type, params] = recv_message();
-        if (event_type != potEngine::EventType::UNKNOW) {
+        if (event_type != EventType::UNKNOW) {
             std::cout << "[CLIENT] Received event from server: " << static_cast<int>(event_type) << std::endl;
         }
-        if (event_type == potEngine::EventType::CONNECTION) {
+        if (event_type == EventType::CONNECTION) {
             createPlayerEntity(params, entity_id);
         }
-        if (event_type == potEngine::EventType::DISCONNECT) {
+        if (event_type == EventType::DISCONNECT) {
             if (entity_id == _playerId) {
                 std::cout << "[CLIENT] Disconnected from server." << std::endl;
                 // TODO fermer le client ici.
@@ -105,7 +105,7 @@ namespace potEngine
             }
             std::cout << "[CLIENT] Client with {ID}-[" << static_cast<int>(entity_id) << "] disconnected from server." << std::endl;
         }
-        if (event_type == potEngine::EventType::MOVE_UP || event_type == potEngine::EventType::MOVE_DOWN || event_type == potEngine::EventType::MOVE_LEFT || event_type == potEngine::EventType::MOVE_RIGHT) {
+        if (event_type == EventType::MOVE_UP || event_type == EventType::MOVE_DOWN || event_type == EventType::MOVE_LEFT || event_type == EventType::MOVE_RIGHT) {
             auto entity = ecsManager.getEntity(entity_id);
             if (!entity) {
                 std::cout << "[CLIENT] {ID}-[" << static_cast<int>(entity_id) << "] not found." << std::endl;
@@ -116,7 +116,7 @@ namespace potEngine
             std::cout << "[CLIENT] Entity {ID}-[" << std::to_string(static_cast<int>(entity_id))
                 << "], {username}-[" << entity->getComponent<potEngine::PlayerComponent>()->get()->username << "], has move to {" << convertedParams[0] << "," << convertedParams[1] << "}" << std::endl;
         }
-        if (event_type == potEngine::EventType::INFORMATION) {
+        if (event_type == EventType::INFORMATION) {
             // ici le joueur recoit les informations de toutes les entities déja présente
             handleCreateEntity(params, entity_id);
         }

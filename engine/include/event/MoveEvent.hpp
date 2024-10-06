@@ -63,11 +63,11 @@ namespace potEngine
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
             auto username = _entity->getComponent<PlayerComponent>()->get()->username;
             int speed = _entity->getComponent<MovementComponent>()->get()->speed;
-            if (info->event == MOVE_UP && position[1] < 1920)
-                position[1] += 1 * speed;
-            if (info->event == MOVE_DOWN && position[1] > 0)
+            if (info->event == MOVE_UP && position[1] > 0)
                 position[1] -= 1 * speed;
-            if (info->event == MOVE_RIGHT && position[0] < 1080)
+            if (info->event == MOVE_DOWN && position[1] < 1080)
+                position[1] += 1 * speed;
+            if (info->event == MOVE_RIGHT && position[0] < 1920)
                 position[0] += 1 * speed;
             if (info->event == MOVE_LEFT && position[0] > 0)
                 position[0] -= 1 * speed;
