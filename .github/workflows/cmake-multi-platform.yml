@@ -60,14 +60,20 @@ jobs:
 
     - name: Set VCPKG_ROOT environment variable
       run: |
-        echo "VCPKG_ROOT_UBUNTU=${{ steps.strings_ubuntu.outputs.build-output-dir }}vcpkg" >> $GITHUB_ENV
-        echo "VCPKG_ROOT_WIN=${{ steps.strings_win.outputs.build-output-dir }}\vcpkg" >> $GITHUB_ENV
+        if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+          echo "VCPKG_ROOT=${{ steps.strings_ubuntu.outputs.build-output-dir }}vcpkg" >> $GITHUB_ENV
+        elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+          echo "VCPKG_ROOT=${{ steps.strings_win.outputs.build-output-dir }}\\vcpkg" >> $GITHUB_ENV
+        fi
+
+    - name: Clone vcpkg
+      run: git clone https://github.com/microsoft/vcpkg.git $VCPKG_ROOT
 
     - name: Install SFML with vcpkg Windows
       if: matrix.os == 'windows-latest'
       shell: pwsh
       run: |
-          ${{ steps.strings_win.outputs.build-output-dir }}\bootstrap-vcpkg.bat
+          ${{ steps.strings_win.outputs.build-output-dir }}\vcpkg\bootstrap-vcpkg.bat
           ${{ steps.strings_win.outputs.build-output-dir }}\vcpkg\vcpkg.exe install sfml:x64-windows
 
     - name: Install SFML with vcpkg ubuntu
