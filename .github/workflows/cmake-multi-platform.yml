@@ -84,8 +84,8 @@ jobs:
       if: matrix.os == 'windows-latest'
       shell: pwsh
       run: |
-        cmd.exe /c ${{ steps.strings_win.outputs.build-output-dir }}\vcpkg\bootstrap-vcpkg.bat
-        cmd.exe /c ${{ steps.strings_win.outputs.build-output-dir }}\vcpkg\vcpkg.exe install sfml:x64-windows
+          ${{ github.workspace }}\build\vcpkg\bootstrap-vcpkg.bat
+          ${{ github.workspace }}\build\vcpkg\vcpkg.exe install sfml:x64-windows
 
     - name: Install SFML with vcpkg ubuntu
       if: matrix.os == 'ubuntu-latest'
