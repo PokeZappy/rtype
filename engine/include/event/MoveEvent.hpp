@@ -8,6 +8,7 @@
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
 #include "CollisionComponent.hpp"
+#include "CollisionEvent.hpp"
 
 #include <netinet/in.h>
 #include <vector>
@@ -78,8 +79,14 @@ namespace potEngine
                 _entity->getComponent<PositionComponent>()->get()->_position = position;
                 _pos = {position.begin(), position.end()};
             } else {
-                // collision ! -> event la
-                std::cout << "COLLISION !" << std::endl;
+                auto collisionEventInfo = std::make_shared<CollisionInfoEvent>(
+                    info->max_players,
+                    info->fd,
+                    info->entity_id,
+                    static_cast<uint8_t>(entity_collide->getID()),
+                    info->ecs_manager
+                );
+                eventBus.publish(collisionEventInfo);
             }
             auto sendMessageEventInfo = std::make_shared<SendMessageToAllEventInfo>(
                 info->max_players,

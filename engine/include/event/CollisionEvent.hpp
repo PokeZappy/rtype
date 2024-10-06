@@ -21,8 +21,8 @@ namespace potEngine
         uint8_t entity_id;
         std::shared_ptr<ECSManager> ecs_manager;
 
-        CollisionInfoEvent(int maxP, int player_fd, uint8_t entity_id, std::shared_ptr<ECSManager> ecs)
-            : max_players(maxP), player_id(player_fd), entity_id(entity_id), ecs_manager(ecs) {}
+        CollisionInfoEvent(int maxP, int player_fd,  uint8_t player_id, uint8_t entity_id, std::shared_ptr<ECSManager> ecs)
+            : max_players(maxP), player_fd(player_fd), player_id(player_id), entity_id(entity_id), ecs_manager(ecs) {}
     };
 
     class CollisionEvent : public IEvent {
@@ -30,6 +30,8 @@ namespace potEngine
         CollisionEvent() {
             eventBus.subscribe(this, &CollisionEvent::Collision);
         };
+
+        // EVENT PUBLISH MES COUILLES
 
         void Collision(std::shared_ptr<CollisionInfoEvent> info)
         {
