@@ -37,6 +37,12 @@ namespace potEngine {
                         auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_RIGHT, std::vector<uint16_t>{});
                         potEngine::eventBus.publish(moveInfo);
                     }
+                    if (event->key == sf::Keyboard::E) {
+                        sf::Texture playerTexture;
+                        if (!playerTexture.loadFromFile("/home/Tom/Bureau/Projet/EPITECH/B-CPP-500-LYN-5-1-rtype-cyprien.diederichs/r-type/assets/sprites/r-typesheet42.gif"))
+                            std::cout << "nop"<< std::endl;
+                        potEngine::ecsManager.createSpriteEntity(playerTexture);
+                    }
                 }
             }
         private:
