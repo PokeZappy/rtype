@@ -49,22 +49,23 @@ jobs:
     - name: Set reusable strings
       id: strings_ubuntu
       shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+      run: echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
     - name: Set reusable strings
       id: strings_win
       shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}\build" >> "$GITHUB_OUTPUT"
+      run: echo "build-output-dir=${{ github.workspace }}\build" >> "$GITHUB_OUTPUT"
 
-    - name: Set VCPKG_ROOT environment variable
-      run: |
-        if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
-          echo "VCPKG_ROOT=${{ steps.strings_ubuntu.outputs.build-output-dir }}vcpkg" >> $GITHUB_ENV
-        elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-          echo "VCPKG_ROOT=${{ steps.strings_win.outputs.build-output-dir }}\\vcpkg" >> $GITHUB_ENV
-        fi
+    - name: Set VCPKG_ROOT environment variable (windows)
+      if: matrix.os == 'windows-latest'
+      shell: pwsh
+      run: echo "VCPKG_ROOT=${{ steps.strings_win.outputs.build-output-dir }}\vcpkg" >> $GITHUB_ENV
+
+    - name: Set VCPKG_ROOT environment variable (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash
+      run: echo "VCPKG_ROOT_UBUNTU=${{ steps.strings_ubuntu.outputs.build-output-dir }}/vcpkg" >> $GITHUB_ENV
+
 
     - name: Clone vcpkg
       run: git clone https://github.com/microsoft/vcpkg.git $VCPKG_ROOT
