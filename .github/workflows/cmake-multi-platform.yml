@@ -4,7 +4,7 @@ on:
   push:
     branches: ["dev_server", "dev_client", "feat_updage_cmake", "cross/feat/server"]
   pull_request:
-    branches: ["dev", "main", "feat_updage_cmake"]
+    branches: ["dev", "main"]
 
 jobs:
   build:
@@ -46,85 +46,23 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential cmake libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev
 
-    - name: Set reusable strings
-      id: strings_ubuntu
-      shell: bash
-      run: echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-
-    - name: Set reusable strings
-      id: strings_win
-      shell: bash
-      run: echo "build-output-dir=${{ github.workspace }}\build" >> "$GITHUB_OUTPUT"
-
-    - name: Set VCPKG_ROOT environment variable (windows)
-      if: matrix.os == 'windows-latest'
-      shell: pwsh
-      run: echo "VCPKG_ROOT=${{ steps.strings_win.outputs.build-output-dir }}\vcpkg" >> $GITHUB_ENV
-
-    - name: Set VCPKG_ROOT environment variable (Ubuntu)
+    - name: Build dir ubuntu
       if: matrix.os == 'ubuntu-latest'
-      shell: bash
-      run: echo "VCPKG_ROOT=${{ steps.strings_ubuntu.outputs.build-output-dir }}/vcpkg" >> $GITHUB_ENV
+      env:
+        Build_dir : ${{ github.workspace}}/build
+      run : echo "create env"
 
-
-    - name: Install SFML with vcpkg Windows
+    - name: Build dir windows
       if: matrix.os == 'windows-latest'
-      shell: pwsh
-      run: |
-          mkdir ${{ steps.strings_win.outputs.build-output-dir }}
-          mkdir ${{ steps.strings_win.outputs.build-output-dir }}\vcpkg
+      env:
+        Build_dir : ${{ github.workspace}}\build
+      run : echo "create env"
 
-    - name: Clone vcpkg
-      run: git clone https://github.com/microsoft/vcpkg.git $VCPKG_ROOT
-
-    - name: Where the fuck am I ?
-      run: tree
-
-    - name: Install SFML win
-      if: matrix.os == 'windows-latest'
-      shell: pwsh
-      run: |
-          ${{ github.workspace }}\build\vcpkg\bootstrap-vcpkg.bat
-          ${{ github.workspace }}\build\vcpkg\vcpkg.exe install sfml:x64-windows
-
-    - name: Install SFML with vcpkg ubuntu
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-          ${{ steps.strings_ubuntu.outputs.build-output-dir }}/vcpkg/bootstrap-vcpkg.sh
-          ${{ steps.strings_ubuntu.outputs.build-output-dir }}/vcpkg/vcpkg install sfml
-
-
-    - name: Configure CMake (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        cmake -B ${{ steps.strings_ubuntu.outputs.build-output-dir }} \
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-        -DCMAKE_TOOLCHAIN_FILE=${{ steps.strings_ubuntu.outputs.build-output-dir }}/vcpkg/scripts/buildsystems/vcpkg.cmake \
-        -S ${{ github.workspace }}
-
-
-    - name: Configure CMake (Windows)
-      if: matrix.os == 'windows-latest'
-      shell: pwsh
-      run: |
-        cmake -B ${{ steps.strings_win.outputs.build-output-dir }} `
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} `
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} `
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
-        -DCMAKE_TOOLCHAIN_FILE="${{ steps.strings_win.outputs.build-output-dir }}\vcpkg\scripts\buildsystems\vcpkg.cmake" `
-        -G "Visual Studio 17 2022" `
-        -S ${{ github.workspace }}
-
-    - name: Build ubuntu
-      if: matrix.os == 'ubuntu-latest'
-      run: cmake --build ${{ steps.strings_ubuntu.outputs.build-output-dir }} --config ${{ matrix.build_type }}
-
-    - name: Build win
-      if: matrix.os == 'windows-latest'
-      run: cmake --build ${{ steps.strings_win.outputs.build-output-dir }} --config ${{ matrix.build_type }}
-
-    - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ctest --build-config ${{ matrix.build_type }}
+    - name: Build & Test
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{ github.workspace }}/build
+        cc: ${{ matrix.c_compiler }}
+        cxx: ${{ matrix.cpp_compiler }}
+        build-type: ${{ matrix.build_type }}
+        parallel: 14

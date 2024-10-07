@@ -4,12 +4,12 @@ project(RType)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#include(cmake/auto-vcpkg.cmake)
-include(cmake/automate-vcpkg.cmake)
-
-vcpkg_bootstrap()
-vcpkg_install_packages(sfml)
-#vcpkg_add_package(sfml)
+include(cmake/auto-vcpkg.cmake)
+#include(cmake/automate-vcpkg.cmake)
+#
+#vcpkg_bootstrap()
+#vcpkg_install_packages(sfml)
+vcpkg_add_package(sfml)
 
 set(CLIENT_INCLUDE_DIRS r-type/client/include)
 set(SERVER_INCLUDE_DIRS r-type/server/include)
@@ -104,7 +104,7 @@ if(WIN32)
 #    set(SFML_DIR "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/share/SFML")
     include_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/include")
     link_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/lib")
-
+    set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/share")
     find_package(SFML COMPONENTS system window graphics audio  REQUIRED)
 
     if(SFML_FOUND)
@@ -120,7 +120,7 @@ if(WIN32)
     include_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/include")
 #    link_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/lib")
 
-    find_package(SFML COMPONENTS system window graphics audio)
+    find_package(SFML COMPONENTS system window graphics audio CONFIG REQUIRED)
 
     if(NOT SFML_FOUND)
         message(FATAL_ERROR "SFML not found!")
@@ -134,6 +134,9 @@ if(WIN32)
 
 
 else()
+    set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-linux/share")
+    include_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-linux/include")
+#        set(SFML_DIR "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-linux/share/SFML")
     find_package(SFML COMPONENTS system window graphics network audio REQUIRED)
     if(SFML_FOUND)
         target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-audio)
