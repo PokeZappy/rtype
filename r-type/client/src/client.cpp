@@ -108,7 +108,11 @@ void RType::Client::start()
     // Initialisation Engine
     // std::shared_ptr<potEngine::AEntity> sprite = ecsManager.createSpriteEntity(spriteTexture);
     std::shared_ptr<potEngine::AEntity> window = potEngine::ecsManager.createWindowEntity();
+
+    std::cout << "window id : " << window->getID() << std::endl;
+    
     std::shared_ptr<potEngine::AEntity> mainMusic = potEngine::ecsManager.createEntity();
+    std::cout << "music id : " << mainMusic->getID() << std::endl;
     std::string musicPath = assetFinder() + "/Soundtracks/ambiant_music/03.-Start-_-Battle-Theme-_1st-Stage_.wav";
     std::shared_ptr<potEngine::AudioComponent> musicComponent = std::make_shared<potEngine::AudioComponent>(musicPath, true);
     musicComponent->setPlaying(true);

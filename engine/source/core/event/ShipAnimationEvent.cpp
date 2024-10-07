@@ -61,6 +61,12 @@ std::string assetFinder() {
                             auto textComponent = std::make_shared<TextComponent>("coucou", sf::Vector2f(500, 500), 32, sf::Color::White);
                             ecsManager.addComponent(entity, textComponent);
                         }
+                        if (event->key == sf::Keyboard::M) {
+                            auto text = ecsManager.createEntity();
+                            auto textComponent = std::make_shared<TextComponent>("Vous etes mort !", sf::Vector2f(200, 200), 32, sf::Color::White);
+                            ecsManager.addComponent(text, textComponent);
+                            ecsManager.removeEntity(_playerId);
+                        }
 
                         // on monte le ship vers le haut
                         if (event->key == sf::Keyboard::Z) {
