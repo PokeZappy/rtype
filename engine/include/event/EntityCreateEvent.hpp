@@ -36,10 +36,9 @@ namespace potEngine
             auto entity = ecsManager.createEntity();
             auto entity_id = entity->getID();
 
-            std::vector<int> position = entity->getComponent<PositionComponent>()->get()->_position;
             std::vector<uint16_t> _pos;
             _pos.push_back(info->_entityType);
-            _pos.insert(_pos.end(), position.begin(), position.end());
+            // _pos.insert(_pos.end(), position.begin(), position.end());
 
             auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(
                 info->max_players,
