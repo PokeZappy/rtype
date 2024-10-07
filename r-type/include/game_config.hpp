@@ -24,6 +24,7 @@ const int CLIENT_SOCKET = 1;
 #include "WindowComponent.hpp"
 #include "LifeComponent.hpp"
 #include "CollisionComponent.hpp"
+#include "ShootComponent.hpp"
 
 #include "ASystem.hpp"
 #include "ISystem.hpp"
@@ -33,6 +34,7 @@ const int CLIENT_SOCKET = 1;
 #include "AnimationSystem.hpp"
 #include "ShipAnimationEvent.hpp"
 #include "InputInfoEvent.hpp"
+#include "MonstreComponent.hpp"
 
 #include "AEventHandler.hpp"
 #include "EventBus.hpp"

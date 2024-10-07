@@ -16,9 +16,10 @@ namespace potEngine
     };
 
     enum EntityType {
-        TOM = 0x00,
+        NONE = 0x00,
         PLAYER = 0x01,
-        MONSTRE = 0x02
+        MONSTRE = 0x02,
+        SHOOT = 0x03
     };
 
     class IEvent {

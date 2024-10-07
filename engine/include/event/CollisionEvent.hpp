@@ -30,8 +30,6 @@ namespace potEngine
             eventBus.subscribe(this, &CollisionEvent::Collision);
         };
 
-        // EVENT PUBLISH MES COUILLES
-
         void Collision(std::shared_ptr<CollisionInfoEvent> info)
         {
             auto player = ecsManager.getEntity(info->player_id);
@@ -45,7 +43,15 @@ namespace potEngine
                 << "], {username}-[" << username << "] collide and has now {LIFE}-[" << life << "]" << std::endl;
 
             if (life < 0) {
-                // todo implémenter la death
+                auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(
+                    info->max_players,
+                    info->player_fd,
+                    info->entity_id,
+                    DEATH,
+                    std::vector<uint16_t>{},
+                    ecsManager.getEntities()
+                );
+                eventBus.publish(sendMessageToAllEventInfo);
             }
         }
     };

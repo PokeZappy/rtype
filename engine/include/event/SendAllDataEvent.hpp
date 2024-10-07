@@ -7,6 +7,8 @@
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
+#include "ShootComponent.hpp"
+#include "MonstreComponent.hpp"
 
 #include <netinet/in.h>
 #include <vector>
@@ -34,8 +36,12 @@ namespace potEngine
         {
             if (entity->getComponent<PlayerComponent>())
                 return EntityType::PLAYER;
+            if (entity->getComponent<MonstreComponent>())
+                return EntityType::MONSTRE;
+            if (entity->getComponent<ShootComponent>())
+                return EntityType::SHOOT;
             else
-                return EntityType::TOM;
+                return EntityType::NONE;
         }
 
         void sendAllData(std::shared_ptr<SendAllDataInfoEvent> info)
