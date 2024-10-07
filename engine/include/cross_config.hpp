@@ -4,9 +4,14 @@
 #define BUFFER_SIZE 1024
 
 #ifdef _WIN32
+    #define NOMINMAX
     #include <winsock2.h>
     #include <ws2tcpip.h>
     #include <windows.h>
+    #include <BaseTsd.h>
+    #include <io.h>
+
+    typedef SSIZE_T ssize_t;
 
     #define INIT_WINSOCK() \
     WSADATA wsaData; \
@@ -42,6 +47,7 @@
     #include <arpa/inet.h>
     #include <unistd.h>
     #include <stdint.h>
+    #include <fcntl.h>
 
     #define INIT_WINSOCK()
 

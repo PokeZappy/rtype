@@ -51,12 +51,12 @@ target_link_libraries(r-type_client PRIVATE engine)
 
 file(GLOB_RECURSE SERVER_SOURCES_TEST "r-type/server/tests/*.cpp" "r-type/server/tests/*.hpp")
 add_executable(r-type_server_test ${SERVER_SOURCES_TEST})
-target_link_libraries(r-type_server_test engine)
+#target_link_libraries(r-type_server_test engine)
 add_test(NAME ServerTests COMMAND r-type_server_test)
 
 file(GLOB_RECURSE CLIENT_SOURCES_TEST "r-type/client/tests/*.cpp" "r-type/client/tests/*.hpp")
 add_executable(r-type_client_test ${CLIENT_SOURCES_TEST})
-target_link_libraries(r-type_client_test engine)
+#target_link_libraries(r-type_client_test engine)
 add_test(NAME ClientTests COMMAND r-type_client_test)
 
 if(MSVC)
@@ -102,9 +102,11 @@ add_custom_target(re_client
 if(WIN32)
 #    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_BINARY_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 #    set(SFML_DIR "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/share/SFML")
-    include_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/include")
-    link_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/lib")
+#    set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-linux/share")
+#    include_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-linux/include")
     set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/share")
+    include_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/include")
+#    link_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/lib")
     find_package(SFML COMPONENTS system window graphics audio  REQUIRED)
 
     if(SFML_FOUND)

@@ -3,6 +3,7 @@
 #include <cmath>
 #include "PositionComponent.hpp"
 #include "PlayerComponent.hpp"
+#include "cross_config.hpp"
 
 namespace potEngine
 {

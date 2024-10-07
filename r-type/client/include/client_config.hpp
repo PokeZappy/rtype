@@ -1,12 +1,11 @@
 #ifndef CLIENT_CONFIG_HPP
 #define CLIENT_CONFIG_HPP
 
+#include "cross_config.hpp"
 #include "game_config.hpp"
 
 #include <cstring>
-#include <unistd.h>
 #include <iostream>
-#include <fcntl.h>
 
 namespace RType
 {

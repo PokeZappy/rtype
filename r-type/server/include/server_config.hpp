@@ -15,10 +15,8 @@
 #include <memory>
 #include <vector>
 #include <iostream>
-#include <fcntl.h>
 #include <chrono>
 #include <cstring>
-#include <unistd.h>
 
 namespace RType
 {
