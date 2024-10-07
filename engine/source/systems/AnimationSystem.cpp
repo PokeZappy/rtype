@@ -5,7 +5,7 @@
 
 namespace potEngine {
 
-    AnimationSystem::AnimationSystem()
+    AnimationSystem::AnimationSystem() : ASystem()
     {
         _signature.set(AComponent::getID<SpriteComponent>(), true);
         _signature.set(AComponent::getID<AnimationComponent>(), true);

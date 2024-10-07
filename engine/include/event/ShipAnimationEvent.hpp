@@ -7,6 +7,7 @@
 #include "SendMessageEvent.hpp"
 #include "AnimationComponent.hpp"
 #include "SpriteComponent.hpp"
+#include "TextComponent.hpp"
 
 #include <netinet/in.h>
 #include <cmath>

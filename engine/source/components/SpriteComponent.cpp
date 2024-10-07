@@ -22,6 +22,10 @@ namespace potEngine {
         //     RenderComponent::shutdown();
     }
 
+    void SpriteComponent::draw(sf::RenderWindow &window) {
+        window.draw(_sprite);
+    }
+
     void SpriteComponent::init()
     {
         // _sprite = new sf::Sprite();

@@ -10,7 +10,7 @@
 
 namespace potEngine
 {
-    RecvMessageSystem::RecvMessageSystem(int cliFd, struct sockaddr_in servAddr, socklen_t adLen, uint8_t id) : _clientFd(cliFd), _addrLen(adLen), _playerId(id)
+    RecvMessageSystem::RecvMessageSystem(int cliFd, struct sockaddr_in servAddr, socklen_t adLen, uint8_t id) : _clientFd(cliFd), _addrLen(adLen), _playerId(id), ASystem()
     {
         // _signature.set(AComponent::getID<RenderComponent>(), true);
         eventBus.subscribe(this, &RecvMessageSystem::updateSystem);

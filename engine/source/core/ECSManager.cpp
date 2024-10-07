@@ -48,10 +48,8 @@ namespace potEngine {
         auto entity = std::make_shared<AEntity>(30);
 
         std::shared_ptr<potEngine::WindowComponent> windowComponent = std::make_shared<potEngine::WindowComponent>();
-        std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>();
 
         addComponent<WindowComponent>(entity, windowComponent);
-        addComponent<SpriteComponent>(entity, spriteComponent);
 
         _entities.push_back(entity);
         return (entity);
@@ -90,14 +88,19 @@ namespace potEngine {
 
     void ECSManager::EntitySignatureChanged(std::shared_ptr<AEntity> entity) {
         auto const &entitySignature = entity->getSignature();
-        // std::cout << "entity signature : " << entitySignature << std::endl;
 
         for (auto const &system: _systems) {
             auto const &systemSignature = system->getSignature();
-            // std::cout << "system signature : " << systemSignature << std::endl;
             auto &systemEntities = system->getEntities();
+            bool doesSignaturesMatch = false;
 
-            if ((entitySignature & systemSignature) == systemSignature)
+            if (system->isInclusive()) {
+                doesSignaturesMatch = (entitySignature & systemSignature).any();
+            } else {
+                doesSignaturesMatch = (entitySignature & systemSignature) == systemSignature;
+            }
+
+            if (doesSignaturesMatch)
             {
                 auto it = std::find(systemEntities.begin(), systemEntities.end(), entity);
 

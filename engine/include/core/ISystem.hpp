@@ -11,6 +11,7 @@ namespace potEngine {
         virtual void update(float deltaTime) = 0;
         virtual std::bitset<64> getSignature() = 0;
         virtual std::vector<std::shared_ptr<AEntity>> &getEntities() = 0;
+        virtual bool isInclusive() = 0;
 
         // virtual removeEntity(const std::size_t id) = 0;
     };

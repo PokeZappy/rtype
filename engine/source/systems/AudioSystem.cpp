@@ -5,7 +5,7 @@
 
 namespace potEngine {
 
-    AudioSystem::AudioSystem()
+    AudioSystem::AudioSystem() : ASystem()
     {
         _signature.set(AComponent::getID<AudioComponent>(), true);
         eventBus.subscribe(this, &AudioSystem::updateSounds);

@@ -1,11 +1,10 @@
 #pragma once
 
-#include "AComponent.hpp"
-#include <SFML/Graphics.hpp>
+#include "RenderComponent.hpp"
 
 namespace potEngine
 {
-    class SpriteComponent : public AComponent {
+    class SpriteComponent : public RenderComponent {
     public:
         SpriteComponent() {};
         SpriteComponent(sf::Texture &texture);
@@ -14,6 +13,7 @@ namespace potEngine
 
         virtual void init();
         virtual void shutdown();
+        void draw(sf::RenderWindow &window) override;
         void setSprite(sf::Sprite sprite);
         sf::Sprite &getSprite();
         sf::Texture getTexture();

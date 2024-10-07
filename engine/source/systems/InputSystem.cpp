@@ -8,7 +8,7 @@
 
 namespace potEngine {
 
-    InputSystem::InputSystem()
+    InputSystem::InputSystem() : ASystem()
     {
         _signature.set(AComponent::getID<WindowComponent>(), true);
         eventBus.subscribe(this, &InputSystem::pollInputs);

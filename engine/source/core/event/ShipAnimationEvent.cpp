@@ -57,7 +57,9 @@ std::string assetFinder() {
                         if (event->key == sf::Keyboard::E) {
                             sf::Texture texture;
                             texture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif");
-                            auto entity = ecsManager.createSpriteEntity(texture);
+                            auto entity = ecsManager.createEntity();
+                            auto textComponent = std::make_shared<TextComponent>("coucou", sf::Vector2f(500, 500), 32, sf::Color::White);
+                            ecsManager.addComponent(entity, textComponent);
                         }
 
                         // on monte le ship vers le haut
