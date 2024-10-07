@@ -31,29 +31,14 @@ namespace potEngine
             eventBus.subscribe(this, &EntityCreateEvent::EntityCreate);
         };
 
-        EntityType checkEntity(std::shared_ptr<potEngine::AEntity> entity)
-        {
-            if (entity->getComponent<PlayerComponent>())
-                return EntityType::PLAYER;
-            if (entity->getComponent<MonstreComponent>())
-                return EntityType::MONSTRE;
-            if (entity->getComponent<ShootComponent>())
-                return EntityType::SHOOT;
-            else
-                return EntityType::NONE;
-        }
-
         void EntityCreate(std::shared_ptr<EntityCreateInfoEvent> info)
         {
             auto entity = ecsManager.createEntity();
             auto entity_id = entity->getID();
 
             std::vector<int> position = entity->getComponent<PositionComponent>()->get()->_position;
-            EntityType _entityType = checkEntity(entity);
-            if (_entityType == EntityType::NONE)
-                return;
             std::vector<uint16_t> _pos;
-            _pos.push_back(_entityType);
+            _pos.push_back(info->_entityType);
             _pos.insert(_pos.end(), position.begin(), position.end());
 
             auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(
@@ -66,7 +51,7 @@ namespace potEngine
             );
             eventBus.publish(sendMessageToAllEventInfo);
 
-            std::cout << "[SERVER] New entity created {ID}-[" << static_cast<int>(entity_id) << "] {TYPE}-[" << _entityType << "]" << std::endl;
+            std::cout << "[SERVER] New entity created {ID}-[" << static_cast<int>(entity_id) << "] {TYPE}-[" << info->_entityType << "]" << std::endl;
         }
     };
 }

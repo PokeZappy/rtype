@@ -53,6 +53,10 @@ void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_a
         auto moveInfo = std::make_shared<potEngine::MoveInfoEvent>(MAX_PLAYERS, server_fd, action, entity_id, params);
         potEngine::eventBus.publish(moveInfo);
     }
+
+    if (action == potEngine::SHOOT) {
+        // todo
+    }
 }
 
 void RType::Server::init_subscribe()

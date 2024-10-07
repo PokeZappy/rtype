@@ -12,14 +12,15 @@ namespace potEngine
         MOVE_LEFT = 0x06,
         MOVE_RIGHT = 0x07,
         COLLISION = 0x08,
-        DEATH
+        DEATH = 0x09,
+        SHOOT = 0x10
     };
 
     enum EntityType {
         NONE = 0x00,
         PLAYER = 0x01,
         MONSTRE = 0x02,
-        SHOOT = 0x03
+        PEW = 0x03
     };
 
     class IEvent {

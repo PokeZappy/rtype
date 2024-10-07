@@ -39,7 +39,7 @@ namespace potEngine
             if (entity->getComponent<MonstreComponent>())
                 return EntityType::MONSTRE;
             if (entity->getComponent<ShootComponent>())
-                return EntityType::SHOOT;
+                return EntityType::PEW;
             else
                 return EntityType::NONE;
         }
