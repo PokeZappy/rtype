@@ -54,9 +54,13 @@ void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_a
         potEngine::eventBus.publish(moveInfo);
     }
 
+<<<<<<< Updated upstream
     if (action == potEngine::SHOOT) {
         // todo
     }
+=======
+    if (action == potEngine::SHOOT)
+>>>>>>> Stashed changes
 }
 
 void RType::Server::init_subscribe()

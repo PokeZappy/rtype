@@ -19,8 +19,12 @@ namespace potEngine
     enum EntityType {
         NONE = 0x00,
         PLAYER = 0x01,
+<<<<<<< Updated upstream
         MONSTRE = 0x02,
         PEW = 0x03
+=======
+        MONSTRE = 0x02
+>>>>>>> Stashed changes
     };
 
     class IEvent {
