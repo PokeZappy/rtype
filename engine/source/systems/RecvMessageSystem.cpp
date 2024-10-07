@@ -60,21 +60,49 @@ namespace potEngine
         auto entity = ecsManager.createEntity(entity_id);
 
         sf::Texture playerTexture;
-        if (!playerTexture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif"))
+        libconfig::Config sconfig;
+        try {
+
+            sconfig.readFile("/home/fifster/tek3/r-type/rtype/r-type/config/config.cfg");
+            } catch (const libconfig::FileIOException &fioex) {
+        std::cerr << "File I/O error: Unable to read configuration file." << std::endl;
+    } catch (const libconfig::ParseException &pex) {
+        // This provides more specific details about where the parse error occurred
+        std::cerr << "Parse error at " << pex.getFile() << ":" << pex.getLine() 
+                  << " - " << pex.getError() << std::endl;
+    } catch (const libconfig::SettingNotFoundException &nfex) {
+        // This gives the exact setting that was not found
+        std::cerr << "Missing setting in configuration file: " << nfex.getPath() << std::endl;
+
+    } catch (const std::exception &e) {
+        // Catch other general exceptions
+        std::cerr << "Error config: " << e.what() << std::endl;
+    }
+        if (!playerTexture.loadFromFile(assetFinder() + sconfig.lookup("graphics").lookup("sprites").lookup("player").c_str()))
             std::cout << assetFinder() << std::endl;
+        else
+            std::cout << "Texture loaded" << std::endl;
 
         std::shared_ptr<PlayerComponent> playerComponent = std::make_shared<PlayerComponent>(username);
         std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(position[0], position[1]);
-        std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(5.0f);
+        try {
+            std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(sconfig.lookup("graphics").lookup("move_on_screen"));
+            ecsManager.addComponent(entity, movementComponent);
+        } catch (const std::exception& e) {
+            std::cerr << "Error mvt : " << e.what() << std::endl;
+        }
         std::shared_ptr<LifeComponent> lifeComponent = std::make_shared<LifeComponent>(3);
         std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
-        std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(playerTexture, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
+        try {
+            std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(playerTexture, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
+            ecsManager.addComponent(entity, spriteComponent);
+        } catch (const std::exception& e) {
+            std::cerr << "Error sprites: " << e.what() << std::endl;
+        }
         ecsManager.addComponent(entity, playerComponent);
         ecsManager.addComponent(entity, positionComponent);
-        ecsManager.addComponent(entity, movementComponent);
         ecsManager.addComponent(entity, lifeComponent);
         ecsManager.addComponent(entity, collisionComponent);
-        ecsManager.addComponent(entity, spriteComponent);
 
         std::cout << "[CLIENT] New entity created {ID}-[" << static_cast<int>(entity_id)
             << "] {username}-[" << username <<  "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
