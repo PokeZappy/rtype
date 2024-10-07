@@ -39,15 +39,7 @@ namespace potEngine
             if (entity->getComponent<MonstreComponent>())
                 return EntityType::MONSTRE;
             if (entity->getComponent<ShootComponent>())
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
                 return EntityType::PEW;
-=======
-                return EntityType::PLAYER;
->>>>>>> Stashed changes
-=======
-                return EntityType::PLAYER;
->>>>>>> Stashed changes
             else
                 return EntityType::NONE;
         }
