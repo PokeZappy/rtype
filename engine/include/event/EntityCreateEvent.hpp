@@ -31,21 +31,6 @@ namespace potEngine
             eventBus.subscribe(this, &EntityCreateEvent::EntityCreate);
         };
 
-<<<<<<< Updated upstream
-=======
-        EntityType checkEntity(std::shared_ptr<potEngine::AEntity> entity)
-        {
-            if (entity->getComponent<PlayerComponent>())
-                return EntityType::PLAYER;
-            if (entity->getComponent<MonstreComponent>())
-                return EntityType::MONSTRE;
-            if (entity->getComponent<ShootComponent>())
-                return EntityType::PLAYER;
-            else
-                return EntityType::NONE;
-        }
-
->>>>>>> Stashed changes
         void EntityCreate(std::shared_ptr<EntityCreateInfoEvent> info)
         {
             auto entity = ecsManager.createEntity();
