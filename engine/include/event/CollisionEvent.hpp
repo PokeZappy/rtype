@@ -17,10 +17,10 @@ namespace potEngine
     public:
         int max_players;
         int player_fd;
-        uint8_t player_id;
-        uint8_t entity_id;
+        size_t player_id;
+        size_t entity_id;
 
-        CollisionInfoEvent(int maxP, int player_fd,  uint8_t player_id, uint8_t entity_id)
+        CollisionInfoEvent(int maxP, int player_fd,  size_t player_id, size_t entity_id)
             : max_players(maxP), player_fd(player_fd), player_id(player_id), entity_id(entity_id) {}
     };
 
@@ -48,7 +48,7 @@ namespace potEngine
                     info->player_fd,
                     info->entity_id,
                     DEATH,
-                    std::vector<uint16_t>{},
+                    std::vector<size_t>{},
                     ecsManager.getEntities()
                 );
                 eventBus.publish(sendMessageToAllEventInfo);

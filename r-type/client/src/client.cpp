@@ -69,7 +69,7 @@ void RType::Client::handle_connection()
     std::cout << "Enter your username: ";
     std::cin >> username;
 
-    std::vector<uint16_t> params_username(username.begin(), username.end());
+    std::vector<size_t> params_username(username.begin(), username.end());
     auto connectionEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, 0, potEngine::CONNECTION, params_username);
     potEngine::eventBus.publish(connectionEventInfo);
     potEngine::ecsManager.update(0.0f);
@@ -79,11 +79,11 @@ void RType::Client::handle_connection()
         player_id = entity_id;
         std::string player_name = username;
         std::vector<int> position = {0, 0};
-        std::vector<uint16_t> _pos;
+        std::vector<size_t> _pos;
         _pos.push_back(potEngine::EntityType::PLAYER);
-        _pos.push_back(static_cast<uint16_t>(player_name.size()));
+        _pos.push_back(static_cast<size_t>(player_name.size()));
         for (char c : player_name) {
-            _pos.push_back(static_cast<uint16_t>(c));
+            _pos.push_back(static_cast<size_t>(c));
         }
         _pos.insert(_pos.end(), position.begin(), position.end());
         potEngine::RecvMessageSystem::createPlayerEntity(_pos, entity_id);

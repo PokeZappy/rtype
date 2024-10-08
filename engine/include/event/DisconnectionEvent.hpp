@@ -16,10 +16,10 @@ namespace potEngine
     public:
         int max_players;
         int fd;
-        uint8_t entity_id;
-        std::vector<uint16_t> params;
+        size_t entity_id;
+        std::vector<size_t> params;
 
-        DisconnectionInfoEvent(int maxP, int fd, uint8_t id, std::vector<uint16_t> p)
+        DisconnectionInfoEvent(int maxP, int fd, size_t id, std::vector<size_t> p)
             : max_players(maxP), fd(fd), entity_id(id), params(p) {}
     };
 

@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <cmath>
 #include <vector>
+#include <cstring>
 
 namespace potEngine
 {
@@ -15,12 +16,12 @@ namespace potEngine
     public:
         int max_players;
         int socket;
-        uint8_t entity_id;
+        size_t entity_id;
         EventType event_type;
-        std::vector<uint16_t> params;
+        std::vector<size_t> params;
         std::vector<std::shared_ptr<potEngine::AEntity>> entities;
 
-        SendMessageToAllEventInfo(int maxP, int socket, uint8_t id, EventType type, std::vector<uint16_t> p, std::vector<std::shared_ptr<potEngine::AEntity>> e)
+        SendMessageToAllEventInfo(int maxP, int socket, size_t id, EventType type, std::vector<size_t> p, std::vector<std::shared_ptr<potEngine::AEntity>> e)
             : max_players(maxP), socket(socket), entity_id(id), event_type(type), params(p), entities(e) {}
     };
 
@@ -38,24 +39,22 @@ namespace potEngine
         }
     private:
 
-        void send_message(const struct sockaddr_in& addr, uint8_t entity_id, potEngine::EventType action, const std::vector<uint16_t>& params, int maxP, int socket)
+        void send_message(const struct sockaddr_in& addr, size_t entity_id, potEngine::EventType action, const std::vector<size_t>& params, size_t maxP, int fd)
         {
             int entity_id_bits = std::ceil(std::log2(maxP + 1));
-            int action_bits = 8 - entity_id_bits;
+            int action_bits = sizeof(size_t) * 8 - entity_id_bits;
 
-            size_t packet_size = 1 + params.size() * sizeof(uint16_t);
+            size_t packet_size = sizeof(size_t) + params.size() * sizeof(size_t);
             std::vector<uint8_t> packet(packet_size);
-
-            packet[0] = (entity_id & ((1 << entity_id_bits) - 1)) << action_bits | (action & ((1 << action_bits) - 1));
-
+            size_t header = (entity_id & ((1 << entity_id_bits) - 1)) << action_bits | (action & ((1 << action_bits) - 1));
+            std::memcpy(packet.data(), &header, sizeof(size_t));
             for (size_t i = 0; i < params.size(); ++i) {
-                packet[1 + 2 * i] = (params[i] >> 8) & 0xFF;
-                packet[1 + 2 * i + 1] = params[i] & 0xFF;
+                std::memcpy(packet.data() + sizeof(size_t) + i * sizeof(size_t), &params[i], sizeof(size_t));
             }
-            sendto(socket, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
+            sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
         }
 
-        void send_message_to_all(uint8_t entity_id, potEngine::EventType event_type, const std::vector<uint16_t>& params, const std::vector<std::shared_ptr<potEngine::AEntity>>& entities, int maxP, int socket)
+        void send_message_to_all(size_t entity_id, potEngine::EventType event_type, const std::vector<size_t>& params, const std::vector<std::shared_ptr<potEngine::AEntity>>& entities, int maxP, int socket)
         {
             for (const auto& entity : entities) {
                 auto networkComponent = entity->getComponent<potEngine::NetworkComponent>();

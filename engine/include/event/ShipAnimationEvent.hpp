@@ -15,7 +15,7 @@ namespace potEngine {
 
     class ShipAnimationEvent : public IEvent {
         public:
-            ShipAnimationEvent(uint8_t playerId) : _playerId(playerId) {
+            ShipAnimationEvent(size_t playerId) : _playerId(playerId) {
                 eventBus.subscribe(this, &ShipAnimationEvent::shipInputEvent);
             };
 
@@ -27,6 +27,6 @@ namespace potEngine {
             }
             void shipInputEvent(std::shared_ptr<InputInfoEvent> event);
         private:
-            uint8_t _playerId;
+            size_t _playerId;
     };
 };

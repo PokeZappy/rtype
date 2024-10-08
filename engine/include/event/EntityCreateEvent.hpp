@@ -36,7 +36,7 @@ namespace potEngine
             auto entity = ecsManager.createEntity();
             auto entity_id = entity->getID();
 
-            std::vector<uint16_t> _pos;
+            std::vector<size_t> _pos;
             _pos.push_back(info->_entityType);
             // _pos.insert(_pos.end(), position.begin(), position.end());
 

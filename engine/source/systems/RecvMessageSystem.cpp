@@ -1,6 +1,7 @@
 #include "RecvMessageSystem.hpp"
 #include <iostream>
 #include <cmath>
+#include <cstring>
 #include "PositionComponent.hpp"
 #include "PlayerComponent.hpp"
 #include "MovementComponent.hpp"
@@ -10,36 +11,39 @@
 
 namespace potEngine
 {
-    RecvMessageSystem::RecvMessageSystem(int cliFd, struct sockaddr_in servAddr, socklen_t adLen, uint8_t id) : _clientFd(cliFd), _addrLen(adLen), _playerId(id)
+    RecvMessageSystem::RecvMessageSystem(int cliFd, struct sockaddr_in servAddr, socklen_t adLen, size_t id) : _clientFd(cliFd), _addrLen(adLen), _playerId(id)
     {
         // _signature.set(AComponent::getID<RenderComponent>(), true);
         eventBus.subscribe(this, &RecvMessageSystem::updateSystem);
     }
 
     RecvMessageSystem::~RecvMessageSystem() {
-
     }
 
-    std::tuple<uint8_t, potEngine::EventType, std::vector<uint16_t>> RecvMessageSystem::recv_message()
+    std::tuple<size_t, potEngine::EventType, std::vector<size_t>> RecvMessageSystem::recv_message()
     {
-        uint8_t buffer[1024]; // TODO mettre BUFFER_SIZE macro
+        uint8_t buffer[1024];
         ssize_t recv_len = recvfrom(_clientFd, buffer, sizeof(buffer), 0, (struct sockaddr*)&_addr, &_addrLen);
 
-        if (recv_len < 0) {
-            return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<uint16_t>{});
+        if (recv_len < 0 || static_cast<size_t>(recv_len) < sizeof(size_t)) {
+            return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<size_t>{});
         }
 
-        int entity_id_bits = std::ceil(std::log2(4 + 1)); // TODO mettre macro MAX_PLAYERS
-        int action_bits = 8 - entity_id_bits;
+        int entity_id_bits = std::ceil(std::log2(4 + 1));
+        int action_bits = sizeof(size_t) * 8 - entity_id_bits;
 
-        uint8_t entity_id = (buffer[0] >> action_bits) & ((1 << entity_id_bits) - 1);
-        uint8_t action = buffer[0] & ((1 << action_bits) - 1);
+        size_t header;
+        std::memcpy(&header, buffer, sizeof(size_t));
+
+        size_t entity_id = (header >> action_bits) & ((1 << entity_id_bits) - 1);
+        size_t action = header & ((1 << action_bits) - 1);
 
         potEngine::EventType event_type = static_cast<potEngine::EventType>(action);
 
-        std::vector<uint16_t> params;
-        for (ssize_t i = 1; i + 1 < recv_len; i += 2) {
-            uint16_t param = (buffer[i] << 8) | buffer[i + 1];
+        std::vector<size_t> params;
+        for (size_t i = sizeof(size_t); i + sizeof(size_t) <= static_cast<size_t>(recv_len); i += sizeof(size_t)) {
+            size_t param;
+            std::memcpy(&param, buffer + i, sizeof(size_t));
             params.push_back(param);
         }
 
@@ -48,14 +52,14 @@ namespace potEngine
 
     std::string assetFinder();
 
-    void RecvMessageSystem::createPlayerEntity(std::vector<uint16_t> params, uint8_t entity_id)
+    void RecvMessageSystem::createPlayerEntity(std::vector<size_t> params, size_t entity_id)
     {
-        uint16_t username_length = params[1];
+        size_t username_length = params[1];
         std::string username;
         for (size_t i = 0; i < username_length; ++i) {
             username += static_cast<char>(params[2 + i]);
         }
-        std::vector<uint16_t> position(params.begin() + 2 + username_length, params.end());
+        std::vector<size_t> position(params.begin() + 2 + username_length, params.end());
 
         auto entity = ecsManager.createEntity(entity_id);
 
@@ -80,9 +84,9 @@ namespace potEngine
             << "] {username}-[" << username <<  "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
     }
 
-    void handleCreateEntity(std::vector<uint16_t> params, uint8_t entity_id)
+    void handleCreateEntity(std::vector<size_t> params, size_t entity_id)
     {
-        uint16_t type = params[0];
+        size_t type = params[0];
 
         if (type == EntityType::PLAYER)
             return RecvMessageSystem::createPlayerEntity(params, entity_id);
@@ -113,8 +117,14 @@ namespace potEngine
             }
             std::vector<int> convertedParams(params.begin(), params.end());
             entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
+
+            auto player_comp = entity->getComponent<PlayerComponent>();
+            std::string username = "";
+            if (player_comp)
+                username = player_comp->get()->username;
+
             std::cout << "[CLIENT] Entity {ID}-[" << std::to_string(static_cast<int>(entity_id))
-                << "], {username}-[" << entity->getComponent<potEngine::PlayerComponent>()->get()->username << "], has move to {" << convertedParams[0] << "," << convertedParams[1] << "}" << std::endl;
+                << "], {username}-[" << username << "], has move to {" << convertedParams[0] << "," << convertedParams[1] << "}" << std::endl;
         }
         if (event_type == EventType::INFORMATION) {
             // ici le joueur recoit les informations de toutes les entities déja présente

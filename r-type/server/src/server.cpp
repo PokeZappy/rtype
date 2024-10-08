@@ -33,7 +33,7 @@ RType::Server::~Server()
     close(server_fd);
 }
 
-void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<uint16_t> params)
+void RType::Server::handle_action(size_t entity_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<size_t> params)
 {
     if (action == potEngine::CONNECTION && MAX_PLAYERS > current_players) {
         auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(
@@ -55,7 +55,12 @@ void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_a
     }
 
     if (action == potEngine::SHOOT) {
-        // todo
+        auto createShootEntity = std::make_shared<potEngine::EntityCreateInfoEvent>(
+            MAX_PLAYERS,
+            server_fd,
+            potEngine::EntityType::PEW
+        );
+        potEngine::eventBus.publish(createShootEntity);
     }
 }
 

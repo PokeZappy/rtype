@@ -47,7 +47,7 @@ namespace potEngine {
         void shutdown();
 
         std::vector<std::shared_ptr<AEntity>> getEntities() const;
-        std::shared_ptr<AEntity> getEntity(uint8_t entity_id) const;
+        std::shared_ptr<AEntity> getEntity(size_t entity_id) const;
 
     private:
         std::size_t _entityCounter;

@@ -56,6 +56,7 @@ const int CLIENT_SOCKET = 1;
 #include "MoveEvent.hpp"
 #include "CollisionEvent.hpp"
 #include "InputToServerEvent.hpp"
+#include "EntityCreateEvent.hpp"
 
 #endif // GAME_CONFIG_HPP
 

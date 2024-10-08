@@ -27,8 +27,8 @@ namespace RType
         ~Server();
 
         void start();
-        void handle_action(uint8_t client_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<uint16_t> params);
-        std::tuple<uint8_t, potEngine::EventType, std::vector<uint16_t>> recv_message(struct sockaddr_in& addr, socklen_t& addr_len);
+        void handle_action(size_t entity_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<size_t> params);
+        std::tuple<size_t, potEngine::EventType, std::vector<size_t>> recv_message(struct sockaddr_in& addr, socklen_t& addr_len);
         void init_subscribe();
 
     private:
