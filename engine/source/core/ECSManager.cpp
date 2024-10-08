@@ -17,6 +17,15 @@ namespace potEngine {
 
     ECSManager::~ECSManager() {}
 
+        std::shared_ptr<AEntity> ECSManager::createServerEntity(size_t serverId)
+        {
+            auto entity = std::make_shared<AEntity>(_entityCounter);
+            _entities.push_back(entity);
+            _serverToClientId[serverId] = _entityCounter;
+            _entityCounter++;
+            return entity;
+        }
+
         std::shared_ptr<AEntity> ECSManager::createEntity()
         {
             auto entity = std::make_shared<AEntity>(_entityCounter);
@@ -25,12 +34,12 @@ namespace potEngine {
             return entity;
         }
 
-    std::shared_ptr<AEntity> ECSManager::createEntity(size_t id)
-    {
-        auto entity = std::make_shared<AEntity>(id);
-        _entities.push_back(entity);
-        return entity;
-    }
+    // std::shared_ptr<AEntity> ECSManager::createEntity(size_t id)
+    // {
+    //     auto entity = std::make_shared<AEntity>(id);
+    //     _entities.push_back(entity);
+    //     return entity;
+    // }
 
     std::shared_ptr<AEntity> ECSManager::createSpriteEntity(sf::Texture &texture) {
         auto entity = std::make_shared<AEntity>(32);
@@ -143,12 +152,21 @@ namespace potEngine {
         return _entities;
     }
 
-    std::shared_ptr<AEntity> ECSManager::getEntity(uint8_t entity_id) const {
+    std::shared_ptr<AEntity> ECSManager::getEntity(size_t entity_id) {
+        size_t newId = getClientIdFromServerId(entity_id);
         for (const auto& entity : _entities) {
-            if (entity->getID() == entity_id) {
+            if (entity->getID() == newId) {
                 return entity;
             }
         }
         return nullptr;
+    }
+
+    size_t ECSManager::getClientIdFromServerId(size_t serverId) {
+        if (_serverToClientId.find(serverId) != _serverToClientId.end()) {
+            return (_serverToClientId[serverId]);
+        } else {
+            return (serverId);
+        }
     }
 }

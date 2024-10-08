@@ -18,7 +18,8 @@ namespace potEngine {
         ~ECSManager();
 
         std::shared_ptr<AEntity> createEntity();
-        std::shared_ptr<AEntity> createEntity(size_t Id);
+        // std::shared_ptr<AEntity> createEntity(size_t Id);
+        std::shared_ptr<AEntity> createServerEntity(size_t serverId);
         std::shared_ptr<AEntity> createWindowEntity();
         std::shared_ptr<AEntity> createSpriteEntity(sf::Texture &texture);
 
@@ -47,13 +48,15 @@ namespace potEngine {
         void shutdown();
 
         std::vector<std::shared_ptr<AEntity>> getEntities() const;
-        std::shared_ptr<AEntity> getEntity(uint8_t entity_id) const;
+        std::shared_ptr<AEntity> getEntity(size_t entity_id);
         // void setInput(sf::Keyboard::Key key, bool value) { _inputs[key] = value; };
         // bool getInput(sf::Keyboard::Key key) { return (_inputs[key]); };
         // std::unordered_map<sf::Keyboard::Key, bool> getInputs() { return (_inputs); };
 
     private:
+        size_t getClientIdFromServerId(size_t serverId);
         std::size_t _entityCounter;
+        std::unordered_map<size_t, size_t> _serverToClientId;
 
         std::vector<std::shared_ptr<ISystem>> _systems;
         std::vector<std::shared_ptr<AEntity>> _entities;

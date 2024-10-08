@@ -16,7 +16,7 @@ namespace potEngine {
 
     class ShipAnimationSystem : public ASystem {
         public:
-            ShipAnimationSystem(uint8_t playerId) : _playerId(playerId) {
+            ShipAnimationSystem(size_t playerId) : _playerId(playerId) {
                 eventBus.subscribe(this, &ShipAnimationSystem::updateAnimation);
             };
 
@@ -30,6 +30,6 @@ namespace potEngine {
 
             void update(float deltaTime) {}
         private:
-            uint8_t _playerId;
+            size_t _playerId;
     };
 };

@@ -24,7 +24,7 @@ namespace potEngine
             : username(username) {}
 
         void setShootAnimationEntityId(int value) {_shootAnimationEntityId = value; }
-        std::optional<int> getShootAnimationEntityId() { return (_shootAnimationEntityId); }
+        std::optional<int> &getShootAnimationEntityId() { return (_shootAnimationEntityId); }
     private:
         std::optional<int> _shootAnimationEntityId;
     };

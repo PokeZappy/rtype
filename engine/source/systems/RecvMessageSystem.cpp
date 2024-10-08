@@ -57,7 +57,7 @@ namespace potEngine
         }
         std::vector<uint16_t> position(params.begin() + 2 + username_length, params.end());
 
-        auto entity = ecsManager.createEntity(entity_id);
+        auto entity = ecsManager.createServerEntity(entity_id);
 
         sf::Texture playerTexture;
         if (!playerTexture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif"))
