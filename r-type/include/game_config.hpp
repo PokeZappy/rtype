@@ -31,6 +31,7 @@ const int CLIENT_SOCKET = 1;
 #include "RenderSystem.hpp"
 #include "InputSystem.hpp"
 #include "RecvMessageSystem.hpp"
+#include "RecvMessageServerSystem.hpp"
 #include "AnimationSystem.hpp"
 #include "ShipAnimationEvent.hpp"
 #include "InputInfoEvent.hpp"

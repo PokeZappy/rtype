@@ -6,7 +6,6 @@
 */
 
 #include "client_config.hpp"
-#include "RecvMessageSystem.hpp"
 
 std::string assetFinder();
 
@@ -37,7 +36,8 @@ RType::Client::~Client()
     close(client_fd);
 }
 
-void RType::Client::setNonBlockingInput() {
+void RType::Client::setNonBlockingInput()
+{
     struct termios t;
     tcgetattr(STDIN_FILENO, &t);
     t.c_lflag &= ~ICANON;

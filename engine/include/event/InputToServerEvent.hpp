@@ -38,6 +38,7 @@ namespace potEngine {
                         potEngine::eventBus.publish(moveInfo);
                     }
                     if (event->key == sf::Keyboard::G) {
+                        // TODO: remove this useless test mf
                         auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::SHOOT, std::vector<size_t>{});
                         potEngine::eventBus.publish(moveInfo);
                     }

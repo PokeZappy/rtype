@@ -14,12 +14,14 @@ RType::Server::Server() : current_players(0)
         exit(EXIT_FAILURE);
     }
 
-    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr_len = sizeof(server_addr);
+    memset(&server_addr, 0, server_addr_len);
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port = htons(PORT);
 
-    if (bind(server_fd, (const struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+
+    if (bind(server_fd, (const struct sockaddr *)&server_addr, server_addr_len) < 0) {
         perror("Bind failed");
         close(server_fd);
         exit(EXIT_FAILURE);
@@ -31,39 +33,6 @@ RType::Server::Server() : current_players(0)
 RType::Server::~Server()
 {
     close(server_fd);
-}
-
-void RType::Server::handle_action(size_t entity_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<size_t> params)
-{
-    if (action == potEngine::CONNECTION && MAX_PLAYERS > current_players) {
-        auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(
-            MAX_PLAYERS, server_fd, client_addr, params
-        );
-        potEngine::eventBus.publish(connectionInfo);
-        current_players++;
-    }
-
-    if (action == potEngine::DISCONNECT) {
-        auto disconnectInfo = std::make_shared<potEngine::DisconnectionInfoEvent>(MAX_PLAYERS, server_fd, entity_id, params);
-        potEngine::eventBus.publish(disconnectInfo);
-        current_players--;
-    }
-
-    if (action == potEngine::MOVE_UP || action == potEngine::MOVE_DOWN || action == potEngine::MOVE_RIGHT || action == potEngine::MOVE_LEFT) {
-        auto moveInfo = std::make_shared<potEngine::MoveInfoEvent>(MAX_PLAYERS, server_fd, action, entity_id, params);
-        potEngine::eventBus.publish(moveInfo);
-    }
-
-    if (action == potEngine::SHOOT) {
-        auto createShootEntity = std::make_shared<potEngine::EntityCreateInfoEvent>(
-            MAX_PLAYERS,
-            server_fd,
-            potEngine::ecsManager.getEntity(entity_id)->getComponent<potEngine::PositionComponent>()->get()->_position,
-            entity_id,
-            potEngine::EntityType::PEW
-        );
-        potEngine::eventBus.publish(createShootEntity);
-    }
 }
 
 void RType::Server::init_subscribe()
@@ -79,21 +48,21 @@ void RType::Server::init_subscribe()
     auto entityCreateEvent = std::make_shared<potEngine::EntityCreateEvent>();
 }
 
+void RType::Server::setNonBlockingInput()
+{
+    int flags = fcntl(server_fd, F_GETFL, 0);
+    fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
+}
+
 void RType::Server::start()
 {
     init_subscribe();
-    struct sockaddr_in client_addr;
-    socklen_t client_addr_len = sizeof(client_addr);
+    setNonBlockingInput();
 
-    int flags = fcntl(server_fd, F_GETFL, 0);
-    fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
+    potEngine::ecsManager.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
 
-    while (true) {
-        auto [entity_id, event_type, params] = recv_message(client_addr, client_addr_len);
+    auto startEvent = std::make_shared<potEngine::StartEvent>();
 
-        if (event_type != potEngine::EventType::UNKNOW) {
-            handle_action(entity_id, client_addr, event_type, params);
-        }
-        potEngine::ecsManager.update(0.0f);
-    }
+    potEngine::eventBus.publish(startEvent);
+    potEngine::ecsManager.update(0.016);
 }

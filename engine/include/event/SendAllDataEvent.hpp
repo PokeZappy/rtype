@@ -3,7 +3,7 @@
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "ECSManager.hpp"
-#include "SendMessageToAllEvent.hpp"
+#include "SendMessageEvent.hpp"
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
