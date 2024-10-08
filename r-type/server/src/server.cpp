@@ -58,6 +58,8 @@ void RType::Server::handle_action(size_t entity_id, struct sockaddr_in client_ad
         auto createShootEntity = std::make_shared<potEngine::EntityCreateInfoEvent>(
             MAX_PLAYERS,
             server_fd,
+            potEngine::ecsManager.getEntity(entity_id)->getComponent<potEngine::PositionComponent>()->get()->_position,
+            entity_id,
             potEngine::EntityType::PEW
         );
         potEngine::eventBus.publish(createShootEntity);
@@ -74,6 +76,7 @@ void RType::Server::init_subscribe()
     auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
     auto moveEvent = std::make_shared<potEngine::MoveEvent>();
     auto collisionEvent = std::make_shared<potEngine::CollisionEvent>();
+    auto entityCreateEvent = std::make_shared<potEngine::EntityCreateEvent>();
 }
 
 void RType::Server::start()

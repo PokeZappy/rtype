@@ -8,6 +8,7 @@
 #include "LifeComponent.hpp"
 #include "CollisionComponent.hpp"
 #include "SpriteComponent.hpp"
+#include "ShootComponent.hpp"
 
 namespace potEngine
 {
@@ -29,26 +30,19 @@ namespace potEngine
             return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<size_t>{});
         }
 
-        int entity_id_bits = std::ceil(std::log2(4 + 1));
-        int action_bits = sizeof(size_t) * 8 - entity_id_bits;
-
         size_t header;
         std::memcpy(&header, buffer, sizeof(size_t));
-
-        size_t entity_id = (header >> action_bits) & ((1 << entity_id_bits) - 1);
-        size_t action = header & ((1 << action_bits) - 1);
-
-        potEngine::EventType event_type = static_cast<potEngine::EventType>(action);
-
+        size_t entity_id = header & ((1ULL << (sizeof(size_t) * 8 - 8)) - 1);
+        potEngine::EventType event_type = static_cast<potEngine::EventType>(header >> (sizeof(size_t) * 8 - 8));
         std::vector<size_t> params;
         for (size_t i = sizeof(size_t); i + sizeof(size_t) <= static_cast<size_t>(recv_len); i += sizeof(size_t)) {
             size_t param;
             std::memcpy(&param, buffer + i, sizeof(size_t));
             params.push_back(param);
         }
-
         return std::make_tuple(entity_id, event_type, params);
     }
+
 
     std::string assetFinder();
 
@@ -80,16 +74,43 @@ namespace potEngine
         ecsManager.addComponent(entity, collisionComponent);
         ecsManager.addComponent(entity, spriteComponent);
 
-        std::cout << "[CLIENT] New entity created {ID}-[" << static_cast<int>(entity_id)
+        std::cout << "[CLIENT] New PlayerEntity created {ID}-[" << static_cast<int>(entity_id)
             << "] {username}-[" << username <<  "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
     }
 
-    void handleCreateEntity(std::vector<size_t> params, size_t entity_id)
+    void RecvMessageSystem::createShootEntity(std::vector<size_t> params, size_t entity_id)
+    {
+
+        std::vector<size_t> position(params.begin() + 1, params.end());
+
+        auto entity = ecsManager.createEntity(entity_id);
+
+        sf::Texture playerTexture;
+        // if (!playerTexture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif"))
+        //     std::cout << assetFinder() << std::endl;
+
+            std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(position[0], position[1]);
+            std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(5.0f);
+            std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
+            std::shared_ptr<ShootComponent> shootComponent = std::make_shared<ShootComponent>();
+
+            ecsManager.addComponent(entity, positionComponent);
+            ecsManager.addComponent(entity, movementComponent);
+            ecsManager.addComponent(entity, collisionComponent);
+            ecsManager.addComponent(entity, shootComponent);
+
+        std::cout << "[CLIENT] New ShootEntity created {ID}-[" << static_cast<int>(entity_id)
+            << "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
+    }
+
+    void RecvMessageSystem::handleCreateEntity(std::vector<size_t> params, size_t entity_id)
     {
         size_t type = params[0];
 
         if (type == EntityType::PLAYER)
             return RecvMessageSystem::createPlayerEntity(params, entity_id);
+        if (type == EntityType::PEW)
+            return RecvMessageSystem::createShootEntity(params, entity_id);
     }
 
     void RecvMessageSystem::updateSystem(std::shared_ptr<BlcEvent> event) {

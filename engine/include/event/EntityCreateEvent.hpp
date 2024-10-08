@@ -19,10 +19,12 @@ namespace potEngine
     public:
         int max_players;
         int fd;
-        EntityType _entityType;
+        std::vector<int> position;
+        size_t entity_id; // de qui viens l'action si elle vient de quelqun
+        EntityType entityType;
 
-        EntityCreateInfoEvent(int maxP, int fd, EntityType type)
-            : max_players(maxP), fd(fd), _entityType(type) {}
+        EntityCreateInfoEvent(int maxP, int fd, std::vector<int> p, size_t entity_id, EntityType type)
+            : max_players(maxP), fd(fd), position(p), entity_id(entity_id), entityType(type) {}
     };
 
     class EntityCreateEvent : public IEvent {
@@ -31,16 +33,34 @@ namespace potEngine
             eventBus.subscribe(this, &EntityCreateEvent::EntityCreate);
         };
 
+        void createShootEntity(std::shared_ptr<potEngine::AEntity> &entity, std::vector<int> pos)
+        {
+            std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(pos[0], pos[1]);
+            std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(5.0f);
+            std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
+            std::shared_ptr<ShootComponent> shootComponent = std::make_shared<ShootComponent>();
+
+            ecsManager.addComponent(entity, positionComponent);
+            ecsManager.addComponent(entity, movementComponent);
+            ecsManager.addComponent(entity, collisionComponent);
+            ecsManager.addComponent(entity, shootComponent);
+        }
+
+        void createMonstreEntity(std::shared_ptr<potEngine::AEntity> &entity, std::vector<int> pos)
+        {
+            // TODO: ajouter les composants d'un monstre ici
+        }
+
         void EntityCreate(std::shared_ptr<EntityCreateInfoEvent> info)
         {
             auto entity = ecsManager.createEntity();
             auto entity_id = entity->getID();
 
             std::vector<size_t> _pos;
-            _pos.push_back(info->_entityType);
-            // _pos.insert(_pos.end(), position.begin(), position.end());
+            _pos.push_back(info->entityType);
+            _pos.insert(_pos.end(), info->position.begin(), info->position.end());
 
-            auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(
+            auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllExeptEventInfo>(
                 info->max_players,
                 info->fd,
                 entity_id,
@@ -50,7 +70,12 @@ namespace potEngine
             );
             eventBus.publish(sendMessageToAllEventInfo);
 
-            std::cout << "[SERVER] New entity created {ID}-[" << static_cast<int>(entity_id) << "] {TYPE}-[" << info->_entityType << "]" << std::endl;
+            if (info->entityType == EntityType::PEW)
+                createShootEntity(entity, info->position);
+            if (info->entityType == EntityType::MONSTRE)
+                createMonstreEntity(entity, info->position);
+
+            std::cout << "[SERVER] New entity created {ID}-[" << static_cast<int>(entity_id) << "] {TYPE}-[" << info->entityType << "]" << std::endl;
         }
     };
 }

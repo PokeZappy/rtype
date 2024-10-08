@@ -37,6 +37,10 @@ namespace potEngine {
                         auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_RIGHT, std::vector<size_t>{});
                         potEngine::eventBus.publish(moveInfo);
                     }
+                    if (event->key == sf::Keyboard::G) {
+                        auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::SHOOT, std::vector<size_t>{});
+                        potEngine::eventBus.publish(moveInfo);
+                    }
                 }
             }
         private:
