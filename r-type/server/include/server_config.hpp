@@ -29,9 +29,6 @@ namespace RType
         void start();
         void init_subscribe();
         void setNonBlockingInput();
-        void handle_action(size_t entity_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<size_t> params);
-
-        std::tuple<size_t, potEngine::EventType, std::vector<size_t>> recv_message(struct sockaddr_in& addr, socklen_t& addr_len);
 
     private:
         int current_players;

@@ -25,17 +25,16 @@ const int CLIENT_SOCKET = 1;
 #include "LifeComponent.hpp"
 #include "CollisionComponent.hpp"
 #include "ShootComponent.hpp"
+#include "MonstreComponent.hpp"
 
 #include "ASystem.hpp"
 #include "ISystem.hpp"
 #include "RenderSystem.hpp"
 #include "InputSystem.hpp"
 #include "RecvMessageSystem.hpp"
+#include "ShootEntitySystem.hpp"
 #include "RecvMessageServerSystem.hpp"
 #include "AnimationSystem.hpp"
-#include "ShipAnimationEvent.hpp"
-#include "InputInfoEvent.hpp"
-#include "MonstreComponent.hpp"
 
 #include "AEventHandler.hpp"
 #include "EventBus.hpp"
@@ -58,6 +57,8 @@ const int CLIENT_SOCKET = 1;
 #include "CollisionEvent.hpp"
 #include "InputToServerEvent.hpp"
 #include "EntityCreateEvent.hpp"
+#include "ShipAnimationEvent.hpp"
+#include "InputInfoEvent.hpp"
 
 #endif // GAME_CONFIG_HPP
 

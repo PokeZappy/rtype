@@ -60,6 +60,7 @@ void RType::Server::start()
     setNonBlockingInput();
 
     potEngine::ecsManager.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
+    potEngine::ecsManager.registerSystem<potEngine::ShootEntitySystem>(server_fd, 0.016f);
 
     auto startEvent = std::make_shared<potEngine::StartEvent>();
 
