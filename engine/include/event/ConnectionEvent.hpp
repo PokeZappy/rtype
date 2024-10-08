@@ -19,9 +19,9 @@ namespace potEngine
         int max_players;
         int fd;
         struct sockaddr_in client_addr;
-        std::vector<uint16_t> params;
+        std::vector<size_t> params;
 
-        ConnectionInfoEvent(int maxP, int fd, struct sockaddr_in c_addr, std::vector<uint16_t> p)
+        ConnectionInfoEvent(int maxP, int fd, struct sockaddr_in c_addr, std::vector<size_t> p)
             : max_players(maxP), fd(fd), client_addr(c_addr), params(p) {}
     };
 
@@ -33,7 +33,7 @@ namespace potEngine
 
         void connect(std::shared_ptr<ConnectionInfoEvent> info) {
             auto player_entity = ecsManager.createEntity();
-            uint8_t player_id = player_entity->getID();
+            size_t player_id = player_entity->getID();
             std::string player_name;
 
             if (info->params.empty()) {
@@ -59,15 +59,15 @@ namespace potEngine
             std::cout << "[SERVER] Player connected: {id}-[" << std::to_string(static_cast<int>(player_id))
                 << "], {username}-[" << player_name << "]" << std::endl;
 
-            auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->fd, info->client_addr, player_id, CONNECTION, std::vector<uint16_t> {});
+            auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->fd, info->client_addr, player_id, CONNECTION, std::vector<size_t> {});
             eventBus.publish(sendMessageEventInfo);
 
             std::vector<int> position = {0, 0};
-            std::vector<uint16_t> _pos;
+            std::vector<size_t> _pos;
             _pos.push_back(EntityType::PLAYER);
-            _pos.push_back(static_cast<uint16_t>(player_name.size()));
+            _pos.push_back(static_cast<size_t>(player_name.size()));
             for (char c : player_name) {
-                _pos.push_back(static_cast<uint16_t>(c));
+                _pos.push_back(static_cast<size_t>(c));
             }
             _pos.insert(_pos.end(), position.begin(), position.end());
 

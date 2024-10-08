@@ -25,6 +25,8 @@ const int CLIENT_SOCKET = 1;
 #include "AudioComponent.hpp"
 #include "LifeComponent.hpp"
 #include "CollisionComponent.hpp"
+#include "ShootComponent.hpp"
+#include "MonstreComponent.hpp"
 
 #include "ASystem.hpp"
 #include "ISystem.hpp"
@@ -32,9 +34,13 @@ const int CLIENT_SOCKET = 1;
 #include "InputSystem.hpp"
 #include "RecvMessageSystem.hpp"
 #include "AudioSystem.hpp"
+#include "ShootEntitySystem.hpp"
+#include "RecvMessageServerSystem.hpp"
 #include "AnimationSystem.hpp"
 #include "ShipAnimationSystem.hpp"
 #include "InputInfoEvent.hpp"
+#include "ShootEntitySystem.hpp"
+#include "RecvMessageServerSystem.hpp"
 
 #include "AEventHandler.hpp"
 #include "EventBus.hpp"
@@ -56,6 +62,8 @@ const int CLIENT_SOCKET = 1;
 #include "MoveEvent.hpp"
 #include "CollisionEvent.hpp"
 #include "InputToServerSystem.hpp"
+#include "EntityCreateEvent.hpp"
+#include "InputInfoEvent.hpp"
 
 #endif // GAME_CONFIG_HPP
 

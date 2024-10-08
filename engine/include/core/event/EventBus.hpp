@@ -67,7 +67,7 @@ namespace potEngine {
             //         _subscribers[typeid(EventType)] = handlers;
             //     }
             //     handlers->push_back(std::make_shared<MemberHandler<T, EventType>>(instance, memberFunction));
-            std::cout << "[EVENTBUS] Event subscribed "  << typeid(EventType).name() << std::endl;
+            // std::cout << "[EVENTBUS] Event subscribed "  << typeid(EventType).name() << std::endl;
         }
 
         std::pair<std::shared_ptr<IEvent>, std::shared_ptr<HandlerList>> getHandler() {

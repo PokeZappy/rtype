@@ -21,9 +21,9 @@ namespace potEngine
         int max_players;
         int fd;
         EventType event;
-        uint8_t entity_id;
+        size_t entity_id;
 
-        MoveInfoEvent(int maxP, int fd, EventType event, uint8_t id, std::vector<uint16_t> p)
+        MoveInfoEvent(int maxP, int fd, EventType event, size_t id, std::vector<size_t> p)
             : max_players(maxP), fd(fd), event(event), entity_id(id) {}
     };
 
@@ -40,7 +40,8 @@ namespace potEngine
                 return nullptr;
 
             for (auto entity : ecsManager.getEntities()) {
-                if (entity->getComponent<CollisionComponent>() == nullptr || entity->getComponent<PositionComponent>() == nullptr || entity->getID() == info->entity_id || entity->getComponent<PlayerComponent>())
+                if (entity->getComponent<CollisionComponent>() == nullptr || entity->getComponent<PositionComponent>() == nullptr || entity->getID() == info->entity_id
+                    || (entity->getComponent<PlayerComponent>() && current_entity->getComponent<PlayerComponent>()))
                     continue;
                 int entity_x = entity->getComponent<PositionComponent>()->get()->_position[0];
                 int entity_y = entity->getComponent<PositionComponent>()->get()->_position[1];
@@ -61,9 +62,13 @@ namespace potEngine
             int save_x = _entity->getComponent<PositionComponent>()->get()->_position[0];
             int save_y = _entity->getComponent<PositionComponent>()->get()->_position[1];
 
+            auto player_comp = _entity->getComponent<PlayerComponent>();
+            std::string username = "";
+            if (player_comp)
+                username = player_comp->get()->username;
+
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
-            auto username = _entity->getComponent<PlayerComponent>()->get()->username;
-            float speed = _entity->getComponent<MovementComponent>()->get()->speed;
+            int speed = _entity->getComponent<MovementComponent>()->get()->speed;
             if (info->event == MOVE_UP && position[1] > 0)
                 position[1] = (position[1] > speed) ? position[1] - speed : 0;
             if (info->event == MOVE_DOWN && position[1] < 1080)
@@ -74,7 +79,7 @@ namespace potEngine
                 position[0] = (position[0] > speed) ? position[0] - speed : 0;
 
             auto entity_collide = check_collision(info, position);
-            std::vector<uint16_t> _pos = {static_cast<uint16_t>(save_x), static_cast<uint16_t>(save_y)};
+            std::vector<size_t> _pos = {static_cast<size_t>(save_x), static_cast<size_t>(save_y)};
             if (entity_collide == nullptr) {
                 _entity->getComponent<PositionComponent>()->get()->_position = position;
                 _pos = {position.begin(), position.end()};
@@ -83,7 +88,7 @@ namespace potEngine
                     info->max_players,
                     info->fd,
                     info->entity_id,
-                    static_cast<uint8_t>(entity_collide->getID())
+                    entity_collide->getID()
                 );
                 eventBus.publish(collisionEventInfo);
             }

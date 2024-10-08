@@ -6,7 +6,6 @@
 */
 
 #include "client_config.hpp"
-#include "RecvMessageSystem.hpp"
 
 std::string assetFinder();
 
@@ -37,7 +36,8 @@ RType::Client::~Client()
     close(client_fd);
 }
 
-void RType::Client::setNonBlockingInput() {
+void RType::Client::setNonBlockingInput()
+{
     struct termios t;
     tcgetattr(STDIN_FILENO, &t);
     t.c_lflag &= ~ICANON;
@@ -69,7 +69,7 @@ void RType::Client::handle_connection()
     std::cout << "Enter your username: ";
     std::cin >> username;
 
-    std::vector<uint16_t> params_username(username.begin(), username.end());
+    std::vector<size_t> params_username(username.begin(), username.end());
     auto connectionEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, 0, potEngine::CONNECTION, params_username);
     potEngine::eventBus.publish(connectionEventInfo);
     potEngine::ecsManager.update(0.0f);
@@ -79,11 +79,11 @@ void RType::Client::handle_connection()
         player_id = entity_id;
         std::string player_name = username;
         std::vector<int> position = {0, 0};
-        std::vector<uint16_t> _pos;
+        std::vector<size_t> _pos;
         _pos.push_back(potEngine::EntityType::PLAYER);
-        _pos.push_back(static_cast<uint16_t>(player_name.size()));
+        _pos.push_back(static_cast<size_t>(player_name.size()));
         for (char c : player_name) {
-            _pos.push_back(static_cast<uint16_t>(c));
+            _pos.push_back(static_cast<size_t>(c));
         }
         _pos.insert(_pos.end(), position.begin(), position.end());
         potEngine::RecvMessageSystem::createPlayerEntity(_pos, entity_id);
@@ -115,12 +115,12 @@ void RType::Client::start()
 
     std::cout << "window id : " << window->getID() << std::endl;
     
-    std::shared_ptr<potEngine::AEntity> mainMusic = potEngine::ecsManager.createEntity();
-    std::cout << "music id : " << mainMusic->getID() << std::endl;
-    std::string musicPath = assetFinder() + "/Soundtracks/ambiant_music/03.-Start-_-Battle-Theme-_1st-Stage_.wav";
-    std::shared_ptr<potEngine::AudioComponent> musicComponent = std::make_shared<potEngine::AudioComponent>(musicPath, true);
-    musicComponent->setPlaying(true);
-    potEngine::ecsManager.addComponent(mainMusic, musicComponent);
+    // std::shared_ptr<potEngine::AEntity> mainMusic = potEngine::ecsManager.createEntity();
+    // std::cout << "music id : " << mainMusic->getID() << std::endl;
+    // std::string musicPath = assetFinder() + "/Soundtracks/ambiant_music/03.-Start-_-Battle-Theme-_1st-Stage_.wav";
+    // std::shared_ptr<potEngine::AudioComponent> musicComponent = std::make_shared<potEngine::AudioComponent>(musicPath, true);
+    // musicComponent->setPlaying(true);
+    // potEngine::ecsManager.addComponent(mainMusic, musicComponent);
 
     // std::vector<std::shared_ptr<potEngine::AEntity>> spriteArray;
     // spriteArray.push_back(sprite);

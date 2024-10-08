@@ -12,7 +12,7 @@
 namespace potEngine {
     class InputToServerSystem : public ASystem {
         public:
-            InputToServerSystem(uint8_t playerId, int clientFd, struct sockaddr_in serverAddr) : _playerId(playerId), _clientFd(clientFd), _serverAddr(serverAddr) {
+            InputToServerSystem(size_t playerId, int clientFd, struct sockaddr_in serverAddr) : _playerId(playerId), _clientFd(clientFd), _serverAddr(serverAddr) {
                 eventBus.subscribe(this, &InputToServerSystem::handleInputs);
             };
 
@@ -38,6 +38,7 @@ namespace potEngine {
                 ecsManager.addComponent(shootAnimationEntity, spriteComponent);
                 return (shootAnimationEntity->getID());
             }
+
             void updateShootAnimationPosition(std::shared_ptr<AEntity> playerEntity) {
                 auto shootAnimationEntity = ecsManager.getEntity(playerEntity->getComponent<PlayerComponent>()->get()->getShootAnimationEntityId().value());
                 auto playerPositionComponent = playerEntity->getComponent<PositionComponent>();
@@ -53,23 +54,23 @@ namespace potEngine {
 
             void handleInputs(std::shared_ptr<BlcEvent> event) {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
-                    auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::DISCONNECT, std::vector<uint16_t>{});
+                    auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::DISCONNECT, std::vector<size_t>{});
                     potEngine::eventBus.publish(disconnectEventInfo);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_UP, std::vector<uint16_t>{});
+                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_UP, std::vector<size_t>{});
                     potEngine::eventBus.publish(moveInfo);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_DOWN, std::vector<uint16_t>{});
+                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_DOWN, std::vector<size_t>{});
                     potEngine::eventBus.publish(moveInfo);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
-                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_LEFT, std::vector<uint16_t>{});
+                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_LEFT, std::vector<size_t>{});
                     potEngine::eventBus.publish(moveInfo);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_RIGHT, std::vector<uint16_t>{});
+                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_RIGHT, std::vector<size_t>{});
                     potEngine::eventBus.publish(moveInfo);
                 }
                 auto playerEntity = ecsManager.getEntity(_playerId);
@@ -95,11 +96,13 @@ namespace potEngine {
                         ecsManager.removeEntity(playerComponent->get()->getShootAnimationEntityId().value());
                         playerComponent->get()->getShootAnimationEntityId().reset();
                     }
+                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::SHOOT, std::vector<size_t>{});
+                    potEngine::eventBus.publish(moveInfo);
                 }
             }
             void update(float deltaTime) { };
         private:
-            uint8_t _playerId;
+            size_t _playerId;
             int _clientFd;
             struct sockaddr_in _serverAddr;
     };

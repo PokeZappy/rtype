@@ -85,7 +85,7 @@ std::string assetFinder() {
         } 
         if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && !sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
             auto playerEntity = ecsManager.getEntity(_playerId);
-            std::cout << "player entity = " << _playerId << std::endl; 
+            // std::cout << "player entity = " << _playerId << std::endl; 
 
             if (playerEntity->getComponent<AnimationComponent>() != std::nullopt) {
                 playerEntity->removeComponent<AnimationComponent>();
