@@ -74,8 +74,8 @@ namespace potEngine
         ecsManager.addComponent(entity, collisionComponent);
         ecsManager.addComponent(entity, spriteComponent);
 
-        std::cout << "[CLIENT] New PlayerEntity created {ID}-[" << static_cast<int>(entity_id)
-            << "] {username}-[" << username <<  "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
+        // std::cout << "[CLIENT] New PlayerEntity created {ID}-[" << static_cast<int>(entity_id)
+        //     << "] {username}-[" << username <<  "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
     }
 
     void RecvMessageSystem::createShootEntity(std::vector<size_t> params, size_t entity_id)
@@ -93,14 +93,20 @@ namespace potEngine
             std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(5.0f);
             std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
             std::shared_ptr<ShootComponent> shootComponent = std::make_shared<ShootComponent>();
+            sf::Texture texture;
+
+            texture.loadFromFile(assetFinder() + "/sprites/r-typesheet1.gif");
+
+            std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texture, sf::IntRect(sf::Vector2i(249, 89), sf::Vector2i(16, 6)));
 
             ecsManager.addComponent(entity, positionComponent);
             ecsManager.addComponent(entity, movementComponent);
             ecsManager.addComponent(entity, collisionComponent);
             ecsManager.addComponent(entity, shootComponent);
+            ecsManager.addComponent(entity, spriteComponent);
 
-        std::cout << "[CLIENT] New ShootEntity created {ID}-[" << static_cast<int>(entity_id)
-            << "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
+        // std::cout << "[CLIENT] New ShootEntity created {ID}-[" << static_cast<int>(entity_id)
+            // << "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
     }
 
     void RecvMessageSystem::handleCreateEntity(std::vector<size_t> params, size_t entity_id)
@@ -144,8 +150,8 @@ namespace potEngine
             if (player_comp)
                 username = player_comp->get()->username;
 
-            std::cout << "[CLIENT] Entity {ID}-[" << std::to_string(static_cast<int>(entity_id))
-                << "], {username}-[" << username << "], has move to {" << convertedParams[0] << "," << convertedParams[1] << "}" << std::endl;
+            // std::cout << "[CLIENT] Entity {ID}-[" << std::to_string(static_cast<int>(entity_id))
+            //     << "], {username}-[" << username << "], has move to {" << convertedParams[0] << "," << convertedParams[1] << "}" << std::endl;
         }
         if (event_type == EventType::INFORMATION) {
             // ici le joueur recoit les informations de toutes les entities déja présente

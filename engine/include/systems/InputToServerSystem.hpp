@@ -8,13 +8,17 @@
 #include <netinet/in.h>
 #include <cmath>
 #include <vector>
+#include <chrono>
 
 namespace potEngine {
     class InputToServerSystem : public ASystem {
         public:
             InputToServerSystem(size_t playerId, int clientFd, struct sockaddr_in serverAddr) : _playerId(playerId), _clientFd(clientFd), _serverAddr(serverAddr) {
+                lastUpdateTime = std::chrono::steady_clock::now();
                 eventBus.subscribe(this, &InputToServerSystem::handleInputs);
             };
+            std::chrono::time_point<std::chrono::steady_clock> lastUpdateTime;
+            float updateInterval = 0.016f;
 
             static sf::IntRect changeShootAnimationFrame(int frame) {
                 return sf::IntRect(sf::Vector2i(2 + 33 * (frame - 1) + std::abs((frame - 1) / 3), 51), sf::Vector2i(32, 30));
@@ -53,51 +57,58 @@ namespace potEngine {
             }
 
             void handleInputs(std::shared_ptr<BlcEvent> event) {
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
-                    auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::DISCONNECT, std::vector<size_t>{});
-                    potEngine::eventBus.publish(disconnectEventInfo);
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_UP, std::vector<size_t>{});
-                    potEngine::eventBus.publish(moveInfo);
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_DOWN, std::vector<size_t>{});
-                    potEngine::eventBus.publish(moveInfo);
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
-                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_LEFT, std::vector<size_t>{});
-                    potEngine::eventBus.publish(moveInfo);
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_RIGHT, std::vector<size_t>{});
-                    potEngine::eventBus.publish(moveInfo);
-                }
-                auto playerEntity = ecsManager.getEntity(_playerId);
-                auto playerComponent = playerEntity->getComponent<PlayerComponent>();
-                if (!playerComponent)
-                    return;
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-                    if (!playerComponent->get()->getShootAnimationEntityId().has_value()) {
-                        std::cout << "je crée l'animation de shoot" << std::endl;
-                        // on crée l'animation de shoot 
-                        int shootAnimationEntityId = createShootAnimation(playerEntity);
-                        std::cout << "id de l'animation = " << shootAnimationEntityId << std::endl;
-                        if (shootAnimationEntityId != -1)
-                            playerComponent->get()->setShootAnimationEntityId(shootAnimationEntityId);
-                        // TODO : informer le serveur que le shoot est en cours
+
+                auto currentTime = std::chrono::steady_clock::now();
+                std::chrono::duration<float> elapsedTime = currentTime - lastUpdateTime;
+                
+                if (elapsedTime.count() >= updateInterval) {
+                    lastUpdateTime = currentTime;
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
+                        auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::DISCONNECT, std::vector<size_t>{});
+                        potEngine::eventBus.publish(disconnectEventInfo);
+                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
+                        auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_UP, std::vector<size_t>{});
+                        potEngine::eventBus.publish(moveInfo);
+                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+                        auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_DOWN, std::vector<size_t>{});
+                        potEngine::eventBus.publish(moveInfo);
+                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+                        auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_LEFT, std::vector<size_t>{});
+                        potEngine::eventBus.publish(moveInfo);
+                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+                        auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_RIGHT, std::vector<size_t>{});
+                        potEngine::eventBus.publish(moveInfo);
+                    }
+                    auto playerEntity = ecsManager.getEntity(_playerId);
+                    auto playerComponent = playerEntity->getComponent<PlayerComponent>();
+                    if (!playerComponent)
+                        return;
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                        if (!playerComponent->get()->getShootAnimationEntityId().has_value()) {
+                            std::cout << "je crée l'animation de shoot" << std::endl;
+                            // on crée l'animation de shoot 
+                            int shootAnimationEntityId = createShootAnimation(playerEntity);
+                            std::cout << "id de l'animation = " << shootAnimationEntityId << std::endl;
+                            if (shootAnimationEntityId != -1)
+                                playerComponent->get()->setShootAnimationEntityId(shootAnimationEntityId);
+                            // TODO : informer le serveur que le shoot est en cours
+                        } else {
+                            // animation de tir existe déjà, on update la position de l'animation pour concorder avec le joueur
+                            updateShootAnimationPosition(playerEntity);
+                        }
                     } else {
-                        // animation de tir existe déjà, on update la position de l'animation pour concorder avec le joueur
-                        updateShootAnimationPosition(playerEntity);
+                        // retirer l'animation si existante
+                        if (playerComponent->get()->getShootAnimationEntityId().has_value()) {
+                            ecsManager.removeEntity(playerComponent->get()->getShootAnimationEntityId().value());
+                            playerComponent->get()->getShootAnimationEntityId().reset();
+                            auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::SHOOT, std::vector<size_t>{});
+                            potEngine::eventBus.publish(moveInfo);
+                        }
                     }
-                } else {
-                    // retirer l'animation si existante
-                    if (playerComponent->get()->getShootAnimationEntityId().has_value()) {
-                        ecsManager.removeEntity(playerComponent->get()->getShootAnimationEntityId().value());
-                        playerComponent->get()->getShootAnimationEntityId().reset();
-                    }
-                    auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::SHOOT, std::vector<size_t>{});
-                    potEngine::eventBus.publish(moveInfo);
                 }
             }
             void update(float deltaTime) { };

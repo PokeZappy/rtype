@@ -54,8 +54,8 @@ namespace potEngine {
     }
 
     std::shared_ptr<AEntity> ECSManager::createWindowEntity() {
-        auto entity = std::make_shared<AEntity>(30);
-
+        auto entity = std::make_shared<AEntity>(_entityCounter);
+        _entityCounter++;
         std::shared_ptr<potEngine::WindowComponent> windowComponent = std::make_shared<potEngine::WindowComponent>();
 
         addComponent<WindowComponent>(entity, windowComponent);
