@@ -21,8 +21,6 @@ RType::Client::Client() : player_id(0)
     server_addr.sin_port = htons(PORT);
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-    socklen_t addr_len = sizeof(server_addr);
-
     potEngine::ecsManager.registerSystem<potEngine::RenderSystem>();
     potEngine::ecsManager.registerSystem<potEngine::InputSystem>();
     potEngine::ecsManager.registerSystem<potEngine::AnimationSystem>();
