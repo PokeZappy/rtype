@@ -33,7 +33,7 @@ const int CLIENT_SOCKET = 1;
 #include "RecvMessageSystem.hpp"
 #include "AudioSystem.hpp"
 #include "AnimationSystem.hpp"
-#include "ShipAnimationEvent.hpp"
+#include "ShipAnimationSystem.hpp"
 #include "InputInfoEvent.hpp"
 
 #include "AEventHandler.hpp"
@@ -55,7 +55,7 @@ const int CLIENT_SOCKET = 1;
 #include "ConnectionEvent.hpp"
 #include "MoveEvent.hpp"
 #include "CollisionEvent.hpp"
-#include "InputToServerEvent.hpp"
+#include "InputToServerSystem.hpp"
 
 #endif // GAME_CONFIG_HPP
 

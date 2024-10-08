@@ -29,8 +29,21 @@ namespace potEngine {
 
             while (window->pollEvent(sfmlEvent))
             {
-                std::shared_ptr<InputInfoEvent> input = std::make_shared<InputInfoEvent>(sfmlEvent.type, sfmlEvent.key.code);
-                eventBus.publish(input);
+                if (sfmlEvent.type == sf::Event::KeyPressed) {
+                auto key = sfmlEvent.key.code;
+                // if (ecsManager.getInputs().find(key) != ecsManager.getInputs().end()) {
+                    // ecsManager.setInput(key, true);
+                // }
+            }
+        
+            if (sfmlEvent.type == sf::Event::KeyReleased) {
+                auto key = sfmlEvent.key.code;
+                // if (ecsManager.getInputs().find(key) != ecsManager.getInputs().end()) {
+                //     ecsManager.setInput(key, false);
+                // }
+            }
+                // std::shared_ptr<InputInfoEvent> input = std::make_shared<InputInfoEvent>(sfmlEvent.type, sfmlEvent.key.code);
+                // eventBus.publish(input);
             }
         }
             // if (sfmlEvent.type == sf::Event::Closed)

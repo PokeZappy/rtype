@@ -48,12 +48,16 @@ namespace potEngine {
 
         std::vector<std::shared_ptr<AEntity>> getEntities() const;
         std::shared_ptr<AEntity> getEntity(uint8_t entity_id) const;
+        // void setInput(sf::Keyboard::Key key, bool value) { _inputs[key] = value; };
+        // bool getInput(sf::Keyboard::Key key) { return (_inputs[key]); };
+        // std::unordered_map<sf::Keyboard::Key, bool> getInputs() { return (_inputs); };
 
     private:
         std::size_t _entityCounter;
 
         std::vector<std::shared_ptr<ISystem>> _systems;
         std::vector<std::shared_ptr<AEntity>> _entities;
+        // std::unordered_map<sf::Keyboard::Key, bool> _inputs;
 
     };
 

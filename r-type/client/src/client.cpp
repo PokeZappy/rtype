@@ -28,7 +28,6 @@ RType::Client::Client() : player_id(0)
     potEngine::ecsManager.registerSystem<potEngine::InputSystem>();
     potEngine::ecsManager.registerSystem<potEngine::AnimationSystem>();
     potEngine::ecsManager.registerSystem<potEngine::AudioSystem>();
-    potEngine::ecsManager.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
 
     std::cout << "[CLIENT] Ready to connect to the server...\n";
 }
@@ -97,6 +96,11 @@ void RType::Client::start()
     handle_connection();
     setNonBlockingInput();
 
+    socklen_t addr_len = sizeof(server_addr);
+    potEngine::ecsManager.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
+    potEngine::ecsManager.registerSystem<potEngine::ShipAnimationSystem>(player_id);
+    potEngine::ecsManager.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, server_addr);
+
     // Initialisation sprites
     // sf::Image spriteImage;
     // spriteImage.create(100, 100, sf::Color::Blue);
@@ -136,10 +140,8 @@ void RType::Client::start()
     // auto animationSystem = std::make_shared<potEngine::AnimationSystem>();
 
     // Input to server event
-    auto inputServerEvent = std::make_shared<potEngine::InputToServerEvent>(player_id, client_fd, server_addr);
 
     // Ship animation event
-    auto shipAnimationEvent = std::make_shared<potEngine::ShipAnimationEvent>(player_id);
 
     auto startEvent = std::make_shared<potEngine::StartEvent>();
 
