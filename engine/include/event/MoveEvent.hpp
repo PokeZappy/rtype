@@ -39,7 +39,8 @@ namespace potEngine
                 return nullptr;
 
             for (auto entity : ecsManager.getEntities()) {
-                if (entity->getComponent<CollisionComponent>() == nullptr || entity->getComponent<PositionComponent>() == nullptr || entity->getID() == info->entity_id || entity->getComponent<PlayerComponent>())
+                if (entity->getComponent<CollisionComponent>() == nullptr || entity->getComponent<PositionComponent>() == nullptr || entity->getID() == info->entity_id
+                    || (entity->getComponent<PlayerComponent>() && current_entity->getComponent<PlayerComponent>()))
                     continue;
                 int entity_x = entity->getComponent<PositionComponent>()->get()->_position[0];
                 int entity_y = entity->getComponent<PositionComponent>()->get()->_position[1];
@@ -86,7 +87,7 @@ namespace potEngine
                     info->max_players,
                     info->fd,
                     info->entity_id,
-                    static_cast<size_t>(entity_collide->getID())
+                    entity_collide->getID()
                 );
                 eventBus.publish(collisionEventInfo);
             }

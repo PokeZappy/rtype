@@ -48,7 +48,7 @@ namespace potEngine
 
         void createMonstreEntity(std::shared_ptr<potEngine::AEntity> &entity, std::vector<int> pos)
         {
-            // TODO: ajouter les composants d'un monstre ici
+            // TODO: ajouter les composants d'un monstre ici.
         }
 
         void EntityCreate(std::shared_ptr<EntityCreateInfoEvent> info)
