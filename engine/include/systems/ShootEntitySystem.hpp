@@ -32,6 +32,7 @@ namespace potEngine
         ShootEntitySystem(int server_fd, float interval) : _serverFd(server_fd), updateInterval(interval)
         {
             lastUpdateTime = std::chrono::steady_clock::now();
+            _signature.set(AComponent::getID<ShootComponent>(), true);
             eventBus.subscribe(this, &ShootEntitySystem::updateSystem);
         }
 
@@ -53,7 +54,8 @@ namespace potEngine
                             4,
                             -1,
                             MOVE_RIGHT,
-                            entity->getID(),
+                            ecsManager.getClientIdFromServerId(entity->getID()),
+                            // entity->getID(),
                             std::vector<size_t> {}
                         );
                         eventBus.publish(moveInfo);

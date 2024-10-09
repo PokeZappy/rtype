@@ -43,7 +43,7 @@ namespace potEngine {
 //                    TODO -fix here
                     backgroundPosition[0] = start_pos.x + (progress/ 350) * (end_pos.x - start_pos.x);
                     backgroundPosition[1] = start_pos.y + (progress/ 350) * (end_pos.y - start_pos.y);
-                    std::cout << "progress " << progress << ", endpos: " << end_pos.x << ", " << end_pos.y << " startpos " << start_pos.x << ", " << start_pos.y << " background "<< backgroundPosition[0] << backgroundPosition[1] << std::endl;
+                    // std::cout << "progress " << progress << ", endpos: " << end_pos.x << ", " << end_pos.y << " startpos " << start_pos.x << ", " << start_pos.y << " background "<< backgroundPosition[0] << backgroundPosition[1] << std::endl;
                 }
             }
             void update(float deltaTime) {}

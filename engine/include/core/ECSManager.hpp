@@ -53,9 +53,8 @@ namespace potEngine {
         // void setInput(sf::Keyboard::Key key, bool value) { _inputs[key] = value; };
         // bool getInput(sf::Keyboard::Key key) { return (_inputs[key]); };
         // std::unordered_map<sf::Keyboard::Key, bool> getInputs() { return (_inputs); };
-
-    private:
         size_t getClientIdFromServerId(size_t serverId);
+    private:
         std::size_t _entityCounter;
         std::unordered_map<size_t, size_t> _serverToClientId;
 
