@@ -7,7 +7,9 @@
 
 #include "client_config.hpp"
 
-RType::Client::Client() : player_id(0)
+std::string assetFinder();
+
+RType::Client::Client(const std::string &ip, int port) : player_id(0)
 {
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("Socket creation failed");
@@ -17,8 +19,8 @@ RType::Client::Client() : player_id(0)
     _addr_len = sizeof(_addr);
     memset(&_addr, 0, _addr_len);
     _addr.sin_family = AF_INET;
-    _addr.sin_port = htons(PORT);
-    _addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    _addr.sin_port = htons(port);
+    _addr.sin_addr.s_addr = inet_addr(ip.c_str());
 
     potEngine::engine.registerSystem<potEngine::RenderSystem>();
     potEngine::engine.registerSystem<potEngine::InputSystem>();

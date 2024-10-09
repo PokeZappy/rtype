@@ -7,8 +7,7 @@
 
 #include "server_config.hpp"
 
-RType::Server::Server() : current_players(0)
-{
+void RType::Server::init(int port) {
     if ((server_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("Socket creation failed");
         exit(EXIT_FAILURE);
@@ -17,13 +16,24 @@ RType::Server::Server() : current_players(0)
     memset(&_addr, 0, _addr_len);
     _addr.sin_family = AF_INET;
     _addr.sin_addr.s_addr = INADDR_ANY;
-    _addr.sin_port = htons(PORT);
+    _addr.sin_port = htons(port);
     if (bind(server_fd, (const struct sockaddr *)&_addr, _addr_len) < 0) {
         perror("Bind failed");
         close(server_fd);
         exit(EXIT_FAILURE);
     }
-    std::cout << "[SERVER] started on port " << PORT << ". Waiting for clients...\n";
+
+    std::cout << "[SERVER] started on port " << port << ". Waiting for clients...\n";
+}
+
+RType::Server::Server() : current_players(0)
+{
+    init(PORT);
+}
+
+RType::Server::Server(int port) : current_players(0)
+{
+    init(port);
 }
 
 RType::Server::~Server()

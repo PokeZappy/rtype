@@ -25,6 +25,7 @@ namespace RType
     class Server {
     public:
         Server();
+        Server(int port);
         ~Server();
 
         void start();
@@ -38,6 +39,7 @@ namespace RType
         int server_fd;
         struct sockaddr_in _addr;
         socklen_t _addr_len;
+        void init(int port);
     };
 }
 

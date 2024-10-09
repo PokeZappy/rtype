@@ -6,16 +6,18 @@
 */
 
 #include "client_config.hpp"
+#include "Parameters.hpp"
 
-int main()
+int main(int argc, char **argv)
 {
     std::string asset_path = assetFinder();
     if (asset_path.empty()) {
         std::cerr << "Can't find the r-type asset folder" << std::endl;
-        return 1;
+        return 84;
     }
 
-    RType::Client client;
+    Parameters parameters(argc, argv);
+    RType::Client client(parameters.getIp(), parameters.getPort());
     // title_screen(asset_path);
     client.start();
     return 0;
