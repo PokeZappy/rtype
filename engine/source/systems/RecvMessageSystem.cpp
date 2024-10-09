@@ -120,7 +120,7 @@ namespace potEngine
     {
         auto [entity_id, event_type, params] = recv_message();
         if (event_type != EventType::UNKNOW) {
-            std::cout << "[CLIENT] Received event from server: " << static_cast<int>(event_type) << std::endl;
+            // std::cout << "[CLIENT] Received event from server: " << static_cast<int>(event_type) << std::endl;
         }
         if (event_type == EventType::CONNECTION) {
             createPlayerEntity(params, entity_id);
@@ -131,7 +131,7 @@ namespace potEngine
                 // TODO: fermer le client ici.
                 return;
             }
-            std::cout << "[CLIENT] Client with {ID}-[" << static_cast<int>(entity_id) << "] disconnected from server." << std::endl;
+            // std::cout << "[CLIENT] Client with {ID}-[" << static_cast<int>(entity_id) << "] disconnected from server." << std::endl;
         }
         if (event_type == EventType::MOVE_UP || event_type == EventType::MOVE_DOWN || event_type == EventType::MOVE_LEFT || event_type == EventType::MOVE_RIGHT) {
             auto entity = ecsManager.getEntity(entity_id);
@@ -158,7 +158,8 @@ namespace potEngine
         }
         if (event_type == EventType::COLLISION) {
             // do somethijng
-            CollisionInfoEvent event(4, _clientFd, entity_id, params[0]);
+            std::shared_ptr<CollisionInfoEvent> event = std::make_shared<CollisionInfoEvent>(4, _clientFd, entity_id, params[0]);
+            eventBus.publish(event);
         }
     }
 }

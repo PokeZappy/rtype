@@ -75,7 +75,7 @@ namespace potEngine
             if (info->entityType == EntityType::MONSTRE)
                 createMonstreEntity(entity, info->position);
 
-            std::cout << "[SERVER] New entity created {ID}-[" << static_cast<int>(entity_id) << "] {TYPE}-[" << info->entityType << "]" << std::endl;
+            // std::cout << "[SERVER] New entity created {ID}-[" << static_cast<int>(entity_id) << "] {TYPE}-[" << info->entityType << "]" << std::endl;
         }
     };
 }
