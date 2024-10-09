@@ -8,8 +8,9 @@
 #include "client_config.hpp"
 #include "Tools.hpp"
 #include "Lobby.hpp"
+#include "Parameters.hpp"
 
-int main()
+int main(int argc, char **argv)
 {
     std::string asset_path = assetFinder();
     if (asset_path.empty()) {
@@ -17,7 +18,8 @@ int main()
         return 1;
     }
 
-    RType::Client client;
+    Parameters parameters(argc, argv);
+    RType::Client client(parameters.getIp(), parameters.getPort());
     // title_screen(asset_path);
     client.start();
     return 0;

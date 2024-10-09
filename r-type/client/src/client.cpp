@@ -9,7 +9,7 @@
 
 std::string assetFinder();
 
-RType::Client::Client() : player_id(0)
+RType::Client::Client(const std::string& ip, int port) : player_id(0)
 {
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("Socket creation failed");
@@ -18,8 +18,8 @@ RType::Client::Client() : player_id(0)
 
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server_addr.sin_port = htons(port);
+    server_addr.sin_addr.s_addr = inet_addr(ip.c_str());
 
     socklen_t addr_len = sizeof(server_addr);
 

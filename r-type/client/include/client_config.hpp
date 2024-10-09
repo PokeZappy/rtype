@@ -22,7 +22,7 @@ namespace RType
 {
     class Client {
     public:
-        Client();
+        Client(const std::string& ip, int port);
         ~Client();
 
         void start();
