@@ -58,16 +58,14 @@ namespace potEngine
 
         auto entity = ecsManager.createServerEntity(entity_id);
 
-        sf::Texture playerTexture;
-        if (!playerTexture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif"))
-            std::cout << assetFinder() << std::endl;
+        const std::string &texturePath = assetFinder() + "/sprites/r-typesheet42.gif";
 
         std::shared_ptr<PlayerComponent> playerComponent = std::make_shared<PlayerComponent>(username);
         std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(position[0], position[1]);
         std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(1.0f);
         std::shared_ptr<LifeComponent> lifeComponent = std::make_shared<LifeComponent>(3);
         std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
-        std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(playerTexture, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
+        std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
         ecsManager.addComponent(entity, playerComponent);
         ecsManager.addComponent(entity, positionComponent);
         ecsManager.addComponent(entity, movementComponent);
@@ -90,11 +88,9 @@ namespace potEngine
         std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(5.0f);
         std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
         std::shared_ptr<ShootComponent> shootComponent = std::make_shared<ShootComponent>();
-        sf::Texture texture;
 
-        texture.loadFromFile(assetFinder() + "/sprites/r-typesheet1.gif");
-
-        std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texture, sf::IntRect(sf::Vector2i(249, 89), sf::Vector2i(16, 6)));
+        const std::string &texturePath = assetFinder() + "/sprites/r-typesheet1.gif";
+        std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(249, 89), sf::Vector2i(16, 6)));
 
         ecsManager.addComponent(entity, positionComponent);
         ecsManager.addComponent(entity, movementComponent);

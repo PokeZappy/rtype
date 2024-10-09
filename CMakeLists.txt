@@ -24,7 +24,8 @@ file(GLOB_RECURSE ENGINE_SOURCES
     "engine/source/event/*.cpp"
 )
 
-add_library(engine SHARED ${ENGINE_SOURCES})
+add_library(engine SHARED ${ENGINE_SOURCES}
+        engine/include/components/staticMoveComponent.hpp)
 
 target_include_directories(engine PUBLIC
     engine/include

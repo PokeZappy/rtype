@@ -21,7 +21,7 @@ namespace potEngine {
         // std::shared_ptr<AEntity> createEntity(size_t Id);
         std::shared_ptr<AEntity> createServerEntity(size_t serverId);
         std::shared_ptr<AEntity> createWindowEntity();
-        std::shared_ptr<AEntity> createSpriteEntity(sf::Texture &texture);
+        std::shared_ptr<AEntity> createSpriteEntity(const std::string &texturePath);
 
         static ECSManager& getInstance() {
             static ECSManager instance;

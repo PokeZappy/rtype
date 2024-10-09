@@ -33,12 +33,10 @@ namespace potEngine {
                 auto playerIntRect = playerSpriteComponent->get()->getSprite().getTextureRect();
                 auto positionComponent = std::make_shared<PositionComponent>(playerPosition[0] + playerIntRect.width * (playerSpriteComponent->get()->getSprite().getScale().x), playerPosition[1] - 14);
                 auto animationComponent = std::make_shared<AnimationComponent>(7, 0.15, true, changeShootAnimationFrame);
-                // Création texture et sprite
-                sf::Texture texture;
-                texture.loadFromFile("/home/Tom/Bureau/Projet/EPITECH/B-CPP-500-LYN-5-1-rtype-cyprien.diederichs/r-type/assets/sprites/r-typesheet1.gif");
-                std::cout << "TEST\n";
-                auto spriteComponent = std::make_shared<SpriteComponent>(texture, sf::IntRect(sf::Vector2i(2, 51), sf::Vector2i(32, 30)));
-                std::cout << "TEST\n";
+
+                const std::string texturePath = "/home/Tom/Bureau/Projet/EPITECH/B-CPP-500-LYN-5-1-rtype-cyprien.diederichs/r-type/assets/sprites/r-typesheet1.gif";
+                auto spriteComponent = std::make_shared<SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(2, 51), sf::Vector2i(32, 30)));
+
                 ecsManager.addComponent(shootAnimationEntity, positionComponent);
                 ecsManager.addComponent(shootAnimationEntity, animationComponent);
                 ecsManager.addComponent(shootAnimationEntity, spriteComponent);
@@ -62,7 +60,6 @@ namespace potEngine {
 
                 auto currentTime = std::chrono::steady_clock::now();
                 std::chrono::duration<float> elapsedTime = currentTime - lastUpdateTime;
-                
                 if (elapsedTime.count() >= updateInterval) {
                     lastUpdateTime = currentTime;
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
@@ -91,19 +88,14 @@ namespace potEngine {
                         return;
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
                         if (!playerComponent->get()->getShootAnimationEntityId().has_value()) {
-                            std::cout << "je crée l'animation de shoot" << std::endl;
-                            // on crée l'animation de shoot 
                             int shootAnimationEntityId = createShootAnimation(playerEntity);
-                            std::cout << "id de l'animation = " << shootAnimationEntityId << std::endl;
                             if (shootAnimationEntityId != -1)
                                 playerComponent->get()->setShootAnimationEntityId(shootAnimationEntityId);
                             // TODO : informer le serveur que le shoot est en cours
                         } else {
-                            // animation de tir existe déjà, on update la position de l'animation pour concorder avec le joueur
                             updateShootAnimationPosition(playerEntity);
                         }
                     } else {
-                        // retirer l'animation si existante
                         if (playerComponent->get()->getShootAnimationEntityId().has_value()) {
                             ecsManager.removeEntity(playerComponent->get()->getShootAnimationEntityId().value());
                             playerComponent->get()->getShootAnimationEntityId().reset();

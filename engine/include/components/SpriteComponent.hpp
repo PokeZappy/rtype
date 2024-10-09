@@ -7,8 +7,9 @@ namespace potEngine
     class SpriteComponent : public RenderComponent {
     public:
         SpriteComponent() {};
-        SpriteComponent(sf::Texture &texture);
-        SpriteComponent(sf::Texture &texture, sf::IntRect textureRect);
+        SpriteComponent(const std::string &texturePath);
+        SpriteComponent(const std::string &texturePath, sf::IntRect textureRect);
+        SpriteComponent(const std::string &texturePath, sf::IntRect textureRect, sf::Vector2i targetSize, sf::Vector2i actualSize);
         ~SpriteComponent();
 
         virtual void init();
