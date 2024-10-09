@@ -68,6 +68,7 @@ namespace potEngine {
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
                         auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::DISCONNECT, std::vector<size_t>{});
                         potEngine::eventBus.publish(disconnectEventInfo);
+                        eventBus.publish(std::make_shared<StopMainLoopEvent>());
                     }
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
                         auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_UP, std::vector<size_t>{});

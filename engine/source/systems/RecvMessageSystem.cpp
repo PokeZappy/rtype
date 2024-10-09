@@ -10,6 +10,8 @@
 #include "SpriteComponent.hpp"
 #include "ShootComponent.hpp"
 #include "CollisionInfoEvent.hpp"
+#include "StopMainLoopEvent.hpp"
+// TODO pitié pendant la refacto faire un fichier pour que les includes soient nickels
 
 namespace potEngine
 {
@@ -155,6 +157,7 @@ namespace potEngine
         }
         if (event_type == EventType::DEATH) {
             ecsManager.removeEntity(entity_id);
+            eventBus.publish(std::make_shared<StopMainLoopEvent>());
         }
         if (event_type == EventType::COLLISION) {
             // do somethijng
