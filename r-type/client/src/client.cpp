@@ -58,7 +58,7 @@ void RType::Client::init_subscribe()
     auto sendMessageToAllExeptEvent = std::make_shared<potEngine::SendMessageToAllExeptEvent>();
     auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
     auto moveEvent = std::make_shared<potEngine::MoveEvent>();
-    auto collisionEvent = std::make_shared<potEngine::CollisionEvent>();
+    auto clientCollisionEvent = std::make_shared<potEngine::ClientCollisionEvent>();
 }
 
 void RType::Client::handle_connection()

@@ -35,6 +35,7 @@ target_include_directories(engine PUBLIC
     engine/include/entity
     engine/include/core/event
     engine/include/event
+    engine/include/event/data
 )
 
 file(GLOB_RECURSE SERVER_SOURCES "r-type/server/src/*.cpp")

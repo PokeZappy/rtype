@@ -9,6 +9,7 @@
 #include "CollisionComponent.hpp"
 #include "SpriteComponent.hpp"
 #include "ShootComponent.hpp"
+#include "CollisionInfoEvent.hpp"
 
 namespace potEngine
 {
@@ -156,6 +157,13 @@ namespace potEngine
         if (event_type == EventType::INFORMATION) {
             // ici le joueur recoit les informations de toutes les entities déja présente
             handleCreateEntity(params, entity_id);
+        }
+        if (event_type == EventType::DEATH) {
+            ecsManager.removeEntity(entity_id);
+        }
+        if (event_type == EventType::COLLISION) {
+            // do somethijng
+            CollisionInfoEvent event(4, _clientFd, entity_id, params[0]);
         }
     }
 }
