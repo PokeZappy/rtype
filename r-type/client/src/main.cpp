@@ -8,10 +8,11 @@
 #include "client_config.hpp"
 #include "Tools.hpp"
 #include "Lobby.hpp"
+#include "AssetFinder.hpp"
 
 int main()
 {
-    std::string asset_path = assetFinder();
+    std::string asset_path = potEngine::assetFinder();
     if (asset_path.empty()) {
         std::cerr << "Can't find the r-type asset folder" << std::endl;
         return 1;

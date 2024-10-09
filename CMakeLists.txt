@@ -23,6 +23,7 @@ file(GLOB_RECURSE ENGINE_SOURCES
     "engine/source/core/event/*.cpp"
     "engine/source/event/*.cpp"
     "engine/source/config/*.cpp"
+    "engine/source/utils/*.cpp"
 )
 
 add_library(engine SHARED ${ENGINE_SOURCES})
@@ -37,6 +38,7 @@ target_include_directories(engine PUBLIC
     engine/include/core/event
     engine/include/event
     engine/include/config
+    engine/include/utils
 )
 
 file(GLOB_RECURSE SERVER_SOURCES "r-type/server/src/*.cpp")
@@ -135,6 +137,7 @@ else()
 
     if(SFML_FOUND)
         target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+        target_link_libraries(r-type_server PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
         target_link_libraries(engine PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
     else()
         message(FATAL_ERROR "SFML not found!")

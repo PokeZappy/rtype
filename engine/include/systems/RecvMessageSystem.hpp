@@ -9,6 +9,8 @@
 #include "WindowComponent.hpp"
 #include <netinet/in.h>
 #include "BlcEvent.hpp"
+#include <libconfig.h++>
+
 // #include "game_config.hpp" // TODO faire marcher cet include trop la flemme actuellement
 
 namespace potEngine {

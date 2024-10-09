@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <stdexcept>
 #include <unistd.h>
+#include "AssetFinder.hpp"
 
 std::string getExecutablePath() {
     char buffer[1024];
@@ -24,7 +25,7 @@ std::filesystem::path findRootPath(const std::filesystem::path& startPath, const
     throw std::runtime_error("Root directory with marker not found.");
 }
 
-std::string assetFinder() {
+std::string potEngine::assetFinder() {
     try {
         std::string executablePath = getExecutablePath();
         std::filesystem::path execPath(executablePath);
@@ -40,7 +41,6 @@ std::string assetFinder() {
             return {};
         }
 
-        std::cout << "Assets found at: " << assetsRoot << std::endl;
         return assetsRoot;
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;

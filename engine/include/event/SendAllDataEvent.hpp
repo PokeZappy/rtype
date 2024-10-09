@@ -35,7 +35,7 @@ namespace potEngine
             if (entity->getComponent<PlayerComponent>())
                 return EntityType::PLAYER;
             else
-                return EntityType::TOM;
+                return EntityType::NONE_ENTITY;
         }
 
         void sendAllData(std::shared_ptr<SendAllDataInfoEvent> info)

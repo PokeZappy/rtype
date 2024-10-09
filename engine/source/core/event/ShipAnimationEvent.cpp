@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <stdexcept>
 #include <unistd.h>
+#include "AssetFinder.hpp"
 
 namespace potEngine {
     std::string getExecutablePath() {
@@ -26,37 +27,37 @@ std::filesystem::path findRootPath(const std::filesystem::path& startPath, const
     throw std::runtime_error("Root directory with marker not found.");
 }
 
-std::string assetFinder() {
-    try {
-        std::string executablePath = getExecutablePath();
-        std::filesystem::path execPath(executablePath);
-        std::filesystem::path projectRoot = findRootPath(execPath.parent_path(), ".git");
-        std::filesystem::path assetsRoot = projectRoot / "r-type" / "assets";
+// std::string assetFinder() {
+//     try {
+//         std::string executablePath = getExecutablePath();
+//         std::filesystem::path execPath(executablePath);
+//         std::filesystem::path projectRoot = findRootPath(execPath.parent_path(), ".git");
+//         std::filesystem::path assetsRoot = projectRoot / "r-type" / "assets";
 
-        // std::cout << "Executable Path: " << execPath << std::endl;
-        // std::cout << "Project Root Path: " << projectRoot << std::endl;
-        // std::cout << "Assets Root Path: " << assetsRoot << std::endl;
+//         // std::cout << "Executable Path: " << execPath << std::endl;
+//         // std::cout << "Project Root Path: " << projectRoot << std::endl;
+//         // std::cout << "Assets Root Path: " << assetsRoot << std::endl;
 
-        if (!std::filesystem::exists(assetsRoot)) {
-            std::cerr << "Folder assets not found, please make sure the assets are in the correct folder." << std::endl;
-            return {};
-        }
+//         if (!std::filesystem::exists(assetsRoot)) {
+//             std::cerr << "Folder assets not found, please make sure the assets are in the correct folder." << std::endl;
+//             return {};
+//         }
 
-        std::cout << "Assets found at: " << assetsRoot << std::endl;
-        return assetsRoot;
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return {};
-    }
+//         std::cout << "Assets found at: " << assetsRoot << std::endl;
+//         return assetsRoot;
+//     } catch (const std::exception& e) {
+//         std::cerr << "Error: " << e.what() << std::endl;
+//         return {};
+//     }
 
-}
+// }
 
     void ShipAnimationEvent::shipInputEvent(std::shared_ptr<InputInfoEvent> event) {
                     if (event->type == sf::Event::KeyPressed) {
 
                         if (event->key == sf::Keyboard::E) {
                             sf::Texture texture;
-                            texture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif");
+                            texture.loadFromFile(potEngine::assetFinder() + "/sprites/r-typesheet42.gif");
                             auto entity = ecsManager.createSpriteEntity(texture);
                         }
 

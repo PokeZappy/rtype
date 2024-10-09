@@ -7,6 +7,7 @@
 #include "LifeComponent.hpp"
 #include "CollisionComponent.hpp"
 #include "SpriteComponent.hpp"
+#include "AssetFinder.hpp"
 
 namespace potEngine
 {

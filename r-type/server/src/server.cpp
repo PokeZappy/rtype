@@ -53,6 +53,16 @@ void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_a
         auto moveInfo = std::make_shared<potEngine::MoveInfoEvent>(MAX_PLAYERS, server_fd, action, entity_id, params);
         potEngine::eventBus.publish(moveInfo);
     }
+
+    if (action == potEngine::START_STAGE) {
+        for (auto entity : potEngine::ecsManager.getEntities()) {
+            if (entity->hasComponent<potEngine::StageComponent>()) {
+                return;
+            }
+        }
+        auto startStage = std::make_shared<potEngine::StratStageInfoEvent>(MAX_PLAYERS, server_fd, entity_id, params);
+        potEngine::eventBus.publish(startStage);
+    }
 }
 
 void RType::Server::init_subscribe()
@@ -65,6 +75,7 @@ void RType::Server::init_subscribe()
     auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
     auto moveEvent = std::make_shared<potEngine::MoveEvent>();
     auto collisionEvent = std::make_shared<potEngine::CollisionEvent>();
+    auto startStageEvent = std::make_shared<potEngine::StartStageEvent>();
 }
 
 void RType::Server::start()

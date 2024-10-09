@@ -36,7 +36,6 @@ const int CLIENT_SOCKET = 1;
 
 #include "AEventHandler.hpp"
 #include "EventBus.hpp"
-#include "Config.hpp"
 #include "IEvent.hpp"
 #include "MemberHandler.hpp"
 
@@ -55,6 +54,7 @@ const int CLIENT_SOCKET = 1;
 #include "MoveEvent.hpp"
 #include "CollisionEvent.hpp"
 #include "InputToServerEvent.hpp"
+#include "StartStageEvent.hpp"
 
 #endif // GAME_CONFIG_HPP
 

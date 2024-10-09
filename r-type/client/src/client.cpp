@@ -8,8 +8,6 @@
 #include "client_config.hpp"
 #include "RecvMessageSystem.hpp"
 
-std::string assetFinder();
-
 RType::Client::Client() : player_id(0)
 {
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
