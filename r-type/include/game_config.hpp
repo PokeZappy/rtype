@@ -39,6 +39,7 @@ const int CLIENT_SOCKET = 1;
 #include "AnimationSystem.hpp"
 #include "ShipAnimationSystem.hpp"
 #include "InputInfoEvent.hpp"
+#include "StopMainLoopEvent.hpp"
 #include "ShootEntitySystem.hpp"
 #include "RecvMessageServerSystem.hpp"
 #include "BackgroundSystem.hpp"
