@@ -106,13 +106,13 @@ void RType::Client::create_background() {
     potEngine::ecsManager.addComponent(entity, static_move_component);
 
 
-    std::cout << "[CLIENT] New Background created {ID}-[" << std::endl;
+    std::cout << "[CLIENT] Background created." << std::endl;
 }
 
 void RType::Client::start()
 {
     init_subscribe();
-    create_background();
+    // create_background();
     handle_connection();
     setNonBlockingInput();
 
