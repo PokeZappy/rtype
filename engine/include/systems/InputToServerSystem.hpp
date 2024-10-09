@@ -35,8 +35,10 @@ namespace potEngine {
                 auto animationComponent = std::make_shared<AnimationComponent>(7, 0.15, true, changeShootAnimationFrame);
                 // Création texture et sprite
                 sf::Texture texture;
-                texture.loadFromFile("/home/samuel/tek3/rtpe/r-type/assets/sprites/r-typesheet1.gif");
+                texture.loadFromFile("/home/Tom/Bureau/Projet/EPITECH/B-CPP-500-LYN-5-1-rtype-cyprien.diederichs/r-type/assets/sprites/r-typesheet1.gif");
+                std::cout << "TEST\n";
                 auto spriteComponent = std::make_shared<SpriteComponent>(texture, sf::IntRect(sf::Vector2i(2, 51), sf::Vector2i(32, 30)));
+                std::cout << "TEST\n";
                 ecsManager.addComponent(shootAnimationEntity, positionComponent);
                 ecsManager.addComponent(shootAnimationEntity, animationComponent);
                 ecsManager.addComponent(shootAnimationEntity, spriteComponent);

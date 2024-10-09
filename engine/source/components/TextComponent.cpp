@@ -4,7 +4,7 @@ namespace potEngine {
 
     TextComponent::TextComponent(std::string text, sf::Vector2f position, int fontSize, sf::Color color)
     {
-        _font.loadFromFile("/home/samuel/tek3/rtpe/r-type/assets/fonts/Parisienne-Regular.ttf");
+        _font.loadFromFile("/home/Tom/Bureau/Projet/EPITECH/B-CPP-500-LYN-5-1-rtype-cyprien.diederichs/r-type/assets/fonts/Parisienne-Regular.ttf");
         _text = sf::Text(text, _font, fontSize);
         _text.setFillColor(color);
         _text.setPosition(position);

@@ -65,8 +65,8 @@ namespace potEngine
         void updateSystem(std::shared_ptr<BlcEvent> event)
         {
             auto [entity_id, event_type, params] = recv_message();
-            if (event_type != EventType::UNKNOW)
-                std::cout << "[SERVER] Received event from client: " << static_cast<int>(event_type) << std::endl;
+            // if (event_type != EventType::UNKNOW)
+            //     std::cout << "[SERVER] Received event from client: " << static_cast<int>(event_type) << std::endl;
 
             if (event_type == CONNECTION && 4 > current_players) {
                 auto connectionInfo = std::make_shared<ConnectionInfoEvent>(4, _serverFd, _addr, params);
