@@ -98,15 +98,12 @@ void RType::Client::start()
     potEngine::ecsManager.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
     potEngine::ecsManager.registerSystem<potEngine::ShipAnimationSystem>(player_id);
     potEngine::ecsManager.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, server_addr);
+    potEngine::ecsManager.registerSystem<potEngine::ShootEntitySystem>(client_fd, 0.1f);
 
     std::shared_ptr<potEngine::AEntity> window = potEngine::ecsManager.createWindowEntity();
-
-    std::cout << "window id : " << window->getID() << std::endl;
-    std::cout << "player id : " << static_cast<int>(player_id) << std::endl;
 
     auto startEvent = std::make_shared<potEngine::StartEvent>();
 
     potEngine::eventBus.publish(startEvent);
-
     potEngine::ecsManager.update(0.016);
 }

@@ -51,7 +51,7 @@ namespace potEngine
                     if (entity->getComponent<ShootComponent>()) {
                         auto moveInfo = std::make_shared<MoveInfoEvent>(
                             4,
-                            _serverFd,
+                            -1,
                             MOVE_RIGHT,
                             entity->getID(),
                             std::vector<size_t> {}

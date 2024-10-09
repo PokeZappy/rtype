@@ -122,15 +122,17 @@ namespace potEngine
                 );
                 eventBus.publish(collisionEventInfo);
             }
-            auto sendMessageEventInfo = std::make_shared<SendMessageToAllEventInfo>(
-                info->max_players,
-                info->fd,
-                info->entity_id,
-                info->event,
-                _pos,
-                ecsManager.getEntities()
-            );
-            eventBus.publish(sendMessageEventInfo);
+            if (info->fd != -1) {
+                auto sendMessageEventInfo = std::make_shared<SendMessageToAllEventInfo>(
+                    info->max_players,
+                    info->fd,
+                    info->entity_id,
+                    info->event,
+                    _pos,
+                    ecsManager.getEntities()
+                );
+                eventBus.publish(sendMessageEventInfo);
+            }
             // std::cout << "[SERVER] Entity {ID}-[" << std::to_string(static_cast<int>(info->entity_id))
             //     << "], {username}-[" << username << "], is moving to {" << _pos[0] << "," << _pos[1] << "}" << std::endl;
         }
