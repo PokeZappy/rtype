@@ -57,16 +57,14 @@ namespace potEngine
 
         auto entity = ecsManager.createServerEntity(entity_id);
 
-        sf::Texture playerTexture;
-        if (!playerTexture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif"))
-            std::cout << assetFinder() << std::endl;
+        const std::string &texturePath = assetFinder() + "/sprites/r-typesheet42.gif";
 
         std::shared_ptr<PlayerComponent> playerComponent = std::make_shared<PlayerComponent>(username);
         std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(position[0], position[1]);
         std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(1.0f);
         std::shared_ptr<LifeComponent> lifeComponent = std::make_shared<LifeComponent>(3);
         std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
-        std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(playerTexture, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
+        std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
         ecsManager.addComponent(entity, playerComponent);
         ecsManager.addComponent(entity, positionComponent);
         ecsManager.addComponent(entity, movementComponent);
@@ -80,33 +78,27 @@ namespace potEngine
 
     void RecvMessageSystem::createShootEntity(std::vector<size_t> params, size_t entity_id)
     {
-
         std::vector<size_t> position(params.begin() + 1, params.end());
 
         auto entity = ecsManager.createServerEntity(entity_id);
 
-        sf::Texture playerTexture;
-        // if (!playerTexture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif"))
-        //     std::cout << assetFinder() << std::endl;
 
-            std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(position[0], position[1]);
-            std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(5.0f);
-            std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
-            std::shared_ptr<ShootComponent> shootComponent = std::make_shared<ShootComponent>();
-            sf::Texture texture;
+        std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(position[0], position[1]);
+        std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(5.0f);
+        std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
+        std::shared_ptr<ShootComponent> shootComponent = std::make_shared<ShootComponent>();
 
-            texture.loadFromFile(assetFinder() + "/sprites/r-typesheet1.gif");
+        const std::string &texturePath = assetFinder() + "/sprites/r-typesheet1.gif";
+        std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(249, 89), sf::Vector2i(16, 6)));
 
-            std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texture, sf::IntRect(sf::Vector2i(249, 89), sf::Vector2i(16, 6)));
+        ecsManager.addComponent(entity, positionComponent);
+        ecsManager.addComponent(entity, movementComponent);
+        ecsManager.addComponent(entity, collisionComponent);
+        ecsManager.addComponent(entity, shootComponent);
+        ecsManager.addComponent(entity, spriteComponent);
 
-            ecsManager.addComponent(entity, positionComponent);
-            ecsManager.addComponent(entity, movementComponent);
-            ecsManager.addComponent(entity, collisionComponent);
-            ecsManager.addComponent(entity, shootComponent);
-            ecsManager.addComponent(entity, spriteComponent);
-
-        // std::cout << "[CLIENT] New ShootEntity created {ID}-[" << static_cast<int>(entity_id)
-            // << "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
+        std::cout << "[CLIENT] New ShootEntity created {ID}-[" << static_cast<int>(entity_id)
+            << "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
     }
 
     void RecvMessageSystem::handleCreateEntity(std::vector<size_t> params, size_t entity_id)
@@ -119,8 +111,8 @@ namespace potEngine
             return RecvMessageSystem::createShootEntity(params, entity_id);
     }
 
-    void RecvMessageSystem::updateSystem(std::shared_ptr<BlcEvent> event) {
-        // std::cout << "RECEIVE" << std::endl;
+    void RecvMessageSystem::updateSystem(std::shared_ptr<BlcEvent> event)
+    {
         auto [entity_id, event_type, params] = recv_message();
         if (event_type != EventType::UNKNOW) {
             std::cout << "[CLIENT] Received event from server: " << static_cast<int>(event_type) << std::endl;
@@ -131,7 +123,7 @@ namespace potEngine
         if (event_type == EventType::DISCONNECT) {
             if (entity_id == _playerId) {
                 std::cout << "[CLIENT] Disconnected from server." << std::endl;
-                // TODO fermer le client ici.
+                // TODO: fermer le client ici.
                 return;
             }
             std::cout << "[CLIENT] Client with {ID}-[" << static_cast<int>(entity_id) << "] disconnected from server." << std::endl;
@@ -154,7 +146,6 @@ namespace potEngine
             //     << "], {username}-[" << username << "], has move to {" << convertedParams[0] << "," << convertedParams[1] << "}" << std::endl;
         }
         if (event_type == EventType::INFORMATION) {
-            // ici le joueur recoit les informations de toutes les entities déja présente
             handleCreateEntity(params, entity_id);
         }
     }

@@ -41,12 +41,12 @@ namespace potEngine {
     //     return entity;
     // }
 
-    std::shared_ptr<AEntity> ECSManager::createSpriteEntity(sf::Texture &texture) {
+    std::shared_ptr<AEntity> ECSManager::createSpriteEntity(const std::string &texturePath) {
         auto entity = std::make_shared<AEntity>(32);
 
         // sf::Sprite sprite(texture);
         // sprite.setPosition(100, 100);
-        std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texture);
+        std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texturePath);
         addComponent<SpriteComponent>(entity, spriteComponent);
 
         _entities.push_back(entity);
