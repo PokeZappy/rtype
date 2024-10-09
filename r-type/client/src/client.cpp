@@ -100,6 +100,7 @@ void RType::Client::start()
     potEngine::ecsManager.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
     potEngine::ecsManager.registerSystem<potEngine::ShipAnimationSystem>(player_id);
     potEngine::ecsManager.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, server_addr);
+    potEngine::ecsManager.registerSystem<potEngine::BackgroundSysteme>();
 
     // Initialisation sprites
     // sf::Image spriteImage;

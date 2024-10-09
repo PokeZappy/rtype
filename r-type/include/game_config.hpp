@@ -41,6 +41,7 @@ const int CLIENT_SOCKET = 1;
 #include "InputInfoEvent.hpp"
 #include "ShootEntitySystem.hpp"
 #include "RecvMessageServerSystem.hpp"
+#include "BackgroundSystem.hpp"
 
 #include "AEventHandler.hpp"
 #include "EventBus.hpp"
