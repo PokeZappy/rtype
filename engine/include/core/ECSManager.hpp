@@ -35,6 +35,7 @@ namespace potEngine {
         void addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component);
 
         void removeEntity(const std::size_t id);
+        void removeEntity(std::shared_ptr<AEntity> entity);
 
         template <typename T, typename... Args>
         void registerSystem(Args&&... args);

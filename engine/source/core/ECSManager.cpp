@@ -85,6 +85,17 @@ namespace potEngine {
             }
     }
 
+    void ECSManager::removeEntity(std::shared_ptr<AEntity> entity)
+    {
+            auto it = std::find(_entities.begin(), _entities.end(), entity);
+            if (it != _entities.end()) {
+                EraseEntitySystem(entity);
+
+                _entities.erase(it);
+                // std::cout << "entité supprimée, tableau entity size : " << _entities.size() << std::endl;
+            }
+    }
+
     void ECSManager::EraseEntitySystem(std::shared_ptr<AEntity> entity) {
         for (auto const &system : _systems) {
             auto &systemEntities = system->getEntities();

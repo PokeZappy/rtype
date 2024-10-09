@@ -25,6 +25,8 @@ RType::Client::Client() : player_id(0)
     potEngine::ecsManager.registerSystem<potEngine::InputSystem>();
     potEngine::ecsManager.registerSystem<potEngine::AnimationSystem>();
     potEngine::ecsManager.registerSystem<potEngine::AudioSystem>();
+    potEngine::ecsManager.registerSystem<potEngine::BackgroundSystem>();
+
 
     std::cout << "[CLIENT] Ready to connect to the server...\n";
 }
@@ -56,7 +58,7 @@ void RType::Client::init_subscribe()
     auto sendMessageToAllExeptEvent = std::make_shared<potEngine::SendMessageToAllExeptEvent>();
     auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
     auto moveEvent = std::make_shared<potEngine::MoveEvent>();
-    auto collisionEvent = std::make_shared<potEngine::CollisionEvent>();
+    auto clientCollisionEvent = std::make_shared<potEngine::ClientCollisionEvent>();
 }
 
 void RType::Client::handle_connection()
@@ -88,9 +90,29 @@ void RType::Client::handle_connection()
     }
 }
 
+void RType::Client::create_background() {
+    auto entity =  potEngine::ecsManager.createEntity();
+
+    sf::Texture backgroundTexture;
+    if (!backgroundTexture.loadFromFile(assetFinder() + "/sprites/space_ background.png"))
+        std::cout << assetFinder() << std::endl;
+    const std::string &texturePath = assetFinder() + "/sprites/space_ background.png";
+
+    auto positionComponent = std::make_shared<potEngine::PositionComponent>(0, 0);
+    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(0, 0, 1206, 207), sf::Vector2i(3140, 1080), sf::Vector2i(1206, 207));
+    auto static_move_component = std::make_shared<potEngine::staticMoveComponent>(sf::Vector2i(-3000, 0), sf::Vector2i(0, 0));
+    potEngine::ecsManager.addComponent(entity, positionComponent);
+    potEngine::ecsManager.addComponent(entity, spriteComponent);
+    potEngine::ecsManager.addComponent(entity, static_move_component);
+
+
+    std::cout << "[CLIENT] New Background created {ID}-[" << std::endl;
+}
+
 void RType::Client::start()
 {
     init_subscribe();
+    create_background();
     handle_connection();
     setNonBlockingInput();
 
