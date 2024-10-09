@@ -7,9 +7,18 @@
 
 #include "server_config.hpp"
 
-int main()
+int main(int argc, char **argv)
 {
-    RType::Server server;
-    server.start();
+    if (argc == 1) {
+        RType::Server server;
+        server.start();
+    } else if (std::stoi(argv[1])) {
+        RType::Server server(std::stoi(argv[1]));
+        server.start();
+    } else {
+        std::cerr << "Usage: ./rtype_server [port]" << std::endl;
+        std::cerr << "Usage: ./rtype_server [port]" << std::endl;
+        return 1;
+    }
     return 0;
 }
