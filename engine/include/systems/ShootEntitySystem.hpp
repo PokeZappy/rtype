@@ -48,16 +48,16 @@ namespace potEngine
                 auto entities = ecsManager.getEntities();
 
                 for (auto entity : entities) {
-                    // if (entity->getComponent<ShootComponent>()) {
-                    //     auto moveInfo = std::make_shared<MoveInfoEvent>(
-                    //         4,
-                    //         _serverFd,
-                    //         MOVE_RIGHT,
-                    //         entity->getID(),
-                    //         std::vector<size_t> {}
-                    //     );
-                    //     eventBus.publish(moveInfo);
-                    // }
+                    if (entity->getComponent<ShootComponent>()) {
+                        auto moveInfo = std::make_shared<MoveInfoEvent>(
+                            4,
+                            _serverFd,
+                            MOVE_RIGHT,
+                            entity->getID(),
+                            std::vector<size_t> {}
+                        );
+                        eventBus.publish(moveInfo);
+                    }
                 }
             }
         }

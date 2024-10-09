@@ -59,6 +59,7 @@ namespace potEngine
                     ecsManager.getEntities()
                 );
                 eventBus.publish(sendMessageToAllEventInfo);
+                ecsManager.removeEntity(lifeEntity->getID());
                 std::cout << "[SERVER] Player {ID}-[" << lifeEntity->getID() << "], {username}-["
                     << username << "] is dead." << std::endl;
             }

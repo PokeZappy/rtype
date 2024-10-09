@@ -52,6 +52,32 @@ namespace potEngine
             return nullptr;
         }
 
+        int removeShoot(std::shared_ptr<potEngine::AEntity> entity, std::shared_ptr<MoveInfoEvent> info)
+        {
+            auto posComponent = entity->getComponent<PositionComponent>();
+            auto shootComponent = entity->getComponent<ShootComponent>();
+
+            if (!shootComponent || !posComponent)
+                return 0;
+
+            if ((info->event == MOVE_RIGHT && posComponent->get()->_position[0] >= 1920) ||
+                (info->event == MOVE_LEFT && posComponent->get()->_position[0] <= 0)) {
+                auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(
+                    info->max_players,
+                    info->fd,
+                    entity->getID(),
+                    DEATH,
+                    std::vector<size_t>{},
+                    ecsManager.getEntities()
+                );
+                eventBus.publish(sendMessageToAllEventInfo);
+                std::cout << "[SERVER] Shoot with {ID}-[" << entity->getID() << "] is dead." << std::endl;
+                ecsManager.removeEntity(entity->getID());
+                return 1;
+            }
+            return 0;
+        }
+
         void Move(std::shared_ptr<MoveInfoEvent> info)
         {
             auto _entity = ecsManager.getEntity(info->entity_id);
@@ -59,6 +85,10 @@ namespace potEngine
                 std::cout << "[SERVER] {ID}-[" << static_cast<int>(info->entity_id) << "] not found." << std::endl;
                 return;
             }
+
+            if (removeShoot(_entity, info))
+                return;
+
             int save_x = _entity->getComponent<PositionComponent>()->get()->_position[0];
             int save_y = _entity->getComponent<PositionComponent>()->get()->_position[1];
 
