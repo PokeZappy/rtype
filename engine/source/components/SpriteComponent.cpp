@@ -2,14 +2,16 @@
 
 namespace potEngine {
 
-    SpriteComponent::SpriteComponent(sf::Texture &texture) : _texture(texture)
-    {
+    SpriteComponent::SpriteComponent(const std::string &texturePath) {
+        _texture.loadFromFile(texturePath);
+
         _sprite = sf::Sprite(_texture);
         _initialTextureRect = _sprite.getTextureRect();
     }
 
-    SpriteComponent::SpriteComponent(sf::Texture &texture, sf::IntRect textureRect) : _texture(texture)
-    {
+    SpriteComponent::SpriteComponent(const std::string &texturePath, sf::IntRect textureRect) {
+        _texture.loadFromFile(texturePath);
+
         _sprite = sf::Sprite(_texture);
         _sprite.setTextureRect(textureRect);
         _sprite.setScale(sf::Vector2f(3, 3));
