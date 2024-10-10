@@ -153,7 +153,8 @@ namespace potEngine
         }
         if (event_type == EventType::DEATH) {
             ecsManager.removeEntity(entity_id);
-            eventBus.publish(std::make_shared<StopMainLoopEvent>());
+            if (entity_id == _playerId)
+                eventBus.publish(std::make_shared<StopMainLoopEvent>());
         }
         if (event_type == EventType::COLLISION) {
             // do somethijng

@@ -43,6 +43,7 @@ const int CLIENT_SOCKET = 1;
 #include "ShootEntitySystem.hpp"
 #include "RecvMessageServerSystem.hpp"
 #include "BackgroundSystem.hpp"
+#include "ShootEntityClientSystem.hpp"
 
 #include "AEventHandler.hpp"
 #include "EventBus.hpp"
@@ -68,6 +69,7 @@ const int CLIENT_SOCKET = 1;
 #include "InputInfoEvent.hpp"
 #include "staticMoveComponent.hpp"
 #include "ClientCollisionEvent.hpp"
+#include "MoveClientEvent.hpp"
 
 #endif // GAME_CONFIG_HPP
 

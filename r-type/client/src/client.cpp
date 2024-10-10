@@ -58,6 +58,7 @@ void RType::Client::init_subscribe()
     auto sendMessageToAllExeptEvent = std::make_shared<potEngine::SendMessageToAllExeptEvent>();
     auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
     auto moveEvent = std::make_shared<potEngine::MoveEvent>();
+    auto moveClientEvent = std::make_shared<potEngine::MoveClientEvent>();
     auto clientCollisionEvent = std::make_shared<potEngine::ClientCollisionEvent>();
 }
 
@@ -120,7 +121,7 @@ void RType::Client::start()
     potEngine::ecsManager.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
     potEngine::ecsManager.registerSystem<potEngine::ShipAnimationSystem>(player_id);
     potEngine::ecsManager.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, server_addr);
-    potEngine::ecsManager.registerSystem<potEngine::ShootEntitySystem>(client_fd, 0.1f);
+    potEngine::ecsManager.registerSystem<potEngine::ShootEntityClientSystem>(client_fd, 0.001f);
 
     std::shared_ptr<potEngine::AEntity> window = potEngine::ecsManager.createWindowEntity();
 

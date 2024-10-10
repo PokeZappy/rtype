@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2024
 ** B-CPP-500-LYN-5-1-rtype-cyprien.diederichs
 ** File description:
-** ShootEntitySystem.hpp
+** ShootEntityClientSystem.hpp
 */
 
 #pragma once
@@ -15,13 +15,13 @@
 #include "BlcEvent.hpp"
 #include "ShootComponent.hpp"
 #include "PositionComponent.hpp"
-#include "MoveEvent.hpp"
+#include "MoveClientEvent.hpp"
 
 #include <chrono>
 
 namespace potEngine
 {
-    class ShootEntitySystem : public ASystem {
+    class ShootEntityClientSystem : public ASystem {
     public:
         int _serverFd;
         std::chrono::time_point<std::chrono::steady_clock> lastUpdateTime;
@@ -30,14 +30,14 @@ namespace potEngine
 
         void update(float) override {};
 
-        ShootEntitySystem(int server_fd, float interval) : _serverFd(server_fd), updateInterval(interval)
+        ShootEntityClientSystem(int server_fd, float interval) : _serverFd(server_fd), updateInterval(interval)
         {
             lastUpdateTime = std::chrono::steady_clock::now();
             _signature.set(AComponent::getID<ShootComponent>(), true);
-            eventBus.subscribe(this, &ShootEntitySystem::updateSystem);
+            eventBus.subscribe(this, &ShootEntityClientSystem::updateSystem);
         }
 
-        ~ShootEntitySystem() {}
+        ~ShootEntityClientSystem() {}
 
         void updateSystem(std::shared_ptr<BlcEvent> event)
         {
@@ -49,7 +49,7 @@ namespace potEngine
 
                 for (auto entity : _entitiesSystem) {
                     // std::cout << "I: " << i++ << std::endl;
-                    auto moveInfo = std::make_shared<MoveInfoEvent>(
+                    auto moveInfo = std::make_shared<MoveClientInfoEvent>(
                         4,
                         -1,
                         MOVE_RIGHT,
