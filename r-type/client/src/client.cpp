@@ -7,6 +7,9 @@
 
 #include "client_config.hpp"
 
+#include <chrono>
+#include <thread>
+
 RType::Client::Client() : player_id(0)
 {
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -114,12 +117,25 @@ void RType::Client::start()
     potEngine::ecsManager.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
     potEngine::ecsManager.registerSystem<potEngine::ShipAnimationSystem>(player_id);
     potEngine::ecsManager.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, server_addr);
-    potEngine::ecsManager.registerSystem<potEngine::ShootEntityClientSystem>(client_fd, 0.001f);
+    potEngine::ecsManager.registerSystem<potEngine::ShootEntityClientSystem>();
 
     std::shared_ptr<potEngine::AEntity> window = potEngine::ecsManager.createWindowEntity();
 
     auto startEvent = std::make_shared<potEngine::StartEvent>();
-
     potEngine::eventBus.publish(startEvent);
-    potEngine::ecsManager.update(0.016);
+
+    const double clientTickDuration = 1.0 / 60.0;
+    auto previousTime = std::chrono::high_resolution_clock::now();
+
+    while (true) {
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed = currentTime - previousTime;
+
+        if (elapsed.count() >= clientTickDuration) {
+            potEngine::ecsManager.update(clientTickDuration);
+            previousTime = currentTime;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
 }
+

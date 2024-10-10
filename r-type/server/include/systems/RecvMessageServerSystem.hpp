@@ -42,7 +42,7 @@ namespace potEngine
 
         std::tuple<size_t, EventType, std::vector<size_t>> recv_message()
         {
-            uint8_t buffer[1024];
+            uint8_t buffer[BUFFER_SIZE];
             ssize_t recv_len = recvfrom(_serverFd, buffer, sizeof(buffer), 0, (struct sockaddr*)&_addr, &_addrLen);
 
             if (recv_len < 0 || static_cast<size_t>(recv_len) < sizeof(size_t)) {
@@ -79,7 +79,7 @@ namespace potEngine
                 current_players--;
             }
             if (event_type == MOVE_UP || event_type == MOVE_DOWN || event_type == MOVE_RIGHT || event_type == MOVE_LEFT) {
-                auto moveInfo = std::make_shared<MoveInfoEvent>(4, _serverFd, event_type, entity_id, params);
+                auto moveInfo = std::make_shared<MoveInfoEvent>(4, _serverFd, event_type, entity_id);
                 eventBus.publish(moveInfo);
             }
             if (event_type == SHOOT) {
@@ -93,10 +93,12 @@ namespace potEngine
                 eventBus.publish(createShootEntity);
             }
             if (event_type == DEATH) {
-                auto username = ecsManager.getEntity(entity_id)->getComponent<PlayerComponent>()->get()->username;
+                // auto username = ecsManager.getEntity(entity_id)->getComponent<PlayerComponent>()->get()->username;
 
-                std::cout << "[SERVER] Player {ID}-[" << entity_id << "], {username}-["
-                    << username << "] is dead." << std::endl;
+                // std::cout << "[SERVER] Player {ID}-[" << entity_id << "], {username}-["
+                //     << username << "] is dead." << std::endl;
+
+                std::cout << "[SERVER] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
                 ecsManager.removeEntity(entity_id);
             }
         }

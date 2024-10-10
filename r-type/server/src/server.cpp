@@ -7,6 +7,9 @@
 
 #include "server_config.hpp"
 
+#include <chrono>
+#include <thread>
+
 RType::Server::Server() : current_players(0)
 {
     if ((server_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -60,10 +63,22 @@ void RType::Server::start()
     setNonBlockingInput();
 
     potEngine::ecsManager.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
-    potEngine::ecsManager.registerSystem<potEngine::ShootEntitySystem>(server_fd, 0.001f);
+    potEngine::ecsManager.registerSystem<potEngine::ShootEntitySystem>();
 
     auto startEvent = std::make_shared<potEngine::StartEvent>();
-
     potEngine::eventBus.publish(startEvent);
-    potEngine::ecsManager.update(0.016);
+
+    const double serverTickDuration = 1.0 / 20.0;
+    auto previousTime = std::chrono::high_resolution_clock::now();
+
+    while (true) {
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed = currentTime - previousTime;
+
+        if (elapsed.count() >= serverTickDuration) {
+            potEngine::ecsManager.update(serverTickDuration);
+            previousTime = currentTime;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
 }

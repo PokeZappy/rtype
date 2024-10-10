@@ -23,7 +23,7 @@ namespace potEngine
         EventType event;
         size_t entity_id;
 
-        MoveInfoEvent(int maxP, int fd, EventType event, size_t id, std::vector<size_t> p)
+        MoveInfoEvent(int maxP, int fd, EventType event, size_t id)
             : max_players(maxP), fd(fd), event(event), entity_id(id) {}
     };
 
@@ -60,7 +60,7 @@ namespace potEngine
             if (!shootComponent || !posComponent)
                 return 0;
 
-            if ((info->event == MOVE_RIGHT && posComponent->get()->_position[0] >= 1920) ||
+            if ((info->event == MOVE_RIGHT && posComponent->get()->_position[0] >= 800) ||
                 (info->event == MOVE_LEFT && posComponent->get()->_position[0] <= 0)) {
                 auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(
                     info->max_players,
@@ -71,7 +71,6 @@ namespace potEngine
                     ecsManager.getEntities()
                 );
                 eventBus.publish(sendMessageToAllEventInfo);
-                std::cout << "[SERVER] Shoot with {ID}-[" << entity->getID() << "] is dead." << std::endl;
                 return 1;
             }
             return 0;
@@ -100,10 +99,10 @@ namespace potEngine
             int speed = _entity->getComponent<MovementComponent>()->get()->speed;
             if (info->event == MOVE_UP && position[1] > 0)
                 position[1] = (position[1] > speed) ? position[1] - speed : 0;
-            if (info->event == MOVE_DOWN && position[1] < 1080)
-                position[1] = (position[1] + speed < 1080) ? position[1] + speed : 1080;
-            if (info->event == MOVE_RIGHT && position[0] < 1920)
-                position[0] = (position[0] + speed < 1920) ? position[0] + speed : 1920;
+            if (info->event == MOVE_DOWN && position[1] < 600)
+                position[1] = (position[1] + speed < 600) ? position[1] + speed : 600;
+            if (info->event == MOVE_RIGHT && position[0] < 800)
+                position[0] = (position[0] + speed < 800) ? position[0] + speed : 800;
             if (info->event == MOVE_LEFT && position[0] > 0)
                 position[0] = (position[0] > speed) ? position[0] - speed : 0;
 
