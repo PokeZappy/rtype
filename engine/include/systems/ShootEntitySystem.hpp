@@ -48,12 +48,11 @@ namespace potEngine
                 lastUpdateTime = currentTime;
 
                 for (auto entity : _entitiesSystem) {
-                    // std::cout << "I: " << i++ << std::endl;
                     auto moveInfo = std::make_shared<MoveInfoEvent>(
                         4,
                         -1,
                         MOVE_RIGHT,
-                        ecsManager.getClientIdFromServerId(entity->getID()),
+                        entity->getID(),
                         std::vector<size_t> {}
                     );
                     eventBus.publish(moveInfo);

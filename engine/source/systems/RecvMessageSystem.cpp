@@ -152,9 +152,13 @@ namespace potEngine
             handleCreateEntity(params, entity_id);
         }
         if (event_type == EventType::DEATH) {
+            // std::cout << "[CLIENT] Shoot with {ID}-[" << entity_id << "] is dead." << std::endl;
+            std::cout << "MORT: s-" << entity_id << "c-" << _playerId;
             ecsManager.removeEntity(entity_id);
-            if (entity_id == _playerId)
+            if (entity_id == _playerId) {
+                std::cout << "IM DEAD\n";
                 eventBus.publish(std::make_shared<StopMainLoopEvent>());
+            }
         }
         if (event_type == EventType::COLLISION) {
             // do somethijng

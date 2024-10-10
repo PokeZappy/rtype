@@ -19,7 +19,7 @@ namespace potEngine
     class MoveClientInfoEvent : public IEvent {
     public:
         int max_players;
-        int fd;
+        int fd; // TODO: pas besoin
         EventType event;
         size_t entity_id;
 
@@ -64,19 +64,8 @@ namespace potEngine
             std::vector<size_t> _pos = {static_cast<size_t>(save_x), static_cast<size_t>(save_y)};
 
             _entity->getComponent<PositionComponent>()->get()->_position = position;
-            _pos = {position.begin(), position.end()};
-            if (info->fd != -1) {
-                auto sendMessageEventInfo = std::make_shared<SendMessageToAllEventInfo>(
-                    info->max_players,
-                    info->fd,
-                    info->entity_id,
-                    info->event,
-                    _pos,
-                    ecsManager.getEntities()
-                );
-                eventBus.publish(sendMessageEventInfo);
-            }
-            // std::cout << "[SERVER] Entity {ID}-[" << std::to_string(static_cast<int>(info->entity_id))
+
+            // std::cout << "[CLIENT] Entity {ID}-[" << std::to_string(static_cast<int>(info->entity_id))
             //     << "], {username}-[" << username << "], is moving to {" << _pos[0] << "," << _pos[1] << "}" << std::endl;
         }
     };

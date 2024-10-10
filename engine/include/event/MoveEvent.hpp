@@ -72,7 +72,6 @@ namespace potEngine
                 );
                 eventBus.publish(sendMessageToAllEventInfo);
                 std::cout << "[SERVER] Shoot with {ID}-[" << entity->getID() << "] is dead." << std::endl;
-                ecsManager.removeEntity(entity->getID());
                 return 1;
             }
             return 0;

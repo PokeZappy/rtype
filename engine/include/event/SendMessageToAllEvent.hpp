@@ -61,6 +61,8 @@ namespace potEngine
                     send_message(networkComponent->get()->addr, entity_id, event_type, params, maxP, networkComponent->get()->fd);
                     if (event_type == DISCONNECT) {
                         ecsManager.removeEntity(entity_id);
+                    } if (event_type == DEATH) {
+                        ecsManager.removeEntity(entity_id);
                     }
                 }
             }

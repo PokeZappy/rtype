@@ -113,7 +113,7 @@ void RType::Client::create_background() {
 void RType::Client::start()
 {
     init_subscribe();
-    // create_background();
+    create_background();
     handle_connection();
     setNonBlockingInput();
 

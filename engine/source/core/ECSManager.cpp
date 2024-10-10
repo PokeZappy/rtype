@@ -72,8 +72,9 @@ namespace potEngine {
 
     void ECSManager::removeEntity(const std::size_t id)
     {
-            auto it = std::find_if(_entities.begin(), _entities.end(), [id](const std::shared_ptr<AEntity> entityPtr) {
-                return entityPtr->getID() == id;
+            std::size_t newId = getClientIdFromServerId(id);
+            auto it = std::find_if(_entities.begin(), _entities.end(), [newId](const std::shared_ptr<AEntity> entityPtr) {
+                return entityPtr->getID() == newId;
             });
             if (it != _entities.end()) {
                 auto entity = *it;
