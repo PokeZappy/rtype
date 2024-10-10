@@ -13,6 +13,8 @@
 
     typedef SSIZE_T ssize_t;
 
+    #define STDIN_FILENO 0;
+
     #define INIT_WINSOCK() \
     WSADATA wsaData; \
     WSAStartup(MAKEWORD(2, 2), &wsaData);

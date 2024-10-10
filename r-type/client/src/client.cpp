@@ -88,7 +88,8 @@ void RType::Client::handle_connection()
 void RType::Client::handle_input()
 {
     char input;
-    int n = read(STDIN_FILENO, &input, 1);
+    int stdfil = STDIN_FILENO;
+    int n = read(stdfil, &input, 1);
 
     if (n > 0) {
         if (input == 'x') {
