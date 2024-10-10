@@ -23,7 +23,7 @@ namespace potEngine
 
     }
 
-    void RenderSystem::renderWindow(std::shared_ptr<BlcEvent> event) {
+    void RenderSystem::renderWindow(std::shared_ptr<NoneEvent> event) {
         // std::cout << "RENDER" << std::endl;
         // std::cout << _entitiesSystem.size() << std::endl;
         for (auto entity : _entitiesSystem) {

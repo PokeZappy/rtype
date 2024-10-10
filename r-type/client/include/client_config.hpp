@@ -8,7 +8,7 @@
 #ifndef CLIENT_CONFIG_HPP
 #define CLIENT_CONFIG_HPP
 
-#include "game_config.hpp"
+#include "ClientInclude.hpp"
 
 #include <netinet/in.h>
 #include <arpa/inet.h>

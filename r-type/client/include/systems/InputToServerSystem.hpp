@@ -34,7 +34,7 @@ namespace potEngine {
                 auto positionComponent = std::make_shared<PositionComponent>(playerPosition[0] + playerIntRect.width * (playerSpriteComponent->get()->getSprite().getScale().x), playerPosition[1] - 14);
                 auto animationComponent = std::make_shared<AnimationComponent>(7, 0.15, true, changeShootAnimationFrame);
 
-                const std::string texturePath = "/home/Tom/Bureau/Projet/EPITECH/B-CPP-500-LYN-5-1-rtype-cyprien.diederichs/r-type/assets/sprites/r-typesheet1.gif";
+                const std::string texturePath = assetFinder() + "/sprites/r-typesheet1.gif";
                 auto spriteComponent = std::make_shared<SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(2, 51), sf::Vector2i(32, 30)));
 
                 ecsManager.addComponent(shootAnimationEntity, positionComponent);
@@ -56,7 +56,7 @@ namespace potEngine {
                 positionComponent->get()->_position[1] = playerPosition[1] - 14;
             }
 
-            void handleInputs(std::shared_ptr<BlcEvent> event) {
+            void handleInputs(std::shared_ptr<NoneEvent> event) {
 
                 auto currentTime = std::chrono::steady_clock::now();
                 std::chrono::duration<float> elapsedTime = currentTime - lastUpdateTime;

@@ -7,7 +7,7 @@
 #include "EventBus.hpp"
 #include "WindowComponent.hpp"
 #include "MainLoopEvent.hpp"
-#include "BlcEvent.hpp"
+#include "NoneEvent.hpp"
 
 namespace potEngine {
     class InputSystem : public ASystem {
@@ -17,6 +17,6 @@ namespace potEngine {
 
         void update(float) override {};
 
-        void pollInputs(std::shared_ptr<BlcEvent> event);
+        void pollInputs(std::shared_ptr<NoneEvent> event);
     };
 }

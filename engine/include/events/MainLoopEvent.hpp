@@ -5,7 +5,7 @@
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "StartEvent.hpp"
-#include "BlcEvent.hpp"
+#include "NoneEvent.hpp"
 #include "StopMainLoopEvent.hpp"
 
 namespace potEngine
@@ -20,7 +20,7 @@ namespace potEngine
         void eventMainLoop(std::shared_ptr<MainLoopEvent> event) {
             if (!isRunning)
                 return;
-            eventBus.publish(std::make_shared<BlcEvent>());
+            eventBus.publish(std::make_shared<NoneEvent>());
             eventBus.publish(event);
         }
 

@@ -7,8 +7,6 @@
 
 #include "client_config.hpp"
 
-std::string assetFinder();
-
 RType::Client::Client() : player_id(0)
 {
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -52,12 +50,7 @@ void RType::Client::setNonBlockingInput()
 
 void RType::Client::init_subscribe()
 {
-    auto connectionEvent = std::make_shared<potEngine::ConnectionEvent>();
-    auto disconnectionEvent = std::make_shared<potEngine::DisconnectionEvent>();
-    auto sendMessageToAllEvent = std::make_shared<potEngine::SendMessageToAllEvent>();
-    auto sendMessageToAllExeptEvent = std::make_shared<potEngine::SendMessageToAllExeptEvent>();
     auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
-    auto moveEvent = std::make_shared<potEngine::MoveEvent>();
     auto moveClientEvent = std::make_shared<potEngine::MoveClientEvent>();
     auto clientCollisionEvent = std::make_shared<potEngine::ClientCollisionEvent>();
 }

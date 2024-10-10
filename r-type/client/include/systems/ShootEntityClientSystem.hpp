@@ -12,7 +12,7 @@
 #include "AEntity.hpp"
 #include "EventBus.hpp"
 #include "ECSManager.hpp"
-#include "BlcEvent.hpp"
+#include "NoneEvent.hpp"
 #include "ShootComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MoveClientEvent.hpp"
@@ -39,7 +39,7 @@ namespace potEngine
 
         ~ShootEntityClientSystem() {}
 
-        void updateSystem(std::shared_ptr<BlcEvent> event)
+        void updateSystem(std::shared_ptr<NoneEvent> event)
         {
             auto currentTime = std::chrono::steady_clock::now();
             std::chrono::duration<float> elapsedTime = currentTime - lastUpdateTime;

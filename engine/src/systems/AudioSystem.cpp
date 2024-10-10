@@ -15,7 +15,7 @@ namespace potEngine {
 
     }
 
-    void AudioSystem::updateSounds(std::shared_ptr<BlcEvent> event) {
+    void AudioSystem::updateSounds(std::shared_ptr<NoneEvent> event) {
         for (auto entity : _entitiesSystem) {
            auto audioComponent = entity->getComponent<AudioComponent>();
            if (!audioComponent)

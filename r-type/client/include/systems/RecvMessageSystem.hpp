@@ -8,8 +8,8 @@
 #include "ECSManager.hpp"
 #include "WindowComponent.hpp"
 #include <netinet/in.h>
-#include "BlcEvent.hpp"
-// #include "game_config.hpp" // TODO faire marcher cet include trop la flemme actuellement
+#include "NoneEvent.hpp"
+// #include "GameInclude.hpp" // TODO faire marcher cet include trop la flemme actuellement
 
 namespace potEngine {
     class RecvMessageSystem : public ASystem {
@@ -23,7 +23,7 @@ namespace potEngine {
 
         void update(float) override {};
 
-        void updateSystem(std::shared_ptr<BlcEvent> event);
+        void updateSystem(std::shared_ptr<NoneEvent> event);
         std::tuple<size_t, potEngine::EventType, std::vector<size_t>> recv_message();
         int _clientFd;
         struct sockaddr_in _addr;

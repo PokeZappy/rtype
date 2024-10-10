@@ -6,8 +6,6 @@
 */
 
 #include "client_config.hpp"
-#include "Tools.hpp"
-#include "Lobby.hpp"
 
 int main()
 {

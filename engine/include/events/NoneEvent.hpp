@@ -6,9 +6,9 @@
 
 namespace potEngine
 {
-    struct BlcEvent : public IEvent
+    struct NoneEvent : public IEvent
     {
-        BlcEvent()
+        NoneEvent()
         {
         };
     };

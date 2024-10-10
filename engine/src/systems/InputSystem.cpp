@@ -2,7 +2,6 @@
 #include "SpriteComponent.hpp"
 #include "WindowEntity.hpp"
 #include "WindowComponent.hpp"
-#include "PositionComponent.hpp"
 #include "InputInfoEvent.hpp"
 #include <iostream>
 
@@ -18,7 +17,7 @@ namespace potEngine {
 
     }
 
-    void InputSystem::pollInputs(std::shared_ptr<BlcEvent> event) {
+    void InputSystem::pollInputs(std::shared_ptr<NoneEvent> event) {
         // std::cout << "INPUT" << std::endl;
         for (auto entity : _entitiesSystem) {
             auto windowComponent = entity->getComponent<WindowComponent>();

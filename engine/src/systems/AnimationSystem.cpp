@@ -16,7 +16,7 @@ namespace potEngine {
 
     }
 
-    void AnimationSystem::updateAnimations(std::shared_ptr<BlcEvent> event) {
+    void AnimationSystem::updateAnimations(std::shared_ptr<NoneEvent> event) {
         // std::cout << "ANIMATION" << std::endl;
         for (auto entity : _entitiesSystem) {
             auto animationComponent = entity->getComponent<AnimationComponent>();

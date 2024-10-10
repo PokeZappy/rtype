@@ -11,7 +11,7 @@
 #include "AEntity.hpp"
 #include "EventBus.hpp"
 #include "ECSManager.hpp"
-#include "BlcEvent.hpp"
+#include "NoneEvent.hpp"
 
 #include "ConnectionEvent.hpp"
 #include "DisconnectionEvent.hpp"
@@ -62,7 +62,7 @@ namespace potEngine
             return std::make_tuple(entity_id, event_type, params);
         }
 
-        void updateSystem(std::shared_ptr<BlcEvent> event)
+        void updateSystem(std::shared_ptr<NoneEvent> event)
         {
             auto [entity_id, event_type, params] = recv_message();
             // if (event_type != EventType::UNKNOW)

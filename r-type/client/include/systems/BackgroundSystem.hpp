@@ -24,7 +24,7 @@ namespace potEngine {
                 eventBus.subscribe(this, &BackgroundSystem::moveBackground);
             };
 
-            void moveBackground(std::shared_ptr<BlcEvent> event) {
+            void moveBackground(std::shared_ptr<NoneEvent> event) {
                 for (auto entity : _entitiesSystem) {
                     auto pos_component = entity->getComponent<staticMoveComponent>();
                     auto sprite_component = entity->getComponent<PositionComponent>();

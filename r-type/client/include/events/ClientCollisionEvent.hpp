@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CollisionInfoEvent.hpp"
+#include "ClientCollisionInfoEvent.hpp"
 
 namespace potEngine {
     class ClientCollisionEvent : public IEvent {
@@ -9,7 +9,7 @@ namespace potEngine {
             eventBus.subscribe(this, &ClientCollisionEvent::handleClientCollision);
         };
 
-        void handleClientCollision(std::shared_ptr<CollisionInfoEvent> event) {
+        void handleClientCollision(std::shared_ptr<ClientCollisionInfoEvent> event) {
             auto entity1 = ecsManager.getEntity(event->collided_entity_id);
             auto entity2 = ecsManager.getEntity(event->colliding_entity_id);
             if (!entity1 || !entity2)

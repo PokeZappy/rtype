@@ -9,17 +9,36 @@ include(cmake/automate-vcpkg.cmake)
 vcpkg_bootstrap()
 vcpkg_install_packages(sfml)
 
-set(CLIENT_INCLUDE_DIRS r-type/client/include)
-set(SERVER_INCLUDE_DIRS r-type/server/include)
-set(GAME_INCLUDE_DIRS r-type/include)
+set(CLIENT_INCLUDE_DIRS 
+    r-type/client/include
+    r-type/client/include/components
+    r-type/client/include/events
+    r-type/client/include/events/data
+    r-type/client/include/systems
+)
+set(SERVER_INCLUDE_DIRS 
+    r-type/server/include
+    r-type/server/include/components
+    r-type/server/include/events
+    r-type/server/include/events/data
+    r-type/server/include/systems
+)
+
+set(SHARED_INCLUDE_DIRS
+    r-type/shared/include
+    r-type/shared/include/components
+    r-type/shared/include/events
+    r-type/shared/include/events/data
+    r-type/shared/include/systems
+)
 
 file(GLOB_RECURSE ENGINE_SOURCES
     "engine/src/components/*.cpp"
     "engine/src/core/*.cpp"
     "engine/src/core/entities/*.cpp"
     "engine/src/core/eventBus/*.cpp"
-    "engine/src/systems/*.cpp"
     "engine/src/events/*.cpp"
+    "engine/src/systems/*.cpp"
 )
 
 add_library(engine SHARED ${ENGINE_SOURCES})
@@ -35,14 +54,28 @@ target_include_directories(engine PUBLIC
     engine/include/events/data
 )
 
-file(GLOB_RECURSE SERVER_SOURCES "r-type/server/src/*.cpp")
-add_executable(r-type_server ${SERVER_SOURCES})
-target_include_directories(r-type_server PRIVATE ${SERVER_INCLUDE_DIRS} ${GAME_INCLUDE_DIRS})
+file(GLOB_RECURSE SHARED_SOURCES
+    "r-type/shared/src/*.cpp"
+    "r-type/shared/src/components/*.cpp"
+    "r-type/shared/src/events/*.cpp"
+    "r-type/shared/src/systems/*.cpp"
+    "r-type/shared/src/tools/*.cpp"
+)
+
+file(GLOB_RECURSE SERVER_SOURCES
+    "r-type/server/src/*.cpp"
+)
+
+add_executable(r-type_server ${SERVER_SOURCES} ${SHARED_SOURCES})
+target_include_directories(r-type_server PRIVATE ${SERVER_INCLUDE_DIRS} ${SHARED_INCLUDE_DIRS})
 target_link_libraries(r-type_server PRIVATE engine)
 
-file(GLOB_RECURSE CLIENT_SOURCES "r-type/client/src/*.cpp")
-add_executable(r-type_client ${CLIENT_SOURCES})
-target_include_directories(r-type_client PRIVATE ${CLIENT_INCLUDE_DIRS} ${GAME_INCLUDE_DIRS})
+file(GLOB_RECURSE CLIENT_SOURCES
+    "r-type/client/src/*.cpp"
+)
+
+add_executable(r-type_client ${CLIENT_SOURCES} ${SHARED_SOURCES})
+target_include_directories(r-type_client PRIVATE ${CLIENT_INCLUDE_DIRS} ${SHARED_INCLUDE_DIRS})
 target_link_libraries(r-type_client PRIVATE engine)
 
 file(GLOB_RECURSE SERVER_SOURCES_TEST "r-type/server/tests/*.cpp" "r-type/server/tests/*.hpp")

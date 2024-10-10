@@ -27,7 +27,7 @@ namespace potEngine {
             static sf::IntRect changeDownAnimationRect(int frame) {
                 return sf::IntRect(sf::Vector2i(66 - 33 * (frame), 1), sf::Vector2i(33, 17));
             }
-            void updateAnimation(std::shared_ptr<BlcEvent> event);
+            void updateAnimation(std::shared_ptr<NoneEvent> event);
 
             void update(float deltaTime) {}
         private:

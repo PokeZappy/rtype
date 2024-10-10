@@ -3,12 +3,9 @@
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "ECSManager.hpp"
-#include "SendMessageToAllEvent.hpp"
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
-#include "CollisionComponent.hpp"
-#include "CollisionEvent.hpp"
 
 #include <netinet/in.h>
 #include <vector>

@@ -8,7 +8,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "game_config.hpp"
+#include "ServerInclude.hpp"
 
 #include <memory>
 #include <vector>

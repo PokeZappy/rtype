@@ -8,7 +8,7 @@
 #include "WindowComponent.hpp"
 #include "AnimationComponent.hpp"
 #include "MainLoopEvent.hpp"
-#include "BlcEvent.hpp"
+#include "NoneEvent.hpp"
 
 namespace potEngine {
     class AnimationSystem : public ASystem {
@@ -18,6 +18,6 @@ namespace potEngine {
 
         void update(float) override {};
 
-        void updateAnimations(std::shared_ptr<BlcEvent> event);
+        void updateAnimations(std::shared_ptr<NoneEvent> event);
     };
 }
