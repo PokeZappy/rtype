@@ -155,6 +155,8 @@ namespace potEngine
         if (event_type == EventType::DEATH) {
             std::cout << "[CLIENT] {ID}-[" << entity_id << "] is dead." << std::endl;
             if (entity_id == _playerId) {
+                // TODO: réglé la segfault sur l'envoie de la data:
+
                 // auto sendDeath = std::make_shared<SendMessageEventInfo>(
                 //     4,
                 //     _clientFd,
