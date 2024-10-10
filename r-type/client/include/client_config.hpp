@@ -18,6 +18,8 @@
 #include <fcntl.h>
 #include <termios.h>
 
+void title_screen(const std::string& asset_path);
+
 namespace RType
 {
     class Client {

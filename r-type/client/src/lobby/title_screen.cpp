@@ -2,7 +2,7 @@
 #include <SFML/Audio.hpp>
 #include <vector>
 #include <iostream>
-#include "Tools.hpp"
+#include "client_config.hpp"
 
 std::vector<sf::Sprite> create_letters(float maxWidth, float maxHeight, const sf::Texture& texture) {
     std::vector<sf::Sprite> sprites;

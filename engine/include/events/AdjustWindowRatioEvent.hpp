@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 
+/*
 sf::View adjustAspectWithBlackBars(sf::View view, float windowWidth, float windowHeight) {
     float windowRatio = windowWidth / windowHeight;
     float viewRatio = view.getSize().x / view.getSize().y;
@@ -16,3 +17,6 @@ sf::View adjustAspectWithBlackBars(sf::View view, float windowWidth, float windo
     view.setViewport(sf::FloatRect(pos[0], pos[1], size[0], size[1]));
     return view;
 }
+*/
+
+// TODO transformer cette fonction en event

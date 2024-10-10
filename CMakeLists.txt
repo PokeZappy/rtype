@@ -14,29 +14,25 @@ set(SERVER_INCLUDE_DIRS r-type/server/include)
 set(GAME_INCLUDE_DIRS r-type/include)
 
 file(GLOB_RECURSE ENGINE_SOURCES
-    "engine/source/components/*.cpp"
-    "engine/source/core/*.cpp"
-    "engine/source/renderer/*.cpp"
-    "engine/source/systems/*.cpp"
-    "engine/source/*.cpp"
-    "engine/source/entity/*.cpp"
-    "engine/source/core/event/*.cpp"
-    "engine/source/event/*.cpp"
+    "engine/src/components/*.cpp"
+    "engine/src/core/*.cpp"
+    "engine/src/core/entities/*.cpp"
+    "engine/src/core/eventBus/*.cpp"
+    "engine/src/systems/*.cpp"
+    "engine/src/events/*.cpp"
 )
 
-add_library(engine SHARED ${ENGINE_SOURCES}
-        engine/include/components/staticMoveComponent.hpp)
+add_library(engine SHARED ${ENGINE_SOURCES})
 
 target_include_directories(engine PUBLIC
     engine/include
     engine/include/components
     engine/include/core
-    engine/include/renderer
+    engine/include/core/entities
+    engine/include/core/eventBus
     engine/include/systems
-    engine/include/entity
-    engine/include/core/event
-    engine/include/event
-    engine/include/event/data
+    engine/include/events
+    engine/include/events/data
 )
 
 file(GLOB_RECURSE SERVER_SOURCES "r-type/server/src/*.cpp")
@@ -51,12 +47,14 @@ target_link_libraries(r-type_client PRIVATE engine)
 
 file(GLOB_RECURSE SERVER_SOURCES_TEST "r-type/server/tests/*.cpp" "r-type/server/tests/*.hpp")
 add_executable(r-type_server_test ${SERVER_SOURCES_TEST})
-target_link_libraries(r-type_server_test engine)
+target_include_directories(r-type_server_test PRIVATE ${SERVER_INCLUDE_DIRS} ${GAME_INCLUDE_DIRS})
+target_link_libraries(r-type_server_test PRIVATE engine)
 add_test(NAME ServerTests COMMAND r-type_server_test)
 
 file(GLOB_RECURSE CLIENT_SOURCES_TEST "r-type/client/tests/*.cpp" "r-type/client/tests/*.hpp")
 add_executable(r-type_client_test ${CLIENT_SOURCES_TEST})
-target_link_libraries(r-type_client_test engine)
+target_include_directories(r-type_client_test PRIVATE ${CLIENT_INCLUDE_DIRS} ${GAME_INCLUDE_DIRS})
+target_link_libraries(r-type_client_test PRIVATE engine)
 add_test(NAME ClientTests COMMAND r-type_client_test)
 
 if(MSVC)

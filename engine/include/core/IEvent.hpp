@@ -15,6 +15,7 @@ namespace potEngine
         DEATH = 0x09,
         SHOOT = 0x10
     };
+    // TODO à enlever
 
     enum EntityType {
         NONE = 0x00,
