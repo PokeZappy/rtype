@@ -12,10 +12,10 @@
 #include <SFML/Graphics.hpp>
 
 namespace potEngine {
-    class ECSManager {
+    class Engine {
     public:
-        ECSManager();
-        ~ECSManager();
+        Engine();
+        ~Engine();
 
         std::shared_ptr<AEntity> createEntity();
         // std::shared_ptr<AEntity> createEntity(size_t Id);
@@ -23,12 +23,12 @@ namespace potEngine {
         std::shared_ptr<AEntity> createWindowEntity();
         std::shared_ptr<AEntity> createSpriteEntity(const std::string &texturePath);
 
-        static ECSManager& getInstance() {
-            static ECSManager instance;
+        static Engine& getInstance() {
+            static Engine instance;
             return instance;
         }
-        ECSManager(ECSManager const&) = delete;
-        void operator=(ECSManager const&) = delete;
+        Engine(Engine const&) = delete;
+        void operator=(Engine const&) = delete;
 
         // void addEntity(std::shared_ptr<AEntity> entity);
         template <typename T>
@@ -54,25 +54,36 @@ namespace potEngine {
         // bool getInput(sf::Keyboard::Key key) { return (_inputs[key]); };
         // std::unordered_map<sf::Keyboard::Key, bool> getInputs() { return (_inputs); };
         size_t getClientIdFromServerId(size_t serverId);
+
+        template<class T, class EventType>
+        void subscribeEvent(T* instance, void (T::*memberFunction)(std::shared_ptr<EventType>)) {
+            _eventBus.subscribe(instance, memberFunction);
+        }
+
+        template<class EventType>
+        void publishEvent(std::shared_ptr<EventType> event) {
+            _eventBus.publish(event);
+        }
     private:
         std::size_t _entityCounter;
         std::unordered_map<size_t, size_t> _serverToClientId;
 
         std::vector<std::shared_ptr<ISystem>> _systems;
         std::vector<std::shared_ptr<AEntity>> _entities;
+        EventBus& _eventBus = EventBus::getInstance();
         // std::unordered_map<sf::Keyboard::Key, bool> _inputs;
 
     };
 
     template <typename T, typename...Args>
-    void ECSManager::registerSystem(Args&&... args)
+    void Engine::registerSystem(Args&&... args)
     {
         static_assert(std::is_base_of<ISystem, T>::value, "T must derive from ISystem");
         _systems.push_back(std::make_shared<T>(std::forward<Args>(args)...));
     }
 
     template <typename T>
-    void ECSManager::unregisterSystem()
+    void Engine::unregisterSystem()
     {
         _systems.erase(std::remove_if(_systems.begin(), _systems.end(), [](const std::shared_ptr<ASystem>& system) {
             return typeid(T) == typeid(*system);
@@ -80,9 +91,9 @@ namespace potEngine {
     }
 
     template <typename T>
-    void ECSManager::addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component) {
+    void Engine::addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component) {
         entity->addComponent<T>(component);
         EntitySignatureChanged(entity);
     }
-    static ECSManager& ecsManager = ECSManager::getInstance();
+    static Engine& engine = Engine::getInstance();
 }

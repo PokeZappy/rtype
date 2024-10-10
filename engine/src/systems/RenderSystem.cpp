@@ -16,7 +16,7 @@ namespace potEngine
         _signature.set(AComponent::getID<SpriteComponent>(), true);
         _signature.set(AComponent::getID<TextComponent>(), true);
         _signature.set(AComponent::getID<WindowComponent>(), true);
-        eventBus.subscribe(this, &RenderSystem::renderWindow);
+        engine.subscribeEvent(this, &RenderSystem::renderWindow);
     }
 
     RenderSystem::~RenderSystem() {

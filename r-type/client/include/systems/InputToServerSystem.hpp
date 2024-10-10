@@ -15,7 +15,7 @@ namespace potEngine {
         public:
             InputToServerSystem(size_t playerId, int clientFd, struct sockaddr_in serverAddr) : _playerId(playerId), _clientFd(clientFd), _serverAddr(serverAddr) {
                 lastUpdateTime = std::chrono::steady_clock::now();
-                eventBus.subscribe(this, &InputToServerSystem::handleInputs);
+                engine.subscribeEvent(this, &InputToServerSystem::handleInputs);
             };
             std::chrono::time_point<std::chrono::steady_clock> lastUpdateTime;
             float updateInterval = 0.016f;
@@ -24,7 +24,7 @@ namespace potEngine {
                 return sf::IntRect(sf::Vector2i(2 + 33 * (frame - 1) + std::abs((frame - 1) / 3), 51), sf::Vector2i(32, 30));
             }
             int createShootAnimation(std::shared_ptr<AEntity> playerEntity) {
-                auto shootAnimationEntity = ecsManager.createEntity();
+                auto shootAnimationEntity = engine.createEntity();
                 auto playerPositionComponent = playerEntity->getComponent<PositionComponent>();
                 auto playerSpriteComponent = playerEntity->getComponent<SpriteComponent>();
                 if (!playerPositionComponent || !playerSpriteComponent)
@@ -37,14 +37,14 @@ namespace potEngine {
                 const std::string texturePath = assetFinder() + "/sprites/r-typesheet1.gif";
                 auto spriteComponent = std::make_shared<SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(2, 51), sf::Vector2i(32, 30)));
 
-                ecsManager.addComponent(shootAnimationEntity, positionComponent);
-                ecsManager.addComponent(shootAnimationEntity, animationComponent);
-                ecsManager.addComponent(shootAnimationEntity, spriteComponent);
+                engine.addComponent(shootAnimationEntity, positionComponent);
+                engine.addComponent(shootAnimationEntity, animationComponent);
+                engine.addComponent(shootAnimationEntity, spriteComponent);
                 return (shootAnimationEntity->getID());
             }
 
             void updateShootAnimationPosition(std::shared_ptr<AEntity> playerEntity) {
-                auto shootAnimationEntity = ecsManager.getEntity(playerEntity->getComponent<PlayerComponent>()->get()->getShootAnimationEntityId().value());
+                auto shootAnimationEntity = engine.getEntity(playerEntity->getComponent<PlayerComponent>()->get()->getShootAnimationEntityId().value());
                 auto playerPositionComponent = playerEntity->getComponent<PositionComponent>();
                 auto playerSpriteComponent = playerEntity->getComponent<SpriteComponent>();
                 if (!playerPositionComponent || !playerSpriteComponent)
@@ -64,26 +64,26 @@ namespace potEngine {
                     lastUpdateTime = currentTime;
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
                         auto disconnectEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::DISCONNECT, std::vector<size_t>{});
-                        potEngine::eventBus.publish(disconnectEventInfo);
-                        eventBus.publish(std::make_shared<StopMainLoopEvent>());
+                        potEngine::engine.publishEvent(disconnectEventInfo);
+                        engine.publishEvent(std::make_shared<StopMainLoopEvent>());
                     }
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
                         auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_UP, std::vector<size_t>{});
-                        potEngine::eventBus.publish(moveInfo);
+                        potEngine::engine.publishEvent(moveInfo);
                     }
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
                         auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_DOWN, std::vector<size_t>{});
-                        potEngine::eventBus.publish(moveInfo);
+                        potEngine::engine.publishEvent(moveInfo);
                     }
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
                         auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_LEFT, std::vector<size_t>{});
-                        potEngine::eventBus.publish(moveInfo);
+                        potEngine::engine.publishEvent(moveInfo);
                     }
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
                         auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_RIGHT, std::vector<size_t>{});
-                        potEngine::eventBus.publish(moveInfo);
+                        potEngine::engine.publishEvent(moveInfo);
                     }
-                    auto playerEntity = ecsManager.getEntity(_playerId);
+                    auto playerEntity = engine.getEntity(_playerId);
                     auto playerComponent = playerEntity->getComponent<PlayerComponent>();
                     if (!playerComponent)
                         return;
@@ -98,10 +98,10 @@ namespace potEngine {
                         }
                     } else {
                         if (playerComponent->get()->getShootAnimationEntityId().has_value()) {
-                            ecsManager.removeEntity(playerComponent->get()->getShootAnimationEntityId().value());
+                            engine.removeEntity(playerComponent->get()->getShootAnimationEntityId().value());
                             playerComponent->get()->getShootAnimationEntityId().reset();
                             auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::SHOOT, std::vector<size_t>{});
-                            potEngine::eventBus.publish(moveInfo);
+                            potEngine::engine.publishEvent(moveInfo);
                         }
                     }
                 }

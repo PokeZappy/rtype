@@ -59,11 +59,11 @@ void RType::Server::start()
     init_subscribe();
     setNonBlockingInput();
 
-    potEngine::ecsManager.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
-    potEngine::ecsManager.registerSystem<potEngine::ShootEntitySystem>(server_fd, 0.001f);
+    potEngine::engine.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
+    potEngine::engine.registerSystem<potEngine::ShootEntitySystem>(server_fd, 0.001f);
 
     auto startEvent = std::make_shared<potEngine::StartEvent>();
 
-    potEngine::eventBus.publish(startEvent);
-    potEngine::ecsManager.update(0.016);
+    potEngine::engine.publishEvent(startEvent);
+    potEngine::engine.update(0.016);
 }

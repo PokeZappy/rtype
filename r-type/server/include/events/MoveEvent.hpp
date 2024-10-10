@@ -2,7 +2,7 @@
 
 #include "IEvent.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "SendMessageToAllEvent.hpp"
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
@@ -30,16 +30,16 @@ namespace potEngine
     class MoveEvent : public IEvent {
     public:
         MoveEvent() {
-            eventBus.subscribe(this, &MoveEvent::Move);
+            engine.subscribeEvent(this, &MoveEvent::Move);
         };
 
         std::shared_ptr<AEntity> check_collision(std::shared_ptr<MoveInfoEvent> info, std::vector<int> current_pos)
         {
-            auto current_entity = ecsManager.getEntity(info->entity_id);
+            auto current_entity = engine.getEntity(info->entity_id);
             if (current_entity->getComponent<CollisionComponent>() == nullptr || current_entity->getComponent<PositionComponent>() == nullptr)
                 return nullptr;
 
-            for (auto entity : ecsManager.getEntities()) {
+            for (auto entity : engine.getEntities()) {
                 if (entity->getComponent<CollisionComponent>() == nullptr || entity->getComponent<PositionComponent>() == nullptr || entity->getID() == info->entity_id
                     || (entity->getComponent<PlayerComponent>() && current_entity->getComponent<PlayerComponent>()))
                     continue;
@@ -68,9 +68,9 @@ namespace potEngine
                     entity->getID(),
                     DEATH,
                     std::vector<size_t>{},
-                    ecsManager.getEntities()
+                    engine.getEntities()
                 );
-                eventBus.publish(sendMessageToAllEventInfo);
+                engine.publishEvent(sendMessageToAllEventInfo);
                 std::cout << "[SERVER] Shoot with {ID}-[" << entity->getID() << "] is dead." << std::endl;
                 return 1;
             }
@@ -79,7 +79,7 @@ namespace potEngine
 
         void Move(std::shared_ptr<MoveInfoEvent> info)
         {
-            auto _entity = ecsManager.getEntity(info->entity_id);
+            auto _entity = engine.getEntity(info->entity_id);
             if (!_entity) {
                 std::cout << "[SERVER] {ID}-[" << static_cast<int>(info->entity_id) << "] not found." << std::endl;
                 return;
@@ -119,7 +119,7 @@ namespace potEngine
                     info->entity_id,
                     entity_collide->getID()
                 );
-                eventBus.publish(collisionEventInfo);
+                engine.publishEvent(collisionEventInfo);
             }
             if (info->fd != -1) {
                 auto sendMessageEventInfo = std::make_shared<SendMessageToAllEventInfo>(
@@ -128,9 +128,9 @@ namespace potEngine
                     info->entity_id,
                     info->event,
                     _pos,
-                    ecsManager.getEntities()
+                    engine.getEntities()
                 );
-                eventBus.publish(sendMessageEventInfo);
+                engine.publishEvent(sendMessageEventInfo);
             }
             // std::cout << "[SERVER] Entity {ID}-[" << std::to_string(static_cast<int>(info->entity_id))
             //     << "], {username}-[" << username << "], is moving to {" << _pos[0] << "," << _pos[1] << "}" << std::endl;

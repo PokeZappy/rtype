@@ -10,7 +10,7 @@
 #include "ASystem.hpp"
 #include "AEntity.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "NoneEvent.hpp"
 
 #include "ConnectionEvent.hpp"
@@ -35,7 +35,7 @@ namespace potEngine
         RecvMessageServerSystem(int serverFd, struct sockaddr_in server_addr, socklen_t server_addr_len)
             : _serverFd(serverFd), _addr(server_addr), _addrLen(server_addr_len), current_players(0)
         {
-            eventBus.subscribe(this, &RecvMessageServerSystem::updateSystem);
+            engine.subscribeEvent(this, &RecvMessageServerSystem::updateSystem);
         }
 
         ~RecvMessageServerSystem() {}
@@ -70,34 +70,34 @@ namespace potEngine
 
             if (event_type == CONNECTION && 4 > current_players) {
                 auto connectionInfo = std::make_shared<ConnectionInfoEvent>(4, _serverFd, _addr, params);
-                eventBus.publish(connectionInfo);
+                engine.publishEvent(connectionInfo);
                 current_players++;
             }
             if (event_type == DISCONNECT) {
                 auto disconnectInfo = std::make_shared<DisconnectionInfoEvent>(4, _serverFd, entity_id, params);
-                eventBus.publish(disconnectInfo);
+                engine.publishEvent(disconnectInfo);
                 current_players--;
             }
             if (event_type == MOVE_UP || event_type == MOVE_DOWN || event_type == MOVE_RIGHT || event_type == MOVE_LEFT) {
                 auto moveInfo = std::make_shared<MoveInfoEvent>(4, _serverFd, event_type, entity_id, params);
-                eventBus.publish(moveInfo);
+                engine.publishEvent(moveInfo);
             }
             if (event_type == SHOOT) {
                 auto createShootEntity = std::make_shared<EntityCreateInfoEvent>(
                     4,
                     _serverFd,
-                    ecsManager.getEntity(entity_id)->getComponent<PositionComponent>()->get()->_position,
+                    engine.getEntity(entity_id)->getComponent<PositionComponent>()->get()->_position,
                     entity_id,
                     EntityType::PEW
                 );
-                eventBus.publish(createShootEntity);
+                engine.publishEvent(createShootEntity);
             }
             if (event_type == DEATH) {
-                auto username = ecsManager.getEntity(entity_id)->getComponent<PlayerComponent>()->get()->username;
+                auto username = engine.getEntity(entity_id)->getComponent<PlayerComponent>()->get()->username;
 
                 std::cout << "[SERVER] Player {ID}-[" << entity_id << "], {username}-["
                     << username << "] is dead." << std::endl;
-                ecsManager.removeEntity(entity_id);
+                engine.removeEntity(entity_id);
             }
         }
     };

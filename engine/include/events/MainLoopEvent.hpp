@@ -14,14 +14,14 @@ namespace potEngine
     {
         MainLoopEvent()
         {
-            eventBus.subscribe(this, &MainLoopEvent::stopMainLoop);
+            engine.subscribeEvent(this, &MainLoopEvent::stopMainLoop);
         };
 
         void eventMainLoop(std::shared_ptr<MainLoopEvent> event) {
             if (!isRunning)
                 return;
-            eventBus.publish(std::make_shared<NoneEvent>());
-            eventBus.publish(event);
+            engine.publishEvent(std::make_shared<NoneEvent>());
+            engine.publishEvent(event);
         }
 
         void stopMainLoop(std::shared_ptr<StopMainLoopEvent> event) {

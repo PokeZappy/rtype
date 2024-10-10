@@ -9,7 +9,7 @@ namespace potEngine {
     {
         _signature.set(AComponent::getID<SpriteComponent>(), true);
         _signature.set(AComponent::getID<AnimationComponent>(), true);
-        eventBus.subscribe(this, &AnimationSystem::updateAnimations);
+        engine.subscribeEvent(this, &AnimationSystem::updateAnimations);
     }
 
     AnimationSystem::~AnimationSystem() {

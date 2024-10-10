@@ -84,5 +84,4 @@ namespace potEngine {
         std::map<std::type_index, std::shared_ptr<HandlerList>> _subscribers;
         std::vector<std::pair<std::shared_ptr<IEvent>, std::shared_ptr<HandlerList>>> _handlers;
     };
-    static EventBus& eventBus = EventBus::getInstance();
 }

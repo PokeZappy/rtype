@@ -11,7 +11,7 @@
 #include "ASystem.hpp"
 #include "AEntity.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "NoneEvent.hpp"
 #include "ShootComponent.hpp"
 #include "PositionComponent.hpp"
@@ -34,7 +34,7 @@ namespace potEngine
         {
             lastUpdateTime = std::chrono::steady_clock::now();
             _signature.set(AComponent::getID<ShootComponent>(), true);
-            eventBus.subscribe(this, &ShootEntitySystem::updateSystem);
+            engine.subscribeEvent(this, &ShootEntitySystem::updateSystem);
         }
 
         ~ShootEntitySystem() {}
@@ -56,7 +56,7 @@ namespace potEngine
                         entity->getID(),
                         std::vector<size_t> {}
                     );
-                    eventBus.publish(moveInfo);
+                    engine.publishEvent(moveInfo);
                 }
             }
         }

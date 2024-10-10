@@ -28,12 +28,12 @@ namespace potEngine
     class SendMessageToAllExeptEvent : public IEvent {
     public:
         SendMessageToAllExeptEvent() {
-            eventBus.subscribe(this, &SendMessageToAllExeptEvent::SendMessageToAllExept);
+            engine.subscribeEvent(this, &SendMessageToAllExeptEvent::SendMessageToAllExept);
         };
 
         void SendMessageToAllExept(std::shared_ptr<SendMessageToAllExeptEventInfo> info)
         {
-            if (ecsManager.getEntity(info->entity_id) == nullptr)
+            if (engine.getEntity(info->entity_id) == nullptr)
                 return;
             send_message_to_all(info->entity_id, info->event_type, info->params, info->entities, info->max_players, info->fd);
         }
