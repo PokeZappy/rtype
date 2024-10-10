@@ -60,8 +60,10 @@ namespace potEngine
                 if (networkComponent) {
                     send_message(networkComponent->get()->addr, entity_id, event_type, params, maxP, networkComponent->get()->fd);
                     if (event_type == DISCONNECT) {
+                        std::cout << "[SERVER] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
                         ecsManager.removeEntity(entity_id);
                     } if (event_type == DEATH) {
+                        std::cout << "[SERVER] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
                         ecsManager.removeEntity(entity_id);
                     }
                 }

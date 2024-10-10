@@ -35,7 +35,7 @@ namespace potEngine
         {
             auto _entity = ecsManager.getEntity(info->entity_id);
             if (!_entity) {
-                std::cout << "[CLIENT] {ID}-[" << static_cast<int>(info->entity_id) << "] not found." << std::endl;
+                // std::cout << "[CLIENT] {ID}-[" << info->entity_id << "] not found." << std::endl;
                 return;
             }
 

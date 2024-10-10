@@ -137,18 +137,9 @@ namespace potEngine
         }
         if (event_type == EventType::DEATH) {
             std::cout << "[CLIENT] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
-
-            auto sendDeath = std::make_shared<SendMessageEventInfo>(
-                MAX_PLAYERS,
-                _clientFd,
-                _addr,
-                ecsManager.getClientIdFromServerId(entity_id),
-                DEATH,
-                std::vector<size_t>{}
-            );
-            eventBus.publish(sendDeath);
-            ecsManager.removeEntity(entity_id);
-            eventBus.publish(std::make_shared<StopMainLoopEvent>());
+            ecsManager.removeEntity(ecsManager.getClientIdFromServerId(entity_id));
+            if (entity_id == _playerId)
+                exit(0);
         }
         if (event_type == EventType::COLLISION) {
             // do somethijng

@@ -7,9 +7,6 @@
 
 #include "client_config.hpp"
 
-#include <chrono>
-#include <thread>
-
 RType::Client::Client() : player_id(0)
 {
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -58,6 +55,21 @@ void RType::Client::init_subscribe()
     auto clientCollisionEvent = std::make_shared<potEngine::ClientCollisionEvent>();
 }
 
+void send_message(const struct sockaddr_in& addr, size_t entity_id, potEngine::EventType action, const std::vector<size_t>& params, size_t maxP, int fd)
+{
+    const size_t EVENT_TYPE_BITS = 8;
+    size_t packet_size = sizeof(size_t) + params.size() * sizeof(size_t);
+    std::vector<uint8_t> packet(packet_size);
+
+    size_t header = entity_id;
+    header |= (static_cast<size_t>(action) << (sizeof(size_t) * 8 - EVENT_TYPE_BITS));
+    std::memcpy(packet.data(), &header, sizeof(size_t));
+    for (size_t i = 0; i < params.size(); ++i) {
+        std::memcpy(packet.data() + sizeof(size_t) + i * sizeof(size_t), &params[i], sizeof(size_t));
+    }
+    sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
+}
+
 void RType::Client::handle_connection()
 {
     socklen_t addr_len = sizeof(server_addr);
@@ -67,9 +79,8 @@ void RType::Client::handle_connection()
     std::cin >> username;
 
     std::vector<size_t> params_username(username.begin(), username.end());
-    auto connectionEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, 0, potEngine::CONNECTION, params_username);
-    potEngine::eventBus.publish(connectionEventInfo);
-    potEngine::ecsManager.update(0.0f);
+    send_message(server_addr, 0, potEngine::CONNECTION, params_username, MAX_PLAYERS, client_fd);
+
     auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
     if (event_type == potEngine::EventType::CONNECTION) {
         std::cout << "[CLIENT] Connected to the server with {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
@@ -125,17 +136,6 @@ void RType::Client::start()
     potEngine::eventBus.publish(startEvent);
 
     const double clientTickDuration = 1.0 / 60.0;
-    auto previousTime = std::chrono::high_resolution_clock::now();
-
-    while (true) {
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> elapsed = currentTime - previousTime;
-
-        if (elapsed.count() >= clientTickDuration) {
-            potEngine::ecsManager.update(clientTickDuration);
-            previousTime = currentTime;
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
+    potEngine::ecsManager.update(clientTickDuration);
 }
 

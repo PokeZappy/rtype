@@ -25,6 +25,7 @@ namespace potEngine {
 
         void updateSystem(std::shared_ptr<NoneEvent> event);
         std::tuple<size_t, potEngine::EventType, std::vector<size_t>> recv_message();
+    private:
         int _clientFd;
         struct sockaddr_in _addr;
         socklen_t _addrLen;

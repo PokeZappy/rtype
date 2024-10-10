@@ -11,7 +11,8 @@
 #include "StartEvent.hpp"
 #include <SFML/Graphics.hpp>
 
-namespace potEngine {
+namespace potEngine
+{
     class ECSManager {
     public:
         ECSManager();

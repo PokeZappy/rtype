@@ -60,8 +60,8 @@ namespace potEngine
             if (!shootComponent || !posComponent)
                 return 0;
 
-            if ((info->event == MOVE_RIGHT && posComponent->get()->_position[0] >= 800) ||
-                (info->event == MOVE_LEFT && posComponent->get()->_position[0] <= 0)) {
+            if ((info->event == MOVE_RIGHT && posComponent->get()->_position[0] == 800) ||
+                (info->event == MOVE_LEFT && posComponent->get()->_position[0] == 0)) {
                 auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(
                     info->max_players,
                     info->fd,
@@ -73,6 +73,10 @@ namespace potEngine
                 eventBus.publish(sendMessageToAllEventInfo);
                 return 1;
             }
+            if ((info->event == MOVE_RIGHT && posComponent->get()->_position[0] > 800) ||
+                (info->event == MOVE_LEFT && posComponent->get()->_position[0] < 0)) {
+                return 1;
+            }
             return 0;
         }
 
@@ -80,7 +84,7 @@ namespace potEngine
         {
             auto _entity = ecsManager.getEntity(info->entity_id);
             if (!_entity) {
-                std::cout << "[SERVER] {ID}-[" << static_cast<int>(info->entity_id) << "] not found." << std::endl;
+                // std::cout << "[SERVER] {ID}-[" << info->entity_id << "] not found." << std::endl;
                 return;
             }
 

@@ -147,7 +147,6 @@ namespace potEngine {
     {
         auto handler = eventBus.getHandler();
         while (handler != std::pair<std::shared_ptr<IEvent>, std::shared_ptr<HandlerList>>(nullptr, nullptr)) {
-            // std::cout << "[ECSManager] Event received" << std::endl;
             for (auto event : *handler.second) {
                 event->exec(handler.first);
             }

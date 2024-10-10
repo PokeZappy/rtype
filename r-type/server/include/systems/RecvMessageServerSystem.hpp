@@ -91,13 +91,7 @@ namespace potEngine
                     EntityType::PEW
                 );
                 eventBus.publish(createShootEntity);
-            }
-            if (event_type == DEATH) {
-                // auto username = ecsManager.getEntity(entity_id)->getComponent<PlayerComponent>()->get()->username;
-
-                // std::cout << "[SERVER] Player {ID}-[" << entity_id << "], {username}-["
-                //     << username << "] is dead." << std::endl;
-
+            } if (event_type == DEATH) {
                 std::cout << "[SERVER] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
                 ecsManager.removeEntity(entity_id);
             }
