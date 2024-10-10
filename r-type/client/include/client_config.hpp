@@ -29,9 +29,11 @@ namespace RType
 
         void start();
         std::tuple<size_t, potEngine::EventType, std::vector<size_t>> recv_message(struct sockaddr_in& addr, socklen_t& addr_len);
-        void init_subscribe();
+        static void init_subscribe();
         void setNonBlockingInput();
         void create_background();
+        void create_hurdle();
+        void create_hurdle_destroyable();
         void handle_connection();
 
     private:

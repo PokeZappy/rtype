@@ -103,6 +103,44 @@ void RType::Client::create_background() {
     std::cout << "[CLIENT] Background created." << std::endl;
 }
 
+void RType::Client::create_hurdle() {
+    auto entity =  potEngine::ecsManager.createEntity();
+
+    sf::Texture hurdleTexture;
+    if (!hurdleTexture.loadFromFile(assetFinder() + "/sprites/space_ background.png"))
+        std::cout << assetFinder() << std::endl;
+    const std::string &texturePath = assetFinder() + "/sprites/space_ background.png";
+
+    auto positionComponent = std::make_shared<potEngine::PositionComponent>(1920, 0);
+    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(417, 286, 279, 7), sf::Vector2i(3140, 1080), sf::Vector2i(1206, 207));
+    auto static_move_component = std::make_shared<potEngine::staticMoveComponent>(sf::Vector2i(-3000, 1000), sf::Vector2i(1920, 1000));
+    potEngine::ecsManager.addComponent(entity, positionComponent);
+    potEngine::ecsManager.addComponent(entity, spriteComponent);
+    potEngine::ecsManager.addComponent(entity, static_move_component);
+
+
+    std::cout << "[CLIENT] Hurdle created." << std::endl;
+}
+
+void RType::Client::create_hurdle_destroyable() {
+    auto entity =  potEngine::ecsManager.createEntity();
+
+    sf::Texture hurdleTexture;
+    if (!hurdleTexture.loadFromFile(assetFinder() + "/sprites/r-typesheet10.gif"))
+        std::cout << assetFinder() << std::endl;
+    const std::string &texturePath = assetFinder() + "/sprites/r-typesheet10.gif";
+
+    auto positionComponent = std::make_shared<potEngine::PositionComponent>(1000, 0);
+    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(72, 30, 22, 30), sf::Vector2i(3140, 1080), sf::Vector2i(1206, 207));
+    auto static_move_component = std::make_shared<potEngine::staticMoveComponent>(sf::Vector2i(-3000, 1000), sf::Vector2i(1000, 1000));
+    potEngine::ecsManager.addComponent(entity, positionComponent);
+    potEngine::ecsManager.addComponent(entity, spriteComponent);
+    potEngine::ecsManager.addComponent(entity, static_move_component);
+
+
+    std::cout << "[CLIENT] Hurdle Destroyable created." << std::endl;
+}
+
 void RType::Client::start()
 {
     init_subscribe();
@@ -110,6 +148,8 @@ void RType::Client::start()
     handle_connection();
     setNonBlockingInput();
 
+    create_hurdle();
+    create_hurdle_destroyable();
     socklen_t addr_len = sizeof(server_addr);
     potEngine::ecsManager.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
     potEngine::ecsManager.registerSystem<potEngine::ShipAnimationSystem>(player_id);

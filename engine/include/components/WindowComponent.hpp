@@ -7,7 +7,7 @@ namespace potEngine {
     class WindowComponent : public AComponent {
     public:
         WindowComponent() {
-            _window = new sf::RenderWindow(sf::VideoMode(800, 600), "R-Type");
+            _window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "R-Type");
         };
         ~WindowComponent() {};
 
