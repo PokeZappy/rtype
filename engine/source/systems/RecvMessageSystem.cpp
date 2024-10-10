@@ -11,6 +11,7 @@
 #include "ShootComponent.hpp"
 #include "CollisionInfoEvent.hpp"
 #include "StopMainLoopEvent.hpp"
+#include "SendMessageEvent.hpp"
 // TODO pitié pendant la refacto faire un fichier pour que les includes soient nickels
 
 namespace potEngine
@@ -152,12 +153,19 @@ namespace potEngine
             handleCreateEntity(params, entity_id);
         }
         if (event_type == EventType::DEATH) {
-            // std::cout << "[CLIENT] Shoot with {ID}-[" << entity_id << "] is dead." << std::endl;
-            std::cout << "MORT: s-" << entity_id << "c-" << _playerId;
-            ecsManager.removeEntity(entity_id);
+            std::cout << "[CLIENT] {ID}-[" << entity_id << "] is dead." << std::endl;
             if (entity_id == _playerId) {
-                std::cout << "IM DEAD\n";
+                // auto sendDeath = std::make_shared<SendMessageEventInfo>(
+                //     4,
+                //     _clientFd,
+                //     _addr,
+                //     _playerId,
+                //     DEATH,
+                //     std::vector<size_t>{}
+                // );
+                // eventBus.publish(sendDeath);
                 eventBus.publish(std::make_shared<StopMainLoopEvent>());
+                // ecsManager.removeEntity(entity_id);
             }
         }
         if (event_type == EventType::COLLISION) {

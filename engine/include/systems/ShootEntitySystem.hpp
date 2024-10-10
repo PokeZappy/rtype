@@ -48,6 +48,7 @@ namespace potEngine
                 lastUpdateTime = currentTime;
 
                 for (auto entity : _entitiesSystem) {
+                    // std::cout << "I: " << i++ << std::endl;
                     auto moveInfo = std::make_shared<MoveInfoEvent>(
                         4,
                         -1,
