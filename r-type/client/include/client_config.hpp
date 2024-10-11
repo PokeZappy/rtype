@@ -14,7 +14,6 @@
 #include "ClientInclude.hpp"
 #include "Config.hpp"
 
-
 void title_screen(const std::string& asset_path);
 
 namespace RType

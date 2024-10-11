@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "AnimationSystem.hpp"
 #include "SpriteComponent.hpp"
 #include "InputInfoEvent.hpp"

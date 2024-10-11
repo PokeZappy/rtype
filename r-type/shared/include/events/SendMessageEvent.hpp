@@ -1,12 +1,12 @@
 #pragma once
 
-#include "IEvent.hpp"
-#include "EventBus.hpp"
-
-#include "Config.hpp"
 #include <cmath>
 #include <vector>
 #include <cstring>
+
+#include "IEvent.hpp"
+#include "EventBus.hpp"
+#include "Config.hpp"
 
 namespace potEngine
 {

@@ -5,7 +5,9 @@
 ** network.cpp
 */
 
-#include "client_config.hpp"
+#include <client_config.hpp>
+#include "Config.hpp"
+#include "IEvent.hpp"
 
 std::tuple<size_t, potEngine::EventType, std::vector<size_t>> RType::Client::recv_message(struct sockaddr_in& addr, socklen_t& addr_len)
 {
