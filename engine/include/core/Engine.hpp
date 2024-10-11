@@ -18,24 +18,10 @@ namespace potEngine
     class Timer {
     public:
         Timer() {
-            _countTick = 60;
-            _previousTime = std::chrono::high_resolution_clock::now();
-        }
-
-        Timer(int counter) {
-            _countTick = counter;
-            _previousTime = std::chrono::high_resolution_clock::now();
+            _countTick = 0;
         }
 
         ~Timer() {}
-
-        void timerSetTimeNow() {
-            _previousTime = std::chrono::high_resolution_clock::now();
-        }
-
-        std::chrono::duration<double> timerGetElapsedTime() const {
-            return std::chrono::high_resolution_clock::now() - _previousTime;
-        }
 
         void timerAddTick() {
             _countTick += 1;
@@ -49,7 +35,7 @@ namespace potEngine
             return _countTick;
         }
 
-        void timerSetTps(int number) {
+        void setTps(int number) {
             _tps = number;
         }
 
@@ -60,7 +46,6 @@ namespace potEngine
     private:
         int _tps = 0;
         int _countTick = 0;
-        std::chrono::time_point<std::chrono::high_resolution_clock> _previousTime;
     };
 
     class Engine {
@@ -102,7 +87,6 @@ namespace potEngine
         std::vector<std::shared_ptr<AEntity>> getEntities() const;
         std::shared_ptr<AEntity> getEntity(size_t entity_id);
         size_t getClientIdFromServerId(size_t serverId);
-        void setTick(int _tps);
     private:
         std::size_t _entityCounter;
         std::unordered_map<size_t, size_t> _serverToClientId;

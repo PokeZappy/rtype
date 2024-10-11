@@ -163,9 +163,4 @@ namespace potEngine {
             return (serverId);
         }
     }
-
-    void Engine::setTick(int tps)
-    {
-        engine.timer.timerSetTps(tps);
-    }
 }
