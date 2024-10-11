@@ -71,7 +71,6 @@ namespace potEngine
         ~Engine();
 
         std::shared_ptr<AEntity> createEntity();
-        // std::shared_ptr<AEntity> createEntity(size_t Id);
         std::shared_ptr<AEntity> createServerEntity(size_t serverId);
         std::shared_ptr<AEntity> createWindowEntity();
         std::shared_ptr<AEntity> createSpriteEntity(const std::string &texturePath);
@@ -83,7 +82,6 @@ namespace potEngine
         Engine(Engine const&) = delete;
         void operator=(Engine const&) = delete;
 
-        // void addEntity(std::shared_ptr<AEntity> entity);
         template <typename T>
         void addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component);
 
