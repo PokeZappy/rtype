@@ -58,12 +58,11 @@ void RType::Server::start()
     init_subscribe();
     setNonBlockingInput();
 
-    potEngine::ecsManager.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
-    potEngine::ecsManager.registerSystem<potEngine::ShootEntitySystem>();
+    potEngine::engine.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
+    potEngine::engine.registerSystem<potEngine::ShootEntitySystem>();
 
+    potEngine::engine.timer.setTps(145);
     auto startEvent = std::make_shared<potEngine::StartEvent>();
-    potEngine::eventBus.publish(startEvent);
-
-    const double serverTickDuration = 1.0 / 20.0;
-    potEngine::ecsManager.update(serverTickDuration);
+    potEngine::engine.publishEvent(startEvent);
+    potEngine::engine.update();
 }

@@ -11,7 +11,7 @@
 #include "ASystem.hpp"
 #include "AEntity.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "NoneEvent.hpp"
 #include "ShootComponent.hpp"
 #include "PositionComponent.hpp"
@@ -26,7 +26,7 @@ namespace potEngine
         ShootEntityClientSystem()
         {
             _signature.set(AComponent::getID<ShootComponent>(), true);
-            eventBus.subscribe(this, &ShootEntityClientSystem::updateSystem);
+            engine.subscribeEvent(this, &ShootEntityClientSystem::updateSystem);
         }
 
         ~ShootEntityClientSystem() {}
@@ -40,9 +40,9 @@ namespace potEngine
                     4,
                     -1,
                     MOVE_RIGHT,
-                    ecsManager.getClientIdFromServerId(entity->getID())
+                    engine.getClientIdFromServerId(entity->getID())
                 );
-                eventBus.publish(moveInfo);
+                engine.publishEvent(moveInfo);
             }
         }
     };

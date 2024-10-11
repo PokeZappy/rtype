@@ -6,7 +6,7 @@
 #include "AEntity.hpp"
 #include "WindowEntity.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "WindowComponent.hpp"
 #include "Config.hpp"
 #include "NoneEvent.hpp"

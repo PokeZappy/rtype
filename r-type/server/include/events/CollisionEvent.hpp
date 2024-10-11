@@ -4,7 +4,7 @@
 
 #include "IEvent.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "SendMessageToAllEvent.hpp"
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
@@ -17,7 +17,7 @@ namespace potEngine
     class CollisionEvent : public IEvent {
     public:
         CollisionEvent() {
-            eventBus.subscribe(this, &CollisionEvent::Collision);
+            engine.subscribeEvent(this, &CollisionEvent::Collision);
         };
 
         void collision_lifeEntity_shoot(std::shared_ptr<potEngine::AEntity> lifeEntity, std::shared_ptr<potEngine::AEntity> shoot, std::shared_ptr<CollisionInfoEvent> info)
@@ -31,11 +31,11 @@ namespace potEngine
                 lifeEntity->getID(),
                 COLLISION,
                 std::vector<size_t> {shoot->getID()},
-                ecsManager.getEntities()
+                engine.getEntities()
             );
-            eventBus.publish(sendCollisionMsgToAll);
+            engine.publishEvent(sendCollisionMsgToAll);
 
-            ecsManager.removeEntity(shoot->getID());
+            engine.removeEntity(shoot->getID());
             std::cout << "[SERVER] Player {ID}-[" << lifeEntity->getID() << "], {username}-["
                 << username << "] collide and has now {LIFE}-[" << life << "]" << std::endl;
 
@@ -46,9 +46,9 @@ namespace potEngine
                     lifeEntity->getID(),
                     DEATH,
                     std::vector<size_t>{},
-                    ecsManager.getEntities()
+                    engine.getEntities()
                 );
-                eventBus.publish(sendMessageToAllEventInfo);
+                engine.publishEvent(sendMessageToAllEventInfo);
             }
             lifeEntity->getComponent<LifeComponent>()->get()->life--;
         }
@@ -60,8 +60,8 @@ namespace potEngine
 
         void Collision(std::shared_ptr<CollisionInfoEvent> info)
         {
-            auto colliding_entity = ecsManager.getEntity(info->colliding_entity_id);
-            auto collided_entity = ecsManager.getEntity(info->collided_entity_id);
+            auto colliding_entity = engine.getEntity(info->colliding_entity_id);
+            auto collided_entity = engine.getEntity(info->collided_entity_id);
             if (colliding_entity == nullptr || collided_entity == nullptr) {
                 std::cout << "[SERVER][COLLISION] At least one entity do not exist." << std::endl;
                 return;

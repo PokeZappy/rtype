@@ -21,7 +21,7 @@ namespace potEngine {
             BackgroundSystem() : ASystem() {
                 _signature.set(AComponent::getID<staticMoveComponent>(), true);
                 _signature.set(AComponent::getID<PositionComponent>(), true);
-                eventBus.subscribe(this, &BackgroundSystem::moveBackground);
+                engine.subscribeEvent(this, &BackgroundSystem::moveBackground);
             };
 
             void moveBackground(std::shared_ptr<NoneEvent> event) {

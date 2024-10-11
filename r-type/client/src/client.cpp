@@ -20,11 +20,11 @@ RType::Client::Client() : player_id(0)
     server_addr.sin_port = htons(PORT);
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-    potEngine::ecsManager.registerSystem<potEngine::RenderSystem>();
-    potEngine::ecsManager.registerSystem<potEngine::InputSystem>();
-    potEngine::ecsManager.registerSystem<potEngine::AnimationSystem>();
-    potEngine::ecsManager.registerSystem<potEngine::AudioSystem>();
-    potEngine::ecsManager.registerSystem<potEngine::BackgroundSystem>();
+    potEngine::engine.registerSystem<potEngine::RenderSystem>();
+    potEngine::engine.registerSystem<potEngine::InputSystem>();
+    potEngine::engine.registerSystem<potEngine::AnimationSystem>();
+    potEngine::engine.registerSystem<potEngine::AudioSystem>();
+    potEngine::engine.registerSystem<potEngine::BackgroundSystem>();
 
 
     std::cout << "[CLIENT] Ready to connect to the server...\n";
@@ -90,7 +90,7 @@ void RType::Client::handle_connection()
 }
 
 void RType::Client::create_background() {
-    auto entity =  potEngine::ecsManager.createEntity();
+    auto entity =  potEngine::engine.createEntity();
 
     sf::Texture backgroundTexture;
     if (!backgroundTexture.loadFromFile(assetFinder() + "/sprites/space_ background.png"))
@@ -100,9 +100,9 @@ void RType::Client::create_background() {
     auto positionComponent = std::make_shared<potEngine::PositionComponent>(0, 0);
     auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(0, 0, 1206, 207), sf::Vector2i(3140, 1080), sf::Vector2i(1206, 207));
     auto static_move_component = std::make_shared<potEngine::staticMoveComponent>(sf::Vector2i(-3000, 0), sf::Vector2i(0, 0));
-    potEngine::ecsManager.addComponent(entity, positionComponent);
-    potEngine::ecsManager.addComponent(entity, spriteComponent);
-    potEngine::ecsManager.addComponent(entity, static_move_component);
+    potEngine::engine.addComponent(entity, positionComponent);
+    potEngine::engine.addComponent(entity, spriteComponent);
+    potEngine::engine.addComponent(entity, static_move_component);
 
 
     std::cout << "[CLIENT] Background created." << std::endl;
@@ -116,16 +116,16 @@ void RType::Client::start()
     setNonBlockingInput();
 
     socklen_t addr_len = sizeof(server_addr);
-    potEngine::ecsManager.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
-    potEngine::ecsManager.registerSystem<potEngine::ShipAnimationSystem>(player_id);
-    potEngine::ecsManager.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, server_addr);
-    potEngine::ecsManager.registerSystem<potEngine::ShootEntityClientSystem>();
+    potEngine::engine.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
+    potEngine::engine.registerSystem<potEngine::ShipAnimationSystem>(player_id);
+    potEngine::engine.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, server_addr);
+    potEngine::engine.registerSystem<potEngine::ShootEntityClientSystem>();
 
-    std::shared_ptr<potEngine::AEntity> window = potEngine::ecsManager.createWindowEntity();
+    std::shared_ptr<potEngine::AEntity> window = potEngine::engine.createWindowEntity();
 
+    potEngine::engine.timer.setTps(145);
     auto startEvent = std::make_shared<potEngine::StartEvent>();
-    potEngine::eventBus.publish(startEvent);
+    potEngine::engine.publishEvent(startEvent);
 
-    const double clientTickDuration = 1.0 / 60.0;
-    potEngine::ecsManager.update(clientTickDuration);
+    potEngine::engine.update();
 }

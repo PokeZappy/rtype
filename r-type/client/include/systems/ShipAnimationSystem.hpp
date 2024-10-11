@@ -17,7 +17,7 @@ namespace potEngine {
     class ShipAnimationSystem : public ASystem {
         public:
             ShipAnimationSystem(size_t playerId) : _playerId(playerId) {
-                eventBus.subscribe(this, &ShipAnimationSystem::updateAnimation);
+                engine.subscribeEvent(this, &ShipAnimationSystem::updateAnimation);
             };
 
             // TODO adapter cette fonction pour qu'elle prenne un offsetX (ou y), pour gérer quand c'est des autres ship qu'on doit animer

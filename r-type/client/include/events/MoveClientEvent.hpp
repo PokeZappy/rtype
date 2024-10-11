@@ -6,7 +6,7 @@
 
 #include "IEvent.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
@@ -29,13 +29,13 @@ namespace potEngine
     class MoveClientEvent : public IEvent {
     public:
         MoveClientEvent() {
-            eventBus.subscribe(this, &MoveClientEvent::MoveClient);
+            engine.subscribeEvent(this, &MoveClientEvent::MoveClient);
         };
 
 
         void MoveClient(std::shared_ptr<MoveClientInfoEvent> info)
         {
-            auto _entity = ecsManager.getEntity(info->entity_id);
+            auto _entity = engine.getEntity(info->entity_id);
             if (!_entity) {
                 // std::cout << "[CLIENT] {ID}-[" << info->entity_id << "] not found." << std::endl;
                 return;
