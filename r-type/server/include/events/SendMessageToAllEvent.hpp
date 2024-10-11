@@ -50,7 +50,7 @@ namespace potEngine
             for (size_t i = 0; i < params.size(); ++i) {
                 std::memcpy(packet.data() + sizeof(size_t) + i * sizeof(size_t), &params[i], sizeof(size_t));
             }
-            sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
+            SENDTO(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
         }
 
         void send_message_to_all(size_t entity_id, potEngine::EventType event_type, const std::vector<size_t>& params, const std::vector<std::shared_ptr<potEngine::AEntity>>& entities, int maxP, int socket)
@@ -62,7 +62,8 @@ namespace potEngine
                     if (event_type == DISCONNECT) {
                         std::cout << "[SERVER] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
                         ecsManager.removeEntity(entity_id);
-                    } if (event_type == DEATH) {
+                    }
+                    if (event_type == DEATH) {
                         std::cout << "[SERVER] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
                         ecsManager.removeEntity(entity_id);
                     }
