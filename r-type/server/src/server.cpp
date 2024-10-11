@@ -60,10 +60,10 @@ void RType::Server::start()
     setNonBlockingInput();
 
     potEngine::engine.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
-    potEngine::engine.registerSystem<potEngine::ShootEntitySystem>(server_fd, 0.001f);
+    potEngine::engine.registerSystem<potEngine::ShootEntitySystem>();
 
+    potEngine::engine.setTick(20);
     auto startEvent = std::make_shared<potEngine::StartEvent>();
-
     potEngine::engine.publishEvent(startEvent);
-    potEngine::engine.update(0.016);
+    potEngine::engine.update();
 }

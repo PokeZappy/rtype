@@ -32,7 +32,7 @@ namespace potEngine
         void disconnect(std::shared_ptr<DisconnectionInfoEvent> info) {
             if (engine.getEntity(info->entity_id) == nullptr)
                 return;
-            std::string player_name = engine.getEntity(info->entity_id).get()->getComponent<potEngine::PlayerComponent>()->get()->username;
+            std::string player_name = engine.getEntity(info->entity_id).get()->getComponent<PlayerComponent>()->get()->username;
             std::cout << "[SERVER] Player disconnected: {id}-[" << std::to_string(static_cast<int>(info->entity_id)) << "], {username}-[" << player_name << "]" << std::endl;
 
             auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(

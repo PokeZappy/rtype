@@ -14,7 +14,7 @@ namespace potEngine
 
     std::tuple<size_t, potEngine::EventType, std::vector<size_t>> RecvMessageSystem::recv_message()
     {
-        uint8_t buffer[1024];
+        uint8_t buffer[BUFFER_SIZE];
         ssize_t recv_len = recvfrom(_clientFd, buffer, sizeof(buffer), 0, (struct sockaddr*)&_addr, &_addrLen);
 
         if (recv_len < 0 || static_cast<size_t>(recv_len) < sizeof(size_t)) {
@@ -33,9 +33,6 @@ namespace potEngine
         }
         return std::make_tuple(entity_id, event_type, params);
     }
-
-
-    std::string assetFinder();
 
     void RecvMessageSystem::createPlayerEntity(std::vector<size_t> params, size_t entity_id)
     {
@@ -128,10 +125,10 @@ namespace potEngine
             std::vector<int> convertedParams(params.begin(), params.end());
             entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
 
-            auto player_comp = entity->getComponent<PlayerComponent>();
-            std::string username = "";
-            if (player_comp)
-                username = player_comp->get()->username;
+            // auto player_comp = entity->getComponent<PlayerComponent>();
+            // std::string username = "";
+            // if (player_comp)
+            //     username = player_comp->get()->username;
 
             // std::cout << "[CLIENT] Entity {ID}-[" << std::to_string(static_cast<int>(entity_id))
             //     << "], {username}-[" << username << "], has move to {" << convertedParams[0] << "," << convertedParams[1] << "}" << std::endl;
@@ -140,22 +137,10 @@ namespace potEngine
             handleCreateEntity(params, entity_id);
         }
         if (event_type == EventType::DEATH) {
-            std::cout << "[CLIENT] {ID}-[" << entity_id << "] is dead." << std::endl;
-            if (entity_id == _playerId) {
-                // TODO: réglé la segfault sur l'envoie de la data:
-
-                // auto sendDeath = std::make_shared<SendMessageEventInfo>(
-                //     4,
-                //     _clientFd,
-                //     _addr,
-                //     _playerId,
-                //     DEATH,
-                //     std::vector<size_t>{}
-                // );
-                // engine.publishEvent(sendDeath);
-                engine.publishEvent(std::make_shared<StopMainLoopEvent>());
-                // engine.removeEntity(entity_id);
-            }
+            std::cout << "[CLIENT] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
+            engine.removeEntity(engine.getClientIdFromServerId(entity_id));
+            if (entity_id == _playerId)
+                exit(0);
         }
         if (event_type == EventType::COLLISION) {
             // do somethijng

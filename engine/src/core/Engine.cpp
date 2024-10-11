@@ -34,18 +34,10 @@ namespace potEngine {
             return entity;
         }
 
-    // std::shared_ptr<AEntity> Engine::createEntity(size_t id)
-    // {
-    //     auto entity = std::make_shared<AEntity>(id);
-    //     _entities.push_back(entity);
-    //     return entity;
-    // }
 
     std::shared_ptr<AEntity> Engine::createSpriteEntity(const std::string &texturePath) {
         auto entity = std::make_shared<AEntity>(32);
 
-        // sf::Sprite sprite(texture);
-        // sprite.setPosition(100, 100);
         std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texturePath);
         addComponent<SpriteComponent>(entity, spriteComponent);
 
@@ -64,37 +56,31 @@ namespace potEngine {
         return (entity);
     }
 
-    //    void Engine::addEntity(std::shared_ptr<AEntity> entity)
-    //    {
-    //        _entities.push_back(entity);
-    //        EntitySignatureChanged(entity);
-    //    }
-
     void Engine::removeEntity(const std::size_t id)
     {
-            std::size_t newId = getClientIdFromServerId(id);
-            auto it = std::find_if(_entities.begin(), _entities.end(), [newId](const std::shared_ptr<AEntity> entityPtr) {
-                return entityPtr->getID() == newId;
-            });
-            if (it != _entities.end()) {
-                auto entity = *it;
+        std::size_t newId = getClientIdFromServerId(id);
+        auto it = std::find_if(_entities.begin(), _entities.end(), [newId](const std::shared_ptr<AEntity> entityPtr) {
+            return entityPtr->getID() == newId;
+        });
+        if (it != _entities.end()) {
+            auto entity = *it;
 
-                EraseEntitySystem(entity);
+            EraseEntitySystem(entity);
 
-                _entities.erase(it);
-                // std::cout << "entité supprimée, tableau entity size : " << _entities.size() << std::endl;
-            }
+            _entities.erase(it);
+            // std::cout << "entité supprimée, tableau entity size : " << _entities.size() << std::endl;
+        }
     }
 
     void Engine::removeEntity(std::shared_ptr<AEntity> entity)
     {
-            auto it = std::find(_entities.begin(), _entities.end(), entity);
-            if (it != _entities.end()) {
-                EraseEntitySystem(entity);
+        auto it = std::find(_entities.begin(), _entities.end(), entity);
+        if (it != _entities.end()) {
+            EraseEntitySystem(entity);
 
-                _entities.erase(it);
-                // std::cout << "entité supprimée, tableau entity size : " << _entities.size() << std::endl;
-            }
+            _entities.erase(it);
+            // std::cout << "entité supprimée, tableau entity size : " << _entities.size() << std::endl;
+        }
     }
 
     void Engine::EraseEntitySystem(std::shared_ptr<AEntity> entity) {
@@ -123,16 +109,13 @@ namespace potEngine {
                 doesSignaturesMatch = (entitySignature & systemSignature) == systemSignature;
             }
 
-            if (doesSignaturesMatch)
-            {
+            if (doesSignaturesMatch) {
                 auto it = std::find(systemEntities.begin(), systemEntities.end(), entity);
 
                 if (it == systemEntities.end()) {
                     systemEntities.push_back(entity);
                 }
-            }
-            else
-            {
+            } else {
                 auto it = std::find(systemEntities.begin(), systemEntities.end(), entity);
 
                 if (it != systemEntities.end()) {
@@ -143,11 +126,10 @@ namespace potEngine {
         }
     }
 
-    void Engine::update(float deltaTime)
+    void Engine::update()
     {
         auto handler = _eventBus.getHandler();
         while (handler != std::pair<std::shared_ptr<IEvent>, std::shared_ptr<HandlerList>>(nullptr, nullptr)) {
-            // std::cout << "[Engine] Event received" << std::endl;
             for (auto event : *handler.second) {
                 event->exec(handler.first);
             }
@@ -157,7 +139,7 @@ namespace potEngine {
 
     void Engine::shutdown()
     {
-
+        // TODO: pourquoi faire ????
     }
 
     std::vector<std::shared_ptr<AEntity>> Engine::getEntities() const {
@@ -180,5 +162,10 @@ namespace potEngine {
         } else {
             return (serverId);
         }
+    }
+
+    void Engine::setTick(int tps)
+    {
+        engine.timer.timerSetTps(tps);
     }
 }

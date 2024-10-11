@@ -19,9 +19,9 @@ namespace potEngine
         size_t entity_id;
         EventType event_type;
         std::vector<size_t> params;
-        std::vector<std::shared_ptr<potEngine::AEntity>> entities;
+        std::vector<std::shared_ptr<AEntity>> entities;
 
-        SendMessageToAllEventInfo(int maxP, int socket, size_t id, EventType type, std::vector<size_t> p, std::vector<std::shared_ptr<potEngine::AEntity>> e)
+        SendMessageToAllEventInfo(int maxP, int socket, size_t id, EventType type, std::vector<size_t> p, std::vector<std::shared_ptr<AEntity>> e)
             : max_players(maxP), socket(socket), entity_id(id), event_type(type), params(p), entities(e) {}
     };
 
@@ -38,7 +38,7 @@ namespace potEngine
             send_message_to_all(info->entity_id, info->event_type, info->params, info->entities, info->max_players, info->socket);
         }
     private:
-        void send_message(const struct sockaddr_in& addr, size_t entity_id, potEngine::EventType action, const std::vector<size_t>& params, size_t maxP, int fd)
+        void send_message(const struct sockaddr_in& addr, size_t entity_id, EventType action, const std::vector<size_t>& params, size_t maxP, int fd)
         {
             const size_t EVENT_TYPE_BITS = 8;
             size_t packet_size = sizeof(size_t) + params.size() * sizeof(size_t);
@@ -53,15 +53,17 @@ namespace potEngine
             sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
         }
 
-        void send_message_to_all(size_t entity_id, potEngine::EventType event_type, const std::vector<size_t>& params, const std::vector<std::shared_ptr<potEngine::AEntity>>& entities, int maxP, int socket)
+        void send_message_to_all(size_t entity_id, EventType event_type, const std::vector<size_t>& params, const std::vector<std::shared_ptr<AEntity>>& entities, int maxP, int socket)
         {
             for (const auto& entity : entities) {
-                auto networkComponent = entity->getComponent<potEngine::NetworkComponent>();
+                auto networkComponent = entity->getComponent<NetworkComponent>();
                 if (networkComponent) {
                     send_message(networkComponent->get()->addr, entity_id, event_type, params, maxP, networkComponent->get()->fd);
                     if (event_type == DISCONNECT) {
+                        std::cout << "[SERVER] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
                         engine.removeEntity(entity_id);
                     } if (event_type == DEATH) {
+                        std::cout << "[SERVER] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
                         engine.removeEntity(entity_id);
                     }
                 }

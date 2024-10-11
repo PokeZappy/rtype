@@ -11,14 +11,66 @@
 #include "StartEvent.hpp"
 #include <SFML/Graphics.hpp>
 
-namespace potEngine {
+#include <chrono>
+
+namespace potEngine
+{
+    class Timer {
+    public:
+        Timer() {
+            _countTick = 60;
+            _previousTime = std::chrono::high_resolution_clock::now();
+        }
+
+        Timer(int counter) {
+            _countTick = counter;
+            _previousTime = std::chrono::high_resolution_clock::now();
+        }
+
+        ~Timer() {}
+
+        void timerSetTimeNow() {
+            _previousTime = std::chrono::high_resolution_clock::now();
+        }
+
+        std::chrono::duration<double> timerGetElapsedTime() const {
+            return std::chrono::high_resolution_clock::now() - _previousTime;
+        }
+
+        void timerAddTick() {
+            _countTick += 1;
+        }
+
+        void timerSetTick(int counter) {
+            _countTick = counter;
+        }
+
+        int timerGetTick() const {
+            return _countTick;
+        }
+
+        void timerSetTps(int number) {
+            _tps = number;
+        }
+
+        int timerGetTps() const {
+            return _tps;
+        }
+
+    private:
+        int _tps = 0;
+        int _countTick = 0;
+        std::chrono::time_point<std::chrono::high_resolution_clock> _previousTime;
+    };
+
     class Engine {
     public:
+        Timer timer;
+
         Engine();
         ~Engine();
 
         std::shared_ptr<AEntity> createEntity();
-        // std::shared_ptr<AEntity> createEntity(size_t Id);
         std::shared_ptr<AEntity> createServerEntity(size_t serverId);
         std::shared_ptr<AEntity> createWindowEntity();
         std::shared_ptr<AEntity> createSpriteEntity(const std::string &texturePath);
@@ -30,7 +82,6 @@ namespace potEngine {
         Engine(Engine const&) = delete;
         void operator=(Engine const&) = delete;
 
-        // void addEntity(std::shared_ptr<AEntity> entity);
         template <typename T>
         void addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component);
 
@@ -45,14 +96,11 @@ namespace potEngine {
         void EntitySignatureChanged(std::shared_ptr<AEntity> entity);
         void EraseEntitySystem(std::shared_ptr<AEntity> entity);
 
-        void update(float deltaTime);
+        void update();
         void shutdown();
 
         std::vector<std::shared_ptr<AEntity>> getEntities() const;
         std::shared_ptr<AEntity> getEntity(size_t entity_id);
-        // void setInput(sf::Keyboard::Key key, bool value) { _inputs[key] = value; };
-        // bool getInput(sf::Keyboard::Key key) { return (_inputs[key]); };
-        // std::unordered_map<sf::Keyboard::Key, bool> getInputs() { return (_inputs); };
         size_t getClientIdFromServerId(size_t serverId);
 
         template<class T, class EventType>
@@ -64,6 +112,7 @@ namespace potEngine {
         void publishEvent(std::shared_ptr<EventType> event) {
             _eventBus.publish(event);
         }
+        void setTick(int _tps);
     private:
         std::size_t _entityCounter;
         std::unordered_map<size_t, size_t> _serverToClientId;
