@@ -31,7 +31,7 @@ namespace potEngine
 
         void sendMessage(std::shared_ptr<SendMessageEventInfo> info)
         {
-            if (info->entity_id != 0 && ecsManager.getEntity(info->entity_id) == nullptr)
+            if (info->entity_id != 0 && engine.getEntity(info->entity_id) == nullptr)
                 return;
             send_message(info->client_addr, info->entity_id, info->event_type, info->params, info->max_players, info->fd);
         }

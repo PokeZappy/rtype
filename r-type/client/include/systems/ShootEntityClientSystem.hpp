@@ -11,7 +11,7 @@
 #include "ASystem.hpp"
 #include "AEntity.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "NoneEvent.hpp"
 #include "ShootComponent.hpp"
 #include "PositionComponent.hpp"
@@ -40,7 +40,7 @@ namespace potEngine
                     4,
                     -1,
                     MOVE_RIGHT,
-                    ecsManager.getClientIdFromServerId(entity->getID())
+                    engine.getClientIdFromServerId(entity->getID())
                 );
                 eventBus.publish(moveInfo);
             }

@@ -30,15 +30,15 @@ namespace potEngine {
             {
                 if (sfmlEvent.type == sf::Event::KeyPressed) {
                 auto key = sfmlEvent.key.code;
-                // if (ecsManager.getInputs().find(key) != ecsManager.getInputs().end()) {
-                    // ecsManager.setInput(key, true);
+                // if (engine.getInputs().find(key) != engine.getInputs().end()) {
+                    // engine.setInput(key, true);
                 // }
             }
         
             if (sfmlEvent.type == sf::Event::KeyReleased) {
                 auto key = sfmlEvent.key.code;
-                // if (ecsManager.getInputs().find(key) != ecsManager.getInputs().end()) {
-                //     ecsManager.setInput(key, false);
+                // if (engine.getInputs().find(key) != engine.getInputs().end()) {
+                //     engine.setInput(key, false);
                 // }
             }
                 // std::shared_ptr<InputInfoEvent> input = std::make_shared<InputInfoEvent>(sfmlEvent.type, sfmlEvent.key.code);

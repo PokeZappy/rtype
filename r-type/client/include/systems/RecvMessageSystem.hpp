@@ -5,7 +5,7 @@
 #include "AEntity.hpp"
 #include "WindowEntity.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "WindowComponent.hpp"
 #include <netinet/in.h>
 #include "NoneEvent.hpp"

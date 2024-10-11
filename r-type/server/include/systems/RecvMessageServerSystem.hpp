@@ -10,7 +10,7 @@
 #include "ASystem.hpp"
 #include "AEntity.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "NoneEvent.hpp"
 
 #include "ConnectionEvent.hpp"
@@ -86,14 +86,14 @@ namespace potEngine
                 auto createShootEntity = std::make_shared<EntityCreateInfoEvent>(
                     4,
                     _serverFd,
-                    ecsManager.getEntity(entity_id)->getComponent<PositionComponent>()->get()->_position,
+                    engine.getEntity(entity_id)->getComponent<PositionComponent>()->get()->_position,
                     entity_id,
                     EntityType::PEW
                 );
                 eventBus.publish(createShootEntity);
             } if (event_type == DEATH) {
                 std::cout << "[SERVER] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
-                ecsManager.removeEntity(entity_id);
+                engine.removeEntity(entity_id);
             }
         }
     };

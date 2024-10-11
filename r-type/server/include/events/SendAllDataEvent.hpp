@@ -2,7 +2,7 @@
 
 #include "IEvent.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "SendMessageEvent.hpp"
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
@@ -46,9 +46,9 @@ namespace potEngine
 
         void sendAllData(std::shared_ptr<SendAllDataInfoEvent> info)
         {
-            if (ecsManager.getEntity(info->player_id) == nullptr)
+            if (engine.getEntity(info->player_id) == nullptr)
                 return;
-            std::vector<std::shared_ptr<AEntity>> _entities = ecsManager.getEntities();
+            std::vector<std::shared_ptr<AEntity>> _entities = engine.getEntities();
             auto _entitiesPtr = _entities ;
 
             for (auto entity : _entities) {

@@ -63,12 +63,12 @@ namespace potEngine
         std::chrono::time_point<std::chrono::high_resolution_clock> _previousTime;
     };
 
-    class ECSManager {
+    class Engine {
     public:
         Timer timer;
 
-        ECSManager();
-        ~ECSManager();
+        Engine();
+        ~Engine();
 
         std::shared_ptr<AEntity> createEntity();
         // std::shared_ptr<AEntity> createEntity(size_t Id);
@@ -76,12 +76,12 @@ namespace potEngine
         std::shared_ptr<AEntity> createWindowEntity();
         std::shared_ptr<AEntity> createSpriteEntity(const std::string &texturePath);
 
-        static ECSManager& getInstance() {
-            static ECSManager instance;
+        static Engine& getInstance() {
+            static Engine instance;
             return instance;
         }
-        ECSManager(ECSManager const&) = delete;
-        void operator=(ECSManager const&) = delete;
+        Engine(Engine const&) = delete;
+        void operator=(Engine const&) = delete;
 
         // void addEntity(std::shared_ptr<AEntity> entity);
         template <typename T>
@@ -114,14 +114,14 @@ namespace potEngine
     };
 
     template <typename T, typename...Args>
-    void ECSManager::registerSystem(Args&&... args)
+    void Engine::registerSystem(Args&&... args)
     {
         static_assert(std::is_base_of<ISystem, T>::value, "T must derive from ISystem");
         _systems.push_back(std::make_shared<T>(std::forward<Args>(args)...));
     }
 
     template <typename T>
-    void ECSManager::unregisterSystem()
+    void Engine::unregisterSystem()
     {
         _systems.erase(std::remove_if(_systems.begin(), _systems.end(), [](const std::shared_ptr<ASystem>& system) {
             return typeid(T) == typeid(*system);
@@ -129,9 +129,9 @@ namespace potEngine
     }
 
     template <typename T>
-    void ECSManager::addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component) {
+    void Engine::addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component) {
         entity->addComponent<T>(component);
         EntitySignatureChanged(entity);
     }
-    static ECSManager& ecsManager = ECSManager::getInstance();
+    static Engine& engine = Engine::getInstance();
 }

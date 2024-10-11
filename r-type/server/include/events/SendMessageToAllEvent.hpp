@@ -33,7 +33,7 @@ namespace potEngine
 
         void SendMessageToAll(std::shared_ptr<SendMessageToAllEventInfo> info)
         {
-            if (ecsManager.getEntity(info->entity_id) == nullptr)
+            if (engine.getEntity(info->entity_id) == nullptr)
                 return;
             send_message_to_all(info->entity_id, info->event_type, info->params, info->entities, info->max_players, info->socket);
         }
@@ -61,10 +61,10 @@ namespace potEngine
                     send_message(networkComponent->get()->addr, entity_id, event_type, params, maxP, networkComponent->get()->fd);
                     if (event_type == DISCONNECT) {
                         std::cout << "[SERVER] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
-                        ecsManager.removeEntity(entity_id);
+                        engine.removeEntity(entity_id);
                     } if (event_type == DEATH) {
                         std::cout << "[SERVER] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
-                        ecsManager.removeEntity(entity_id);
+                        engine.removeEntity(entity_id);
                     }
                 }
             }

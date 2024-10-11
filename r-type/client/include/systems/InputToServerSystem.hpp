@@ -24,7 +24,7 @@ namespace potEngine {
                 return sf::IntRect(sf::Vector2i(2 + 33 * (frame - 1) + std::abs((frame - 1) / 3), 51), sf::Vector2i(32, 30));
             }
             int createShootAnimation(std::shared_ptr<AEntity> playerEntity) {
-                auto shootAnimationEntity = ecsManager.createEntity();
+                auto shootAnimationEntity = engine.createEntity();
                 auto playerPositionComponent = playerEntity->getComponent<PositionComponent>();
                 auto playerSpriteComponent = playerEntity->getComponent<SpriteComponent>();
                 if (!playerPositionComponent || !playerSpriteComponent)
@@ -37,14 +37,14 @@ namespace potEngine {
                 const std::string texturePath = assetFinder() + "/sprites/r-typesheet1.gif";
                 auto spriteComponent = std::make_shared<SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(2, 51), sf::Vector2i(32, 30)));
 
-                ecsManager.addComponent(shootAnimationEntity, positionComponent);
-                ecsManager.addComponent(shootAnimationEntity, animationComponent);
-                ecsManager.addComponent(shootAnimationEntity, spriteComponent);
+                engine.addComponent(shootAnimationEntity, positionComponent);
+                engine.addComponent(shootAnimationEntity, animationComponent);
+                engine.addComponent(shootAnimationEntity, spriteComponent);
                 return (shootAnimationEntity->getID());
             }
 
             void updateShootAnimationPosition(std::shared_ptr<AEntity> playerEntity) {
-                auto shootAnimationEntity = ecsManager.getEntity(playerEntity->getComponent<PlayerComponent>()->get()->getShootAnimationEntityId().value());
+                auto shootAnimationEntity = engine.getEntity(playerEntity->getComponent<PlayerComponent>()->get()->getShootAnimationEntityId().value());
                 auto playerPositionComponent = playerEntity->getComponent<PositionComponent>();
                 auto playerSpriteComponent = playerEntity->getComponent<SpriteComponent>();
                 if (!playerPositionComponent || !playerSpriteComponent)
@@ -83,7 +83,7 @@ namespace potEngine {
                         auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_RIGHT, std::vector<size_t>{});
                         potEngine::eventBus.publish(moveInfo);
                     }
-                    auto playerEntity = ecsManager.getEntity(_playerId);
+                    auto playerEntity = engine.getEntity(_playerId);
                     auto playerComponent = playerEntity->getComponent<PlayerComponent>();
                     if (!playerComponent)
                         return;
@@ -98,7 +98,7 @@ namespace potEngine {
                         }
                     } else {
                         if (playerComponent->get()->getShootAnimationEntityId().has_value()) {
-                            ecsManager.removeEntity(playerComponent->get()->getShootAnimationEntityId().value());
+                            engine.removeEntity(playerComponent->get()->getShootAnimationEntityId().value());
                             playerComponent->get()->getShootAnimationEntityId().reset();
                             auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::SHOOT, std::vector<size_t>{});
                             potEngine::eventBus.publish(moveInfo);

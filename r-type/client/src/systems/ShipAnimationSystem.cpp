@@ -55,36 +55,36 @@ std::string assetFinder() {
         // if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
         //     sf::Texture texture;
         //     texture.loadFromFile(assetFinder() + "/sprites/r-typesheet42.gif");
-        //     auto entity = ecsManager.createEntity();
+        //     auto entity = engine.createEntity();
         //     auto textComponent = std::make_shared<TextComponent>("coucou", sf::Vector2f(500, 500), 32, sf::Color::White);
-        //     ecsManager.addComponent(entity, textComponent);
+        //     engine.addComponent(entity, textComponent);
         // }
         // if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-        //     auto text = ecsManager.createEntity();
+        //     auto text = engine.createEntity();
         //     auto textComponent = std::make_shared<TextComponent>("Vous etes mort !", sf::Vector2f(200, 200), 32, sf::Color::White);
-        //     ecsManager.addComponent(text, textComponent);
-        //     // ecsManager.removeEntity(_playerId);
+        //     engine.addComponent(text, textComponent);
+        //     // engine.removeEntity(_playerId);
         // }
 
         // on monte le ship vers le haut
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-            auto playerEntity = ecsManager.getEntity(_playerId);
+            auto playerEntity = engine.getEntity(_playerId);
 
             if (playerEntity->getComponent<AnimationComponent>() == std::nullopt) {
                 std::shared_ptr<AnimationComponent> upAnimation = std::make_shared<AnimationComponent>(2, 0.5, false, changeUpAnimationRect);
-                ecsManager.addComponent(playerEntity, upAnimation);
+                engine.addComponent(playerEntity, upAnimation);
             }
         // on monte le ship vers le bas
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-            auto playerEntity = ecsManager.getEntity(_playerId);
+            auto playerEntity = engine.getEntity(_playerId);
 
             if (playerEntity->getComponent<AnimationComponent>() == std::nullopt) {
                 std::shared_ptr<AnimationComponent> upAnimation = std::make_shared<AnimationComponent>(2, 0.5, false, changeDownAnimationRect);
-                ecsManager.addComponent(playerEntity, upAnimation);
+                engine.addComponent(playerEntity, upAnimation);
             }
         } 
         if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && !sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-            auto playerEntity = ecsManager.getEntity(_playerId);
+            auto playerEntity = engine.getEntity(_playerId);
             // std::cout << "player entity = " << _playerId << std::endl; 
 
             if (playerEntity->getComponent<AnimationComponent>() != std::nullopt) {
