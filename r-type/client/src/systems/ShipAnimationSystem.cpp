@@ -44,7 +44,7 @@ std::string assetFinder() {
         }
 
         std::cout << "Assets found at: " << assetsRoot << std::endl;
-        return assetsRoot;
+        return std::string(assetsRoot);
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return {};
