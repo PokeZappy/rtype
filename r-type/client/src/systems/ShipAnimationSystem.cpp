@@ -1,12 +1,13 @@
-#include "ShipAnimationSystem.hpp"
 #include <iostream>
 #include <filesystem>
 #include <stdexcept>
-#include <unistd.h>
+
+#include "ShipAnimationSystem.hpp"
+#include "Config.hpp"
 
 namespace potEngine {
     std::string getExecutablePath() {
-    char buffer[1024];
+    char buffer[BUFFER_SIZE];
     ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
     if (len == -1) throw std::runtime_error("Failed to get executable path.");
     buffer[len] = '\0';

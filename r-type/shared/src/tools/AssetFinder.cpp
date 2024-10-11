@@ -1,7 +1,7 @@
 #include <iostream>
 #include <filesystem>
 #include <stdexcept>
-#include <unistd.h>
+#include "Config.hpp"
 
 std::string getExecutablePath() {
     char buffer[1024];

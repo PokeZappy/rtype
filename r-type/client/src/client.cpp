@@ -6,6 +6,7 @@
 */
 
 #include "client_config.hpp"
+#include "Config.hpp"
 
 RType::Client::Client() : player_id(0)
 {
@@ -31,11 +32,11 @@ RType::Client::Client() : player_id(0)
 
 RType::Client::~Client()
 {
-    CLOSESOCKET(client_fd);
+    CLOSESOCKET(client_fd)
 }
 
 void RType::Client::setNonBlockingInput() {
-    SET_SOCK_NONBLOCKING(client_fd);
+    SET_SOCK_NONBLOCKING(client_fd)
 }
 
 void RType::Client::init_subscribe()
@@ -57,7 +58,7 @@ void send_message(const struct sockaddr_in& addr, size_t entity_id, potEngine::E
     for (size_t i = 0; i < params.size(); ++i) {
         std::memcpy(packet.data() + sizeof(size_t) + i * sizeof(size_t), &params[i], sizeof(size_t));
     }
-    sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
+    SENDTO(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
 }
 
 void RType::Client::handle_connection()

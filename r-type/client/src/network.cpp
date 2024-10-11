@@ -5,7 +5,7 @@
 ** network.cpp
 */
 
-#include <client_config.hpp>
+#include "client_config.hpp"
 #include "Config.hpp"
 #include "IEvent.hpp"
 
