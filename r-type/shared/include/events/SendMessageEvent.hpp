@@ -3,7 +3,7 @@
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 
-#include "cross_config.hpp"
+#include "Config.hpp"
 #include <cmath>
 #include <vector>
 #include <cstring>

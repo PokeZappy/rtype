@@ -1,12 +1,12 @@
+#include <algorithm>
+#include <iostream>
+
 #include "ECSManager.hpp"
 #include "ASystem.hpp"
 #include "AEntity.hpp"
 #include "RenderSystem.hpp"
 #include "SpriteComponent.hpp"
 #include "WindowComponent.hpp"
-
-#include <algorithm>
-#include <iostream>
 
 namespace potEngine {
 

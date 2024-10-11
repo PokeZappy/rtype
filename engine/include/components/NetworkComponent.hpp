@@ -8,7 +8,7 @@
 #ifndef NETWORK_COMPONENT_HPP
 #define NETWORK_COMPONENT_HPP
 
-#include "cross_config.hpp"
+#include "Config.hpp"
 
 #include "AComponent.hpp"
 

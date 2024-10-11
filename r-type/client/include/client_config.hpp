@@ -8,11 +8,12 @@
 #ifndef CLIENT_CONFIG_HPP
 #define CLIENT_CONFIG_HPP
 
-#include "ClientInclude.hpp"
-#include "cross_config.hpp"
-
 #include <cstring>
 #include <iostream>
+
+#include "ClientInclude.hpp"
+#include "Config.hpp"
+
 
 void title_screen(const std::string& asset_path);
 

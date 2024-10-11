@@ -1,14 +1,14 @@
 #pragma once
 
+#include <cmath>
+#include <vector>
+#include <cstring>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "AEntity.hpp"
 #include "NetworkComponent.hpp"
-
-#include <netinet/in.h>
-#include <cmath>
-#include <vector>
-#include <cstring>
+#include "Config.hpp"
 
 namespace potEngine
 {

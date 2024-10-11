@@ -1,14 +1,14 @@
 #pragma once
 
+#include <vector>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "ECSManager.hpp"
 #include "SendMessageToAllEvent.hpp"
 #include "PlayerComponent.hpp"
 #include "NetworkComponent.hpp"
-
-#include "cross_config.hpp"
-#include <vector>
+#include "Config.hpp"
 
 namespace potEngine
 {

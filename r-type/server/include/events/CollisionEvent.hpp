@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "ECSManager.hpp"
@@ -8,9 +10,7 @@
 #include "PositionComponent.hpp"
 #include "LifeComponent.hpp"
 #include "CollisionInfoEvent.hpp"
-
-#include <netinet/in.h>
-#include <vector>
+#include "Config.hpp"
 
 namespace potEngine
 {

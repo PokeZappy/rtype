@@ -25,6 +25,7 @@ set(SERVER_INCLUDE_DIRS
 set(SHARED_INCLUDE_DIRS
     r-type/shared/include
     r-type/shared/include/components
+    r-type/shared/include/cross
     r-type/shared/include/events
     r-type/shared/include/events/data
     r-type/shared/include/systems

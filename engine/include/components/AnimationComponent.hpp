@@ -1,9 +1,11 @@
 #pragma once
 
-#include "AComponent.hpp"
-#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <functional>
+
+#include <SFML/Graphics.hpp>
+
+#include "AComponent.hpp"
 
 namespace potEngine
 {

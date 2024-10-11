@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "ECSManager.hpp"
@@ -9,9 +11,7 @@
 #include "MovementComponent.hpp"
 #include "ShootComponent.hpp"
 #include "MonstreComponent.hpp"
-
-#include <netinet/in.h>
-#include <vector>
+#include "Config.hpp"
 
 namespace potEngine
 {

@@ -7,19 +7,19 @@
 
 #pragma once
 
+#include <cstring>
+
 #include "ASystem.hpp"
 #include "AEntity.hpp"
 #include "EventBus.hpp"
 #include "ECSManager.hpp"
 #include "NoneEvent.hpp"
-
 #include "ConnectionEvent.hpp"
 #include "DisconnectionEvent.hpp"
 #include "MoveEvent.hpp"
 #include "EntityCreateEvent.hpp"
+#include "Config.hpp"
 
-#include <netinet/in.h>
-#include <cstring>
 
 namespace potEngine
 {

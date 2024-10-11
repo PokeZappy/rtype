@@ -9,7 +9,7 @@
 #define SERVER_HPP
 
 #include "ServerInclude.hpp"
-#include "cross_config.hpp"
+#include "Config.hpp"
 
 #include <memory>
 #include <vector>
