@@ -62,7 +62,7 @@ void RType::Server::start()
     potEngine::engine.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
     potEngine::engine.registerSystem<potEngine::ShootEntitySystem>();
 
-    potEngine::engine.timer.setTps(145);
+    potEngine::engine.timer.setTps(20);
     auto startEvent = std::make_shared<potEngine::StartEvent>();
     potEngine::engine.publishEvent(startEvent);
     potEngine::engine.update();
