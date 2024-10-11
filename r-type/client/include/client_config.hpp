@@ -9,14 +9,10 @@
 #define CLIENT_CONFIG_HPP
 
 #include "ClientInclude.hpp"
+#include "cross_config.hpp"
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <cstring>
-#include <unistd.h>
 #include <iostream>
-#include <fcntl.h>
-#include <termios.h>
 
 void title_screen(const std::string& asset_path);
 

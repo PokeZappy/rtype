@@ -31,21 +31,11 @@ RType::Client::Client() : player_id(0)
 
 RType::Client::~Client()
 {
-    close(client_fd);
+    CLOSESOCKET(client_fd);
 }
 
-void RType::Client::setNonBlockingInput()
-{
-    struct termios t;
-    tcgetattr(STDIN_FILENO, &t);
-    t.c_lflag &= ~ICANON;
-    t.c_lflag &= ~ECHO;
-    tcsetattr(STDIN_FILENO, TCSANOW, &t);
-
-    int flags = fcntl(client_fd, F_GETFL, 0);
-    fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
-    int flags_ = fcntl(STDIN_FILENO, F_GETFL, 0);
-    fcntl(STDIN_FILENO, F_SETFL, flags_ | O_NONBLOCK);
+void RType::Client::setNonBlockingInput() {
+    SET_SOCK_NONBLOCKING(client_fd);
 }
 
 void RType::Client::init_subscribe()
@@ -138,4 +128,3 @@ void RType::Client::start()
     const double clientTickDuration = 1.0 / 60.0;
     potEngine::ecsManager.update(clientTickDuration);
 }
-
