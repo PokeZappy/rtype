@@ -11,8 +11,49 @@
 #include "StartEvent.hpp"
 #include <SFML/Graphics.hpp>
 
+#include <chrono>
+
 namespace potEngine
 {
+        class Timer {
+        public:
+            Timer() {
+                countTick = 60;
+                previousTime = std::chrono::high_resolution_clock::now();
+            }
+
+            Timer(int counter) {
+                countTick = counter;
+                previousTime = std::chrono::high_resolution_clock::now();
+            }
+
+            ~Timer() {}
+
+            void timerSetTimeNow() {
+                previousTime = std::chrono::high_resolution_clock::now();
+            }
+
+            std::chrono::duration<double> timerGetElapsedTime() const {
+                return std::chrono::high_resolution_clock::now() - previousTime;
+            }
+
+            void timerAddTick() {
+                countTick += 1;
+            }
+
+            void timerSetTick(int counter) {
+                countTick = counter;
+            }
+
+            int timerGetTick() const {
+                return countTick;
+            }
+
+        private:
+            int countTick = 0;
+            std::chrono::time_point<std::chrono::high_resolution_clock> previousTime;
+    };
+
     class ECSManager {
     public:
         ECSManager();
