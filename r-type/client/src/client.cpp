@@ -6,6 +6,7 @@
 */
 
 #include "client_config.hpp"
+#include "Config.hpp"
 
 RType::Client::Client() : player_id(0)
 {
@@ -31,21 +32,11 @@ RType::Client::Client() : player_id(0)
 
 RType::Client::~Client()
 {
-    close(client_fd);
+    CLOSESOCKET(client_fd)
 }
 
-void RType::Client::setNonBlockingInput()
-{
-    struct termios t;
-    tcgetattr(STDIN_FILENO, &t);
-    t.c_lflag &= ~ICANON;
-    t.c_lflag &= ~ECHO;
-    tcsetattr(STDIN_FILENO, TCSANOW, &t);
-
-    int flags = fcntl(client_fd, F_GETFL, 0);
-    fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
-    int flags_ = fcntl(STDIN_FILENO, F_GETFL, 0);
-    fcntl(STDIN_FILENO, F_SETFL, flags_ | O_NONBLOCK);
+void RType::Client::setNonBlockingInput() {
+    SET_SOCK_NONBLOCKING(client_fd)
 }
 
 void RType::Client::init_subscribe()
@@ -67,7 +58,7 @@ void send_message(const struct sockaddr_in& addr, size_t entity_id, potEngine::E
     for (size_t i = 0; i < params.size(); ++i) {
         std::memcpy(packet.data() + sizeof(size_t) + i * sizeof(size_t), &params[i], sizeof(size_t));
     }
-    sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
+    SENDTO(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
 }
 
 void RType::Client::handle_connection()
@@ -138,4 +129,3 @@ void RType::Client::start()
 
     potEngine::engine.update();
 }
-

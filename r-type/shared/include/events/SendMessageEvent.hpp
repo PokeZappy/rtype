@@ -1,12 +1,12 @@
 #pragma once
 
-#include "IEvent.hpp"
-#include "EventBus.hpp"
-
-#include <netinet/in.h>
 #include <cmath>
 #include <vector>
 #include <cstring>
+
+#include "IEvent.hpp"
+#include "EventBus.hpp"
+#include "Config.hpp"
 
 namespace potEngine
 {
@@ -48,7 +48,7 @@ namespace potEngine
             for (size_t i = 0; i < params.size(); ++i) {
                 std::memcpy(packet.data() + sizeof(size_t) + i * sizeof(size_t), &params[i], sizeof(size_t));
             }
-            sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
+            SENDTO(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
         }
 
     };

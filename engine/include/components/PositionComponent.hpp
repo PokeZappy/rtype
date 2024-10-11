@@ -8,8 +8,9 @@
 #ifndef POSITION_COMPONENT_HPP
 #define POSITION_COMPONENT_HPP
 
-#include "AComponent.hpp"
 #include <vector>
+
+#include "AComponent.hpp"
 
 namespace potEngine
 {

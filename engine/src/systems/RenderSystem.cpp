@@ -1,13 +1,11 @@
+#include <filesystem>
+
 #include "RenderSystem.hpp"
 #include "SpriteComponent.hpp"
 #include "TextComponent.hpp"
 #include "WindowEntity.hpp"
 #include "WindowComponent.hpp"
 #include "PositionComponent.hpp"
-#include <iostream>
-#include <filesystem>
-#include <stdexcept>
-#include <unistd.h>
 
 namespace potEngine
 {

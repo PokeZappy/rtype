@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <cmath>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "InputInfoEvent.hpp"
@@ -8,9 +10,7 @@
 #include "AnimationComponent.hpp"
 #include "SpriteComponent.hpp"
 #include "TextComponent.hpp"
-
-#include <netinet/in.h>
-#include <cmath>
+#include "Config.hpp"
 
 namespace potEngine {
 

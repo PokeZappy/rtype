@@ -1,14 +1,14 @@
 #pragma once
 
+#include <cmath>
+#include <vector>
+#include <cstring>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "AEntity.hpp"
 #include "NetworkComponent.hpp"
-
-#include <netinet/in.h>
-#include <cmath>
-#include <vector>
-#include <cstring>
+#include "Config.hpp"
 
 namespace potEngine
 {
@@ -50,7 +50,7 @@ namespace potEngine
             for (size_t i = 0; i < params.size(); ++i) {
                 std::memcpy(packet.data() + sizeof(size_t) + i * sizeof(size_t), &params[i], sizeof(size_t));
             }
-            sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
+            SENDTO(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
         }
 
         void send_message_to_all(size_t entity_id, EventType event_type, const std::vector<size_t>& params, const std::vector<std::shared_ptr<AEntity>>& entities, int maxP, int socket)

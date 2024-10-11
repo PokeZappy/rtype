@@ -8,15 +8,11 @@
 #ifndef CLIENT_CONFIG_HPP
 #define CLIENT_CONFIG_HPP
 
-#include "ClientInclude.hpp"
-
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <cstring>
-#include <unistd.h>
 #include <iostream>
-#include <fcntl.h>
-#include <termios.h>
+
+#include "ClientInclude.hpp"
+#include "Config.hpp"
 
 void title_screen(const std::string& asset_path);
 

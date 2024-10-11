@@ -1,14 +1,14 @@
 #pragma once
 
+#include <cmath>
+#include <vector>
+#include <chrono>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "InputInfoEvent.hpp"
 #include "SendMessageEvent.hpp"
-
-#include <netinet/in.h>
-#include <cmath>
-#include <vector>
-#include <chrono>
+#include "Config.hpp"
 
 namespace potEngine {
     class InputToServerSystem : public ASystem {

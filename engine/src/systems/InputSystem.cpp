@@ -1,9 +1,7 @@
 #include "InputSystem.hpp"
-#include "SpriteComponent.hpp"
 #include "WindowEntity.hpp"
 #include "WindowComponent.hpp"
 #include "InputInfoEvent.hpp"
-#include <iostream>
 
 namespace potEngine {
 

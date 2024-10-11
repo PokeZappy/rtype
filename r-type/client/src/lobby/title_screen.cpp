@@ -1,8 +1,9 @@
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
 #include <vector>
 #include <iostream>
-#include "client_config.hpp"
+
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+#include "Config.hpp"
 
 
 sf::View adjustAspectWithBlackBars(sf::View view, float windowWidth, float windowHeight) {

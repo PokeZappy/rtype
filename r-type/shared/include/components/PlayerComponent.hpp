@@ -9,9 +9,9 @@
 #define PLAYER_COMPONENT_HPP
 
 #include <iostream>
+#include <optional>
 
 #include "AComponent.hpp"
-#include <optional>
 
 namespace potEngine
 {

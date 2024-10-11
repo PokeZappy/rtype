@@ -1,13 +1,18 @@
 #include <iostream>
 #include <filesystem>
 #include <stdexcept>
-#include <unistd.h>
+#include "Config.hpp"
 
 std::string getExecutablePath() {
-    char buffer[1024];
-    ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
-    if (len == -1) throw std::runtime_error("Failed to get executable path.");
-    buffer[len] = '\0';
+    char buffer[BUFFER_SIZE];
+    #ifdef _WIN32
+        DWORD len = READLINK(NULL, buffer, sizeof(buffer));
+        if (len == 0) throw std::runtime_error("Failed to get executable path.");
+    #else
+        ssize_t len = READLINK("/proc/self/exe", buffer, sizeof(buffer));
+        if (len == -1) throw std::runtime_error("Failed to get executable path.");
+        buffer[len] = '\0';
+    #endif
     return std::string(buffer);
 }
 
@@ -41,7 +46,7 @@ std::string assetFinder() {
         }
 
         // std::cout << "Assets found at: " << assetsRoot << std::endl;
-        return assetsRoot;
+        return assetsRoot.string();
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return {};

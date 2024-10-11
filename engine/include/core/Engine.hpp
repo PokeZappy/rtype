@@ -5,13 +5,15 @@
 #include <unordered_map>
 #include <typeindex>
 #include <algorithm>
+#include <chrono>
+
+#include <SFML/Graphics.hpp>
+
 #include "AEntity.hpp"
 #include "ASystem.hpp"
 #include "EventBus.hpp"
 #include "StartEvent.hpp"
-#include <SFML/Graphics.hpp>
 
-#include <chrono>
 
 namespace potEngine
 {

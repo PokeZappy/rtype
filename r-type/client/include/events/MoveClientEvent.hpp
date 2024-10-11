@@ -1,15 +1,17 @@
 #pragma once
 
+#include <vector>
+
+#include <SFML/Graphics.hpp>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "Engine.hpp"
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
+#include "Config.hpp"
 
-#include <netinet/in.h>
-#include <vector>
-#include <SFML/Graphics.hpp>
 
 namespace potEngine
 {

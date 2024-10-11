@@ -1,7 +1,6 @@
 #include "AnimationSystem.hpp"
 #include "SpriteComponent.hpp"
 #include "InputInfoEvent.hpp"
-#include <iostream>
 
 namespace potEngine {
 

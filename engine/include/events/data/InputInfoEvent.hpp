@@ -1,7 +1,9 @@
 #pragma once
 
 #include <memory>
+
 #include <SFML/Graphics.hpp>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "Engine.hpp"

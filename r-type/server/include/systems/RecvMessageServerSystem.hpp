@@ -9,6 +9,7 @@
 
 #include "ServerInclude.hpp"
 #include "DisconnectionEvent.hpp"
+#include "Config.hpp"
 
 namespace potEngine
 {

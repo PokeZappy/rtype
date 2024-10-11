@@ -8,10 +8,9 @@ namespace potEngine {
     }
     RecvMessageServerSystem::~RecvMessageServerSystem() {}
 
-    std::tuple<size_t, EventType, std::vector<size_t>> RecvMessageServerSystem::recv_message()
-    {
+    std::tuple<size_t, EventType, std::vector<size_t>> RecvMessageServerSystem::recv_message() {
         uint8_t buffer[BUFFER_SIZE];
-        ssize_t recv_len = recvfrom(_serverFd, buffer, sizeof(buffer), 0, (struct sockaddr*)&_addr, &_addrLen);
+        ssize_t recv_len = RECVFROM(_serverFd, buffer, sizeof(buffer), 0, (struct sockaddr*)&_addr, &_addrLen);
 
         if (recv_len < 0 || static_cast<size_t>(recv_len) < sizeof(size_t)) {
             return std::make_tuple(0, EventType::UNKNOW, std::vector<size_t>{});

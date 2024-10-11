@@ -1,5 +1,9 @@
 #pragma once
 
+#include <vector>
+
+#include <SFML/Graphics.hpp>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "Engine.hpp"
@@ -9,10 +13,7 @@
 #include "MovementComponent.hpp"
 #include "CollisionComponent.hpp"
 #include "CollisionEvent.hpp"
-
-#include <netinet/in.h>
-#include <vector>
-#include <SFML/Graphics.hpp>
+#include "Config.hpp"
 
 namespace potEngine
 {
