@@ -2,7 +2,7 @@ name: CMake on multiple platforms
 
 on:
   push:
-    branches: ["dev_server", "dev_client", "feat_updage_cmake", "cross/feat/server"]
+    branches: ["dev_server", "dev_client", "feat_updage_cmake", "feat/cross/merge_win_version"]
   pull_request:
     branches: ["dev", "main"]
 
