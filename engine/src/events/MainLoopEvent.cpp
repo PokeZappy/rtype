@@ -9,19 +9,23 @@ void potEngine::MainLoopEvent::eventMainLoop(std::shared_ptr<MainLoopEvent> even
 {
     if (!isRunning)
         return;
+
+    auto start = std::chrono::high_resolution_clock::now();
     engine.timer.timerAddTick();
+
     engine.publishEvent(std::make_shared<NoneEvent>());
     engine.publishEvent(event);
-    if (engine.timer.timerGetTick() >= engine.timer.timerGetTick()) {
-        std::cout << "PAUSE !\n";
-        std::chrono::duration<double> elapsed = engine.timer.timerGetElapsedTime();
 
-        if (elapsed.count() < 1.0) {
-            double timeToSleep = 1.0 - elapsed.count();
-            std::this_thread::sleep_for(std::chrono::duration<double>(timeToSleep));
-        }
+    std::chrono::duration<double> elapsedTick = std::chrono::high_resolution_clock::now() - start;
+
+    double tickDuration = 1.0 / engine.timer.timerGetTps();
+    if (elapsedTick.count() < tickDuration) {
+        double timeToSleep = tickDuration - elapsedTick.count();
+        std::this_thread::sleep_for(std::chrono::duration<double>(timeToSleep));
+    }
+
+    if (engine.timer.timerGetTick() >= engine.timer.timerGetTps()) {
         engine.timer.timerSetTick(0);
-        engine.timer.timerSetTimeNow();
     }
 }
 

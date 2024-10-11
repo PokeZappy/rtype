@@ -140,7 +140,7 @@ namespace potEngine
             std::cout << "[CLIENT] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
             engine.removeEntity(engine.getClientIdFromServerId(entity_id));
             if (entity_id == _playerId)
-                exit(0);
+                engine.publishEvent(std::make_shared<StopMainLoopEvent>());
         }
         if (event_type == EventType::COLLISION) {
             // do somethijng
