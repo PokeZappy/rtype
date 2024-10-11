@@ -8,11 +8,11 @@
 namespace potEngine {
     std::string getExecutablePath() {
     char buffer[BUFFER_SIZE];
-    ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
+    ssize_t len = READLINK("/proc/self/exe", buffer, sizeof(buffer));
     if (len == -1) throw std::runtime_error("Failed to get executable path.");
     buffer[len] = '\0';
     return std::string(buffer);
-}
+    }
 
 std::filesystem::path findRootPath(const std::filesystem::path& startPath, const std::string& marker) {
     std::filesystem::path currentPath = startPath;

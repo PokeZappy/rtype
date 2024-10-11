@@ -42,6 +42,9 @@
         closesocket(clientFd); \
         WSACleanup();
 
+    #define READLINK(path, buffer, len) \
+    GetModuleFileNameA(NULL, buffer, len);
+
 #else
     #include <netinet/in.h>
     #include <termios.h>
@@ -76,5 +79,8 @@
 
     #define CLOSESOCKET(clientFd) \
     close(clientFd);
+
+    #define READLINK(path, buffer, len) \
+    readlink(path, buffer, len - 1);
 
 #endif
