@@ -12,9 +12,10 @@ namespace potEngine
     struct StageInfo
     {
         float _waves_time;
-        std::vector<float> _apparition_time;
+        std::vector<int> _apparition_time;
         std::vector<std::string> _monsters;
-        std::vector<Position> _apparition_point;
+        std::vector<std::vector<Position>> _apparition_point;
+        std::vector<int> _nb_monsters;
     };
 
     class StageComponent : public AComponent
@@ -26,6 +27,7 @@ namespace potEngine
         bool _isStarted = false;
         sf::Clock _clock = sf::Clock();
         float _start_time = 0;
+        int _actual_wave = 0;
         std::vector<struct StageInfo> _stageInfo;
     };
 }

@@ -55,6 +55,7 @@ const int CLIENT_SOCKET = 1;
 #include "CollisionEvent.hpp"
 #include "InputToServerEvent.hpp"
 #include "StartStageEvent.hpp"
+#include "StageEvent.hpp"
 
 #endif // GAME_CONFIG_HPP
 
