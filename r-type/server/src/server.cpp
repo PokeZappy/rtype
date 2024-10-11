@@ -50,8 +50,7 @@ void RType::Server::init_subscribe()
 
 void RType::Server::setNonBlockingInput()
 {
-    int flags = fcntl(server_fd, F_GETFL, 0);
-    fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
+    SET_NONBLOCKING(server_fd)
 }
 
 void RType::Server::start()
