@@ -15,47 +15,58 @@
 
 namespace potEngine
 {
-        class Timer {
-        public:
-            Timer() {
-                countTick = 60;
-                previousTime = std::chrono::high_resolution_clock::now();
-            }
+    class Timer {
+    public:
+        Timer() {
+            _countTick = 60;
+            _previousTime = std::chrono::high_resolution_clock::now();
+        }
 
-            Timer(int counter) {
-                countTick = counter;
-                previousTime = std::chrono::high_resolution_clock::now();
-            }
+        Timer(int counter) {
+            _countTick = counter;
+            _previousTime = std::chrono::high_resolution_clock::now();
+        }
 
-            ~Timer() {}
+        ~Timer() {}
 
-            void timerSetTimeNow() {
-                previousTime = std::chrono::high_resolution_clock::now();
-            }
+        void timerSetTimeNow() {
+            _previousTime = std::chrono::high_resolution_clock::now();
+        }
 
-            std::chrono::duration<double> timerGetElapsedTime() const {
-                return std::chrono::high_resolution_clock::now() - previousTime;
-            }
+        std::chrono::duration<double> timerGetElapsedTime() const {
+            return std::chrono::high_resolution_clock::now() - _previousTime;
+        }
 
-            void timerAddTick() {
-                countTick += 1;
-            }
+        void timerAddTick() {
+            _countTick += 1;
+        }
 
-            void timerSetTick(int counter) {
-                countTick = counter;
-            }
+        void timerSetTick(int counter) {
+            _countTick = counter;
+        }
 
-            int timerGetTick() const {
-                return countTick;
-            }
+        int timerGetTick() const {
+            return _countTick;
+        }
 
-        private:
-            int countTick = 0;
-            std::chrono::time_point<std::chrono::high_resolution_clock> previousTime;
+        void timerSetTps(int number) {
+            _tps = number;
+        }
+
+        int timerGetTps() const {
+            return _tps;
+        }
+
+    private:
+        int _tps = 0;
+        int _countTick = 0;
+        std::chrono::time_point<std::chrono::high_resolution_clock> _previousTime;
     };
 
     class ECSManager {
     public:
+        Timer timer;
+
         ECSManager();
         ~ECSManager();
 
@@ -87,23 +98,19 @@ namespace potEngine
         void EntitySignatureChanged(std::shared_ptr<AEntity> entity);
         void EraseEntitySystem(std::shared_ptr<AEntity> entity);
 
-        void update(float deltaTime);
+        void update();
         void shutdown();
 
         std::vector<std::shared_ptr<AEntity>> getEntities() const;
         std::shared_ptr<AEntity> getEntity(size_t entity_id);
-        // void setInput(sf::Keyboard::Key key, bool value) { _inputs[key] = value; };
-        // bool getInput(sf::Keyboard::Key key) { return (_inputs[key]); };
-        // std::unordered_map<sf::Keyboard::Key, bool> getInputs() { return (_inputs); };
         size_t getClientIdFromServerId(size_t serverId);
+        void setTick(int _tps);
     private:
         std::size_t _entityCounter;
         std::unordered_map<size_t, size_t> _serverToClientId;
 
         std::vector<std::shared_ptr<ISystem>> _systems;
         std::vector<std::shared_ptr<AEntity>> _entities;
-        // std::unordered_map<sf::Keyboard::Key, bool> _inputs;
-
     };
 
     template <typename T, typename...Args>

@@ -34,18 +34,10 @@ namespace potEngine {
             return entity;
         }
 
-    // std::shared_ptr<AEntity> ECSManager::createEntity(size_t id)
-    // {
-    //     auto entity = std::make_shared<AEntity>(id);
-    //     _entities.push_back(entity);
-    //     return entity;
-    // }
 
     std::shared_ptr<AEntity> ECSManager::createSpriteEntity(const std::string &texturePath) {
         auto entity = std::make_shared<AEntity>(32);
 
-        // sf::Sprite sprite(texture);
-        // sprite.setPosition(100, 100);
         std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texturePath);
         addComponent<SpriteComponent>(entity, spriteComponent);
 
@@ -64,37 +56,31 @@ namespace potEngine {
         return (entity);
     }
 
-    //    void ECSManager::addEntity(std::shared_ptr<AEntity> entity)
-    //    {
-    //        _entities.push_back(entity);
-    //        EntitySignatureChanged(entity);
-    //    }
-
     void ECSManager::removeEntity(const std::size_t id)
     {
-            std::size_t newId = getClientIdFromServerId(id);
-            auto it = std::find_if(_entities.begin(), _entities.end(), [newId](const std::shared_ptr<AEntity> entityPtr) {
-                return entityPtr->getID() == newId;
-            });
-            if (it != _entities.end()) {
-                auto entity = *it;
+        std::size_t newId = getClientIdFromServerId(id);
+        auto it = std::find_if(_entities.begin(), _entities.end(), [newId](const std::shared_ptr<AEntity> entityPtr) {
+            return entityPtr->getID() == newId;
+        });
+        if (it != _entities.end()) {
+            auto entity = *it;
 
-                EraseEntitySystem(entity);
+            EraseEntitySystem(entity);
 
-                _entities.erase(it);
-                // std::cout << "entité supprimée, tableau entity size : " << _entities.size() << std::endl;
-            }
+            _entities.erase(it);
+            // std::cout << "entité supprimée, tableau entity size : " << _entities.size() << std::endl;
+        }
     }
 
     void ECSManager::removeEntity(std::shared_ptr<AEntity> entity)
     {
-            auto it = std::find(_entities.begin(), _entities.end(), entity);
-            if (it != _entities.end()) {
-                EraseEntitySystem(entity);
+        auto it = std::find(_entities.begin(), _entities.end(), entity);
+        if (it != _entities.end()) {
+            EraseEntitySystem(entity);
 
-                _entities.erase(it);
-                // std::cout << "entité supprimée, tableau entity size : " << _entities.size() << std::endl;
-            }
+            _entities.erase(it);
+            // std::cout << "entité supprimée, tableau entity size : " << _entities.size() << std::endl;
+        }
     }
 
     void ECSManager::EraseEntitySystem(std::shared_ptr<AEntity> entity) {
@@ -123,16 +109,13 @@ namespace potEngine {
                 doesSignaturesMatch = (entitySignature & systemSignature) == systemSignature;
             }
 
-            if (doesSignaturesMatch)
-            {
+            if (doesSignaturesMatch) {
                 auto it = std::find(systemEntities.begin(), systemEntities.end(), entity);
 
                 if (it == systemEntities.end()) {
                     systemEntities.push_back(entity);
                 }
-            }
-            else
-            {
+            } else {
                 auto it = std::find(systemEntities.begin(), systemEntities.end(), entity);
 
                 if (it != systemEntities.end()) {
@@ -143,7 +126,7 @@ namespace potEngine {
         }
     }
 
-    void ECSManager::update(float deltaTime)
+    void ECSManager::update()
     {
         auto handler = eventBus.getHandler();
         while (handler != std::pair<std::shared_ptr<IEvent>, std::shared_ptr<HandlerList>>(nullptr, nullptr)) {
@@ -156,7 +139,7 @@ namespace potEngine {
 
     void ECSManager::shutdown()
     {
-
+        // TODO: pourquoi faire ????
     }
 
     std::vector<std::shared_ptr<AEntity>> ECSManager::getEntities() const {
@@ -179,5 +162,10 @@ namespace potEngine {
         } else {
             return (serverId);
         }
+    }
+
+    void ECSManager::setTick(int tps)
+    {
+        ecsManager.timer.timerSetTps(tps);
     }
 }

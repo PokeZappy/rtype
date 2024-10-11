@@ -132,10 +132,10 @@ void RType::Client::start()
 
     std::shared_ptr<potEngine::AEntity> window = potEngine::ecsManager.createWindowEntity();
 
+    potEngine::ecsManager.setTick(60);
     auto startEvent = std::make_shared<potEngine::StartEvent>();
     potEngine::eventBus.publish(startEvent);
 
-    const double clientTickDuration = 1.0 / 60.0;
-    potEngine::ecsManager.update(clientTickDuration);
+    potEngine::ecsManager.update();
 }
 

@@ -62,9 +62,9 @@ void RType::Server::start()
     potEngine::ecsManager.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
     potEngine::ecsManager.registerSystem<potEngine::ShootEntitySystem>();
 
+    potEngine::ecsManager.setTick(20);
     auto startEvent = std::make_shared<potEngine::StartEvent>();
     potEngine::eventBus.publish(startEvent);
 
-    const double serverTickDuration = 1.0 / 20.0;
-    potEngine::ecsManager.update(serverTickDuration);
+    potEngine::ecsManager.update();
 }
