@@ -28,6 +28,6 @@ namespace potEngine
         sf::Clock _clock = sf::Clock();
         float _start_time = 0;
         int _actual_wave = 0;
-        std::vector<struct StageInfo> _stageInfo;
+        std::vector<std::shared_ptr<struct StageInfo>> _stageInfo;
     };
 }

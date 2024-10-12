@@ -64,27 +64,34 @@ namespace potEngine
                     struct StageInfo stageInfo;
                     libconfig::Setting &waves = root["waves"]["wave_" + std::to_string(i + 1)];
                     stageInfo._waves_time = waves["wave_time"];
-                    for (int j = 0; j < waves["apparition_time"].getLength(); j++) {
+                    for (int j = 0; j < waves["monsters"].getLength(); j++) {
                         stageInfo._monsters.push_back(waves["monsters"][j]);
                         stageInfo._apparition_time.push_back(waves["apparition_time"][j]);
                         stageInfo._nb_monsters.push_back(0);
                         const libconfig::Setting &valueArray = waves["apparition_point"][j];
                         for (int k = 0; k < valueArray.getLength(); k++) {
                             std::vector<std::vector<int>> all_pos;
-                            for (int l = 0; l < valueArray[k]["value"].getLength(); l++) {
-                                std::cout << "valueArray[k]: " << k << std::endl;
+                            if (valueArray[k].getLength() == 0) {
                                 std::vector<int> pos = {-1, -1};
-                                if (valueArray[k]["value"][l].getLength() != 0) {
-                                    pos[0] = valueArray[k]["x"];
-                                    pos[1] = valueArray[k]["y"];
-                                }
                                 all_pos.push_back(pos);
+                            } else {
+                                for (int l = 0; l < valueArray[k].getLength(); l++) {
+                                    std::vector<int> pos = {-1, -1};
+                                    if (valueArray[k][l].getLength() != 0) {
+                                        pos[0] = valueArray[k][l]["x"];
+                                        pos[1] = valueArray[k][l]["y"];
+                                    } else {
+                                        pos[0] = -1;
+                                        pos[1] = -1;
+                                    }
+                                    all_pos.push_back(pos);
+                                }
                             }
                             stageInfo._apparition_point.push_back(all_pos);
                         }
-                    stageComponent->get()->_stageInfo.push_back(stageInfo);
-                    stageComponent->get()->_isStarted = true;
                     }
+                    stageComponent->get()->_stageInfo.push_back(std::make_shared<struct StageInfo>(stageInfo));
+                    stageComponent->get()->_isStarted = true;
                 }
             } catch (const libconfig::FileIOException &fioex) {
                 std::cerr << "I/O error while reading file." << std::endl;
