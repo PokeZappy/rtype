@@ -2,7 +2,7 @@
 
 namespace potEngine {
 
-    ASystem::ASystem()
+    ASystem::ASystem(bool inclusive) : _inclusive(inclusive)
     {
         _entitiesSystem = std::vector<std::shared_ptr<AEntity>>();
     }

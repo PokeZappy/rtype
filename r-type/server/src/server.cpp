@@ -14,12 +14,14 @@ RType::Server::Server() : current_players(0)
         exit(EXIT_FAILURE);
     }
 
-    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr_len = sizeof(server_addr);
+    memset(&server_addr, 0, server_addr_len);
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port = htons(PORT);
 
-    if (bind(server_fd, (const struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+
+    if (bind(server_fd, (const struct sockaddr *)&server_addr, server_addr_len) < 0) {
         perror("Bind failed");
         close(server_fd);
         exit(EXIT_FAILURE);
@@ -77,23 +79,25 @@ void RType::Server::init_subscribe()
     auto collisionEvent = std::make_shared<potEngine::CollisionEvent>();
     auto startStageEvent = std::make_shared<potEngine::StartStageEvent>();
     auto stageEvent = std::make_shared<potEngine::StageEvent>();
+    auto entityCreateEvent = std::make_shared<potEngine::EntityCreateEvent>();
+}
+
+void RType::Server::setNonBlockingInput()
+{
+    int flags = fcntl(server_fd, F_GETFL, 0);
+    fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
 }
 
 void RType::Server::start()
 {
     init_subscribe();
-    struct sockaddr_in client_addr;
-    socklen_t client_addr_len = sizeof(client_addr);
+    setNonBlockingInput();
 
-    int flags = fcntl(server_fd, F_GETFL, 0);
-    fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
+    potEngine::ecsManager.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
+    potEngine::ecsManager.registerSystem<potEngine::ShootEntitySystem>(server_fd, 0.001f);
 
-    while (true) {
-        auto [entity_id, event_type, params] = recv_message(client_addr, client_addr_len);
+    auto startEvent = std::make_shared<potEngine::StartEvent>();
 
-        if (event_type != potEngine::EventType::UNKNOW) {
-            handle_action(entity_id, client_addr, event_type, params);
-        }
-        potEngine::ecsManager.update(0.0f);
-    }
+    potEngine::eventBus.publish(startEvent);
+    potEngine::ecsManager.update(0.016);
 }

@@ -12,6 +12,7 @@
 
 #include <netinet/in.h>
 #include <vector>
+#include <SFML/Graphics.hpp>
 
 namespace potEngine
 {
@@ -20,9 +21,9 @@ namespace potEngine
         int max_players;
         int fd;
         EventType event;
-        uint8_t entity_id;
+        size_t entity_id;
 
-        MoveInfoEvent(int maxP, int fd, EventType event, uint8_t id, std::vector<uint16_t> p)
+        MoveInfoEvent(int maxP, int fd, EventType event, size_t id, std::vector<size_t> p)
             : max_players(maxP), fd(fd), event(event), entity_id(id) {}
     };
 
@@ -39,7 +40,8 @@ namespace potEngine
                 return nullptr;
 
             for (auto entity : ecsManager.getEntities()) {
-                if (entity->getComponent<CollisionComponent>() == nullptr || entity->getComponent<PositionComponent>() == nullptr || entity->getID() == info->entity_id || entity->getComponent<PlayerComponent>())
+                if (entity->getComponent<CollisionComponent>() == nullptr || entity->getComponent<PositionComponent>() == nullptr || entity->getID() == info->entity_id
+                    || (entity->getComponent<PlayerComponent>() && current_entity->getComponent<PlayerComponent>()))
                     continue;
                 int entity_x = entity->getComponent<PositionComponent>()->get()->_position[0];
                 int entity_y = entity->getComponent<PositionComponent>()->get()->_position[1];
@@ -50,6 +52,31 @@ namespace potEngine
             return nullptr;
         }
 
+        int removeShoot(std::shared_ptr<potEngine::AEntity> entity, std::shared_ptr<MoveInfoEvent> info)
+        {
+            auto posComponent = entity->getComponent<PositionComponent>();
+            auto shootComponent = entity->getComponent<ShootComponent>();
+
+            if (!shootComponent || !posComponent)
+                return 0;
+
+            if ((info->event == MOVE_RIGHT && posComponent->get()->_position[0] >= 1920) ||
+                (info->event == MOVE_LEFT && posComponent->get()->_position[0] <= 0)) {
+                auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(
+                    info->max_players,
+                    info->fd,
+                    entity->getID(),
+                    DEATH,
+                    std::vector<size_t>{},
+                    ecsManager.getEntities()
+                );
+                eventBus.publish(sendMessageToAllEventInfo);
+                std::cout << "[SERVER] Shoot with {ID}-[" << entity->getID() << "] is dead." << std::endl;
+                return 1;
+            }
+            return 0;
+        }
+
         void Move(std::shared_ptr<MoveInfoEvent> info)
         {
             auto _entity = ecsManager.getEntity(info->entity_id);
@@ -57,11 +84,19 @@ namespace potEngine
                 std::cout << "[SERVER] {ID}-[" << static_cast<int>(info->entity_id) << "] not found." << std::endl;
                 return;
             }
+
+            if (removeShoot(_entity, info))
+                return;
+
             int save_x = _entity->getComponent<PositionComponent>()->get()->_position[0];
             int save_y = _entity->getComponent<PositionComponent>()->get()->_position[1];
 
+            auto player_comp = _entity->getComponent<PlayerComponent>();
+            std::string username = "";
+            if (player_comp)
+                username = player_comp->get()->username;
+
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
-            auto username = _entity->getComponent<PlayerComponent>()->get()->username;
             int speed = _entity->getComponent<MovementComponent>()->get()->speed;
             if (info->event == MOVE_UP && position[1] > 0)
                 position[1] = (position[1] > speed) ? position[1] - speed : 0;
@@ -73,7 +108,7 @@ namespace potEngine
                 position[0] = (position[0] > speed) ? position[0] - speed : 0;
 
             auto entity_collide = check_collision(info, position);
-            std::vector<uint16_t> _pos = {static_cast<uint16_t>(save_x), static_cast<uint16_t>(save_y)};
+            std::vector<size_t> _pos = {static_cast<size_t>(save_x), static_cast<size_t>(save_y)};
             if (entity_collide == nullptr) {
                 _entity->getComponent<PositionComponent>()->get()->_position = position;
                 _pos = {position.begin(), position.end()};
@@ -82,21 +117,23 @@ namespace potEngine
                     info->max_players,
                     info->fd,
                     info->entity_id,
-                    static_cast<uint8_t>(entity_collide->getID())
+                    entity_collide->getID()
                 );
                 eventBus.publish(collisionEventInfo);
             }
-            auto sendMessageEventInfo = std::make_shared<SendMessageToAllEventInfo>(
-                info->max_players,
-                info->fd,
-                info->entity_id,
-                info->event,
-                _pos,
-                ecsManager.getEntities()
-            );
-            eventBus.publish(sendMessageEventInfo);
-            std::cout << "[SERVER] Entity {ID}-[" << std::to_string(static_cast<int>(info->entity_id))
-                << "], {username}-[" << username << "], is moving to {" << _pos[0] << "," << _pos[1] << "}" << std::endl;
+            if (info->fd != -1) {
+                auto sendMessageEventInfo = std::make_shared<SendMessageToAllEventInfo>(
+                    info->max_players,
+                    info->fd,
+                    info->entity_id,
+                    info->event,
+                    _pos,
+                    ecsManager.getEntities()
+                );
+                eventBus.publish(sendMessageEventInfo);
+            }
+            // std::cout << "[SERVER] Entity {ID}-[" << std::to_string(static_cast<int>(info->entity_id))
+            //     << "], {username}-[" << username << "], is moving to {" << _pos[0] << "," << _pos[1] << "}" << std::endl;
         }
     };
 }

@@ -2,17 +2,27 @@
 
 namespace potEngine {
 
-    SpriteComponent::SpriteComponent(sf::Texture &texture) : _texture(texture)
-    {
+    SpriteComponent::SpriteComponent(const std::string &texturePath) {
+        _texture.loadFromFile(texturePath);
+
         _sprite = sf::Sprite(_texture);
         _initialTextureRect = _sprite.getTextureRect();
     }
 
-    SpriteComponent::SpriteComponent(sf::Texture &texture, sf::IntRect textureRect) : _texture(texture)
-    {
+    SpriteComponent::SpriteComponent(const std::string &texturePath, sf::IntRect textureRect) {
+        _texture.loadFromFile(texturePath);
+
         _sprite = sf::Sprite(_texture);
         _sprite.setTextureRect(textureRect);
-        _sprite.setScale(sf::Vector2f(3, 3));
+        _initialTextureRect = textureRect;
+    }
+
+    SpriteComponent::SpriteComponent(const std::string &texturePath, sf::IntRect textureRect, sf::Vector2i targetSize, sf::Vector2i actualSize) {
+        _texture.loadFromFile(texturePath);
+        _sprite = sf::Sprite(_texture);
+        _sprite.setTextureRect(textureRect);
+//        _sprite.setScale(sf::Vector2f(3, 3));
+        _sprite.setScale(targetSize.x / actualSize.x, targetSize.y / actualSize.y);
         _initialTextureRect = textureRect;
     }
 
@@ -20,6 +30,10 @@ namespace potEngine {
     {
         // if (_sprite != nullptr)
         //     RenderComponent::shutdown();
+    }
+
+    void SpriteComponent::draw(sf::RenderWindow &window) {
+        window.draw(_sprite);
     }
 
     void SpriteComponent::init()

@@ -26,7 +26,8 @@ file(GLOB_RECURSE ENGINE_SOURCES
     "engine/source/utils/*.cpp"
 )
 
-add_library(engine SHARED ${ENGINE_SOURCES})
+add_library(engine SHARED ${ENGINE_SOURCES}
+        engine/include/components/staticMoveComponent.hpp)
 
 target_include_directories(engine PUBLIC
     engine/include
@@ -39,6 +40,7 @@ target_include_directories(engine PUBLIC
     engine/include/event
     engine/include/config
     engine/include/utils
+    engine/include/event/data
 )
 
 file(GLOB_RECURSE SERVER_SOURCES "r-type/server/src/*.cpp")

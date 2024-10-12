@@ -1,5 +1,6 @@
 #include "RenderSystem.hpp"
 #include "SpriteComponent.hpp"
+#include "TextComponent.hpp"
 #include "WindowEntity.hpp"
 #include "WindowComponent.hpp"
 #include "PositionComponent.hpp"
@@ -10,9 +11,11 @@
 
 namespace potEngine
 {
-    RenderSystem::RenderSystem()
+    RenderSystem::RenderSystem() : ASystem(true)
     {
         _signature.set(AComponent::getID<SpriteComponent>(), true);
+        _signature.set(AComponent::getID<TextComponent>(), true);
+        _signature.set(AComponent::getID<WindowComponent>(), true);
         eventBus.subscribe(this, &RenderSystem::renderWindow);
     }
 
@@ -29,17 +32,18 @@ namespace potEngine
                 continue;
             auto window = windowComponent->get()->getWindow();
             window->clear();
-            for (auto spriteEntity : _entitiesSystem) {
-                auto spriteComponent = spriteEntity->getComponent<SpriteComponent>();
-                auto windowComponent = spriteEntity->getComponent<WindowComponent>();
-                if (spriteComponent && !windowComponent) {
-                    auto position = spriteEntity->getComponent<PositionComponent>();
+            for (auto renderEntity : _entitiesSystem) {
+                if (auto spriteComponent = renderEntity->getComponent<SpriteComponent>()) {
+                    auto position = renderEntity->getComponent<PositionComponent>();
                     sf::Sprite &sprite = spriteComponent->get()->getSprite();
                     if (position != std::nullopt) {
                         auto pos = position->get()->_position;
                         sprite.setPosition(pos[0], pos[1]);
                     }
-                    window->draw(sprite);
+                    spriteComponent->get()->draw(*window);
+                }
+                if (auto textComponent = renderEntity->getComponent<TextComponent>()) {
+                    textComponent->get()->draw(*window);
                 }
             }
             window->display();

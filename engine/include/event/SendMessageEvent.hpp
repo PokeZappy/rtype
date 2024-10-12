@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <cmath>
 #include <vector>
+#include <cstring>
 
 namespace potEngine
 {
@@ -14,11 +15,11 @@ namespace potEngine
         int max_players;
         int fd;
         struct sockaddr_in client_addr;
-        uint8_t entity_id;
+        size_t entity_id;
         EventType event_type;
-        std::vector<uint16_t> params;
+        std::vector<size_t> params;
 
-        SendMessageEventInfo(int maxP, int fd, struct sockaddr_in addr, uint8_t id, EventType type, std::vector<uint16_t> p)
+        SendMessageEventInfo(int maxP, int fd, struct sockaddr_in addr, size_t id, EventType type, std::vector<size_t> p)
             : max_players(maxP), fd(fd), client_addr(addr), entity_id(id), event_type(type), params(p) {}
     };
 
@@ -35,21 +36,20 @@ namespace potEngine
             send_message(info->client_addr, info->entity_id, info->event_type, info->params, info->max_players, info->fd);
         }
     private:
-        void send_message(const struct sockaddr_in& addr, uint8_t entity_id, potEngine::EventType action, const std::vector<uint16_t>& params, int maxP, int fd)
+        void send_message(const struct sockaddr_in& addr, size_t entity_id, potEngine::EventType action, const std::vector<size_t>& params, size_t maxP, int fd)
         {
-            int entity_id_bits = std::ceil(std::log2(maxP + 1));
-            int action_bits = 8 - entity_id_bits;
-
-            size_t packet_size = 1 + params.size() * sizeof(uint16_t);
+            const size_t EVENT_TYPE_BITS = 8;
+            size_t packet_size = sizeof(size_t) + params.size() * sizeof(size_t);
             std::vector<uint8_t> packet(packet_size);
 
-            packet[0] = (entity_id & ((1 << entity_id_bits) - 1)) << action_bits | (action & ((1 << action_bits) - 1));
-
+            size_t header = entity_id;
+            header |= (static_cast<size_t>(action) << (sizeof(size_t) * 8 - EVENT_TYPE_BITS));
+            std::memcpy(packet.data(), &header, sizeof(size_t));
             for (size_t i = 0; i < params.size(); ++i) {
-                packet[1 + 2 * i] = (params[i] >> 8) & 0xFF;
-                packet[1 + 2 * i + 1] = params[i] & 0xFF;
+                std::memcpy(packet.data() + sizeof(size_t) + i * sizeof(size_t), &params[i], sizeof(size_t));
             }
             sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
         }
+
     };
 }

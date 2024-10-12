@@ -11,6 +11,7 @@
 #include <iostream>
 
 #include "AComponent.hpp"
+#include <optional>
 
 namespace potEngine
 {
@@ -18,8 +19,14 @@ namespace potEngine
     public:
         std::string username;
 
+
         PlayerComponent(std::string username = "none")
             : username(username) {}
+
+        void setShootAnimationEntityId(int value) {_shootAnimationEntityId = value; }
+        std::optional<int> &getShootAnimationEntityId() { return (_shootAnimationEntityId); }
+    private:
+        std::optional<int> _shootAnimationEntityId;
     };
 }
 

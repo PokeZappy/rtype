@@ -18,9 +18,10 @@ namespace potEngine {
         ~ECSManager();
 
         std::shared_ptr<AEntity> createEntity();
-        std::shared_ptr<AEntity> createEntity(size_t Id);
+        // std::shared_ptr<AEntity> createEntity(size_t Id);
+        std::shared_ptr<AEntity> createServerEntity(size_t serverId);
         std::shared_ptr<AEntity> createWindowEntity();
-        std::shared_ptr<AEntity> createSpriteEntity(sf::Texture &texture);
+        std::shared_ptr<AEntity> createSpriteEntity(const std::string &texturePath);
 
         static ECSManager& getInstance() {
             static ECSManager instance;
@@ -34,6 +35,7 @@ namespace potEngine {
         void addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component);
 
         void removeEntity(const std::size_t id);
+        void removeEntity(std::shared_ptr<AEntity> entity);
 
         template <typename T, typename... Args>
         void registerSystem(Args&&... args);
@@ -47,13 +49,18 @@ namespace potEngine {
         void shutdown();
 
         std::vector<std::shared_ptr<AEntity>> getEntities() const;
-        std::shared_ptr<AEntity> getEntity(uint8_t entity_id) const;
-
+        std::shared_ptr<AEntity> getEntity(size_t entity_id);
+        // void setInput(sf::Keyboard::Key key, bool value) { _inputs[key] = value; };
+        // bool getInput(sf::Keyboard::Key key) { return (_inputs[key]); };
+        // std::unordered_map<sf::Keyboard::Key, bool> getInputs() { return (_inputs); };
+        size_t getClientIdFromServerId(size_t serverId);
     private:
         std::size_t _entityCounter;
+        std::unordered_map<size_t, size_t> _serverToClientId;
 
         std::vector<std::shared_ptr<ISystem>> _systems;
         std::vector<std::shared_ptr<AEntity>> _entities;
+        // std::unordered_map<sf::Keyboard::Key, bool> _inputs;
 
     };
 

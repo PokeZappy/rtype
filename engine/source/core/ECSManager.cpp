@@ -17,6 +17,15 @@ namespace potEngine {
 
     ECSManager::~ECSManager() {}
 
+        std::shared_ptr<AEntity> ECSManager::createServerEntity(size_t serverId)
+        {
+            auto entity = std::make_shared<AEntity>(_entityCounter);
+            _entities.push_back(entity);
+            _serverToClientId[serverId] = _entityCounter;
+            _entityCounter++;
+            return entity;
+        }
+
         std::shared_ptr<AEntity> ECSManager::createEntity()
         {
             auto entity = std::make_shared<AEntity>(_entityCounter);
@@ -25,19 +34,19 @@ namespace potEngine {
             return entity;
         }
 
-    std::shared_ptr<AEntity> ECSManager::createEntity(size_t id)
-    {
-        auto entity = std::make_shared<AEntity>(id);
-        _entities.push_back(entity);
-        return entity;
-    }
+    // std::shared_ptr<AEntity> ECSManager::createEntity(size_t id)
+    // {
+    //     auto entity = std::make_shared<AEntity>(id);
+    //     _entities.push_back(entity);
+    //     return entity;
+    // }
 
-    std::shared_ptr<AEntity> ECSManager::createSpriteEntity(sf::Texture &texture) {
+    std::shared_ptr<AEntity> ECSManager::createSpriteEntity(const std::string &texturePath) {
         auto entity = std::make_shared<AEntity>(32);
 
         // sf::Sprite sprite(texture);
         // sprite.setPosition(100, 100);
-        std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texture);
+        std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texturePath);
         addComponent<SpriteComponent>(entity, spriteComponent);
 
         _entities.push_back(entity);
@@ -45,13 +54,11 @@ namespace potEngine {
     }
 
     std::shared_ptr<AEntity> ECSManager::createWindowEntity() {
-        auto entity = std::make_shared<AEntity>(30);
-
+        auto entity = std::make_shared<AEntity>(_entityCounter);
+        _entityCounter++;
         std::shared_ptr<potEngine::WindowComponent> windowComponent = std::make_shared<potEngine::WindowComponent>();
-        std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>();
 
         addComponent<WindowComponent>(entity, windowComponent);
-        addComponent<SpriteComponent>(entity, spriteComponent);
 
         _entities.push_back(entity);
         return (entity);
@@ -65,8 +72,9 @@ namespace potEngine {
 
     void ECSManager::removeEntity(const std::size_t id)
     {
-            auto it = std::find_if(_entities.begin(), _entities.end(), [id](const std::shared_ptr<AEntity>& entityPtr) {
-                return entityPtr->getID() == id;
+            std::size_t newId = getClientIdFromServerId(id);
+            auto it = std::find_if(_entities.begin(), _entities.end(), [newId](const std::shared_ptr<AEntity> entityPtr) {
+                return entityPtr->getID() == newId;
             });
             if (it != _entities.end()) {
                 auto entity = *it;
@@ -74,15 +82,28 @@ namespace potEngine {
                 EraseEntitySystem(entity);
 
                 _entities.erase(it);
+                // std::cout << "entité supprimée, tableau entity size : " << _entities.size() << std::endl;
+            }
+    }
+
+    void ECSManager::removeEntity(std::shared_ptr<AEntity> entity)
+    {
+            auto it = std::find(_entities.begin(), _entities.end(), entity);
+            if (it != _entities.end()) {
+                EraseEntitySystem(entity);
+
+                _entities.erase(it);
+                // std::cout << "entité supprimée, tableau entity size : " << _entities.size() << std::endl;
             }
     }
 
     void ECSManager::EraseEntitySystem(std::shared_ptr<AEntity> entity) {
         for (auto const &system : _systems) {
-            auto systemEntities = system->getEntities();
+            auto &systemEntities = system->getEntities();
             auto it = std::find(systemEntities.begin(), systemEntities.end(), entity);
 
             if (it != systemEntities.end()) {
+                // std::cout << "je remove l'entité du système" << std::endl;
                 systemEntities.erase(it);
             }
         }
@@ -90,14 +111,19 @@ namespace potEngine {
 
     void ECSManager::EntitySignatureChanged(std::shared_ptr<AEntity> entity) {
         auto const &entitySignature = entity->getSignature();
-        // std::cout << "entity signature : " << entitySignature << std::endl;
 
         for (auto const &system: _systems) {
             auto const &systemSignature = system->getSignature();
-            // std::cout << "system signature : " << systemSignature << std::endl;
             auto &systemEntities = system->getEntities();
+            bool doesSignaturesMatch = false;
 
-            if ((entitySignature & systemSignature) == systemSignature)
+            if (system->isInclusive()) {
+                doesSignaturesMatch = (entitySignature & systemSignature).any();
+            } else {
+                doesSignaturesMatch = (entitySignature & systemSignature) == systemSignature;
+            }
+
+            if (doesSignaturesMatch)
             {
                 auto it = std::find(systemEntities.begin(), systemEntities.end(), entity);
 
@@ -138,12 +164,21 @@ namespace potEngine {
         return _entities;
     }
 
-    std::shared_ptr<AEntity> ECSManager::getEntity(uint8_t entity_id) const {
+    std::shared_ptr<AEntity> ECSManager::getEntity(size_t entity_id) {
+        size_t newId = getClientIdFromServerId(entity_id);
         for (const auto& entity : _entities) {
-            if (entity->getID() == entity_id) {
+            if (entity->getID() == newId) {
                 return entity;
             }
         }
         return nullptr;
+    }
+
+    size_t ECSManager::getClientIdFromServerId(size_t serverId) {
+        if (_serverToClientId.find(serverId) != _serverToClientId.end()) {
+            return (_serverToClientId[serverId]);
+        } else {
+            return (serverId);
+        }
     }
 }

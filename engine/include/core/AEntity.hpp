@@ -14,6 +14,7 @@ namespace potEngine {
     class AEntity {
     public:
         AEntity(const std::size_t _id);
+        AEntity(const std::size_t localId, const std::size_t serverId);
         ~AEntity();
 
         template <typename T>

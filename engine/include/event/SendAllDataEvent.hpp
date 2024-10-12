@@ -3,10 +3,12 @@
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "ECSManager.hpp"
-#include "SendMessageToAllEvent.hpp"
+#include "SendMessageEvent.hpp"
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
+#include "ShootComponent.hpp"
+#include "MonstreComponent.hpp"
 
 #include <netinet/in.h>
 #include <vector>
@@ -18,9 +20,9 @@ namespace potEngine
         int max_players;
         int fd;
         struct sockaddr_in client_addr;
-        uint8_t player_id;
+        size_t player_id;
 
-        SendAllDataInfoEvent(int maxP, int fd, struct sockaddr_in addr, uint8_t id)
+        SendAllDataInfoEvent(int maxP, int fd, struct sockaddr_in addr, size_t id)
             : max_players(maxP), fd(fd), client_addr(addr), player_id(id) {}
     };
 
@@ -34,6 +36,10 @@ namespace potEngine
         {
             if (entity->getComponent<PlayerComponent>())
                 return EntityType::PLAYER;
+            if (entity->getComponent<MonstreComponent>())
+                return EntityType::MONSTRE;
+            if (entity->getComponent<ShootComponent>())
+                return EntityType::PEW;
             else
                 return EntityType::NONE_ENTITY;
         }
@@ -50,14 +56,14 @@ namespace potEngine
                     continue;
                 std::vector<int> position = entity->getComponent<PositionComponent>()->get()->_position;
                 EntityType _entityType = checkEntity(entity);
-                std::vector<uint16_t> _pos;
+                std::vector<size_t> _pos;
 
                 if (_entityType == EntityType::PLAYER) {
                     auto username = entity->getComponent<PlayerComponent>()->get()->username;
                     _pos.push_back(_entityType);
-                    _pos.push_back(static_cast<uint16_t>(username.size()));
+                    _pos.push_back(static_cast<size_t>(username.size()));
                     for (char c : username) {
-                        _pos.push_back(static_cast<uint16_t>(c));
+                        _pos.push_back(static_cast<size_t>(c));
                     }
                     _pos.insert(_pos.end(), position.begin(), position.end());
                 } else {
