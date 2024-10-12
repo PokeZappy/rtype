@@ -126,8 +126,11 @@ namespace potEngine {
         }
     }
 
-    void Engine::update()
+    void Engine::start()
     {
+        auto startEvent = std::make_shared<potEngine::StartEvent>();
+        publishEvent(startEvent);
+
         auto handler = _eventBus.getHandler();
         while (handler != std::pair<std::shared_ptr<IEvent>, std::shared_ptr<HandlerList>>(nullptr, nullptr)) {
             for (auto event : *handler.second) {
@@ -135,11 +138,6 @@ namespace potEngine {
             }
             handler = _eventBus.getHandler();
         }
-    }
-
-    void Engine::shutdown()
-    {
-        // TODO: pourquoi faire ????
     }
 
     std::vector<std::shared_ptr<AEntity>> Engine::getEntities() const {
@@ -162,5 +160,9 @@ namespace potEngine {
         } else {
             return (serverId);
         }
+    }
+
+    void Engine::setFramerateLimit(int framerate) {
+        timer.setTps(framerate);
     }
 }

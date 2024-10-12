@@ -28,7 +28,7 @@ namespace potEngine
         SendMessageEvent() {
             engine.subscribeEvent(this, &SendMessageEvent::sendMessage);
         };
-
+        
         void sendMessage(std::shared_ptr<SendMessageEventInfo> info)
         {
             if (info->entity_id != 0 && engine.getEntity(info->entity_id) == nullptr)

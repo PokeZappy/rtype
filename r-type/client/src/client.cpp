@@ -132,10 +132,7 @@ void RType::Client::start()
 
     std::shared_ptr<potEngine::AEntity> window = potEngine::engine.createWindowEntity();
 
-    potEngine::engine.timer.setTps(145);
-    auto startEvent = std::make_shared<potEngine::StartEvent>();
-    potEngine::engine.publishEvent(startEvent);
-
-    potEngine::engine.update();
+    potEngine::engine.timer.setTps(60);
+    potEngine::engine.start();
 }
 

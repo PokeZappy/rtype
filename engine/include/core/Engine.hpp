@@ -81,8 +81,7 @@ namespace potEngine
         void EntitySignatureChanged(std::shared_ptr<AEntity> entity);
         void EraseEntitySystem(std::shared_ptr<AEntity> entity);
 
-        void update();
-        void shutdown();
+        void start();
 
         std::vector<std::shared_ptr<AEntity>> getEntities() const;
         std::shared_ptr<AEntity> getEntity(size_t entity_id);
@@ -97,7 +96,7 @@ namespace potEngine
         void publishEvent(std::shared_ptr<EventType> event) {
             _eventBus.publish(event);
         }
-        void setTick(int _tps);
+        void setFramerateLimit(int framerate);
     private:
         std::size_t _entityCounter;
         std::unordered_map<size_t, size_t> _serverToClientId;
