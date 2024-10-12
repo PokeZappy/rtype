@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+
 #include "ASystem.hpp"
 #include "AEntity.hpp"
 #include "WindowEntity.hpp"
@@ -9,7 +10,7 @@
 #include "WindowComponent.hpp"
 #include "AudioComponent.hpp"
 #include "MainLoopEvent.hpp"
-#include "BlcEvent.hpp"
+#include "NoneEvent.hpp"
 
 namespace potEngine {
     class AudioSystem : public ASystem {
@@ -19,6 +20,6 @@ namespace potEngine {
 
         void update(float) override {};
 
-        void updateSounds(std::shared_ptr<BlcEvent> event);
+        void updateSounds(std::shared_ptr<NoneEvent> event);
     };
 }

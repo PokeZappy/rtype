@@ -25,3 +25,5 @@ r-type_server_test
 installer.sh
 uninstaller.sh
 .vcpkg/
+.vcpkg/
+.vs

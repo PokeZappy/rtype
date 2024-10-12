@@ -4,14 +4,32 @@ project(RType)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(cmake/automate-vcpkg.cmake)
+include(cmake/auto-vcpkg.cmake)
+vcpkg_add_package(sfml)
 
-vcpkg_bootstrap()
-vcpkg_install_packages(sfml)
+set(CLIENT_INCLUDE_DIRS
+    r-type/client/include
+    r-type/client/include/components
+    r-type/client/include/events
+    r-type/client/include/events/data
+    r-type/client/include/systems
+)
+set(SERVER_INCLUDE_DIRS
+    r-type/server/include
+    r-type/server/include/components
+    r-type/server/include/events
+    r-type/server/include/events/data
+    r-type/server/include/systems
+)
 
-set(CLIENT_INCLUDE_DIRS r-type/client/include)
-set(SERVER_INCLUDE_DIRS r-type/server/include)
-set(GAME_INCLUDE_DIRS r-type/include)
+set(SHARED_INCLUDE_DIRS
+    r-type/shared/include
+    r-type/shared/include/components
+    r-type/shared/include/cross
+    r-type/shared/include/events
+    r-type/shared/include/events/data
+    r-type/shared/include/systems
+)
 
 file(GLOB_RECURSE ENGINE_SOURCES
     "engine/source/components/*.cpp"
@@ -22,50 +40,55 @@ file(GLOB_RECURSE ENGINE_SOURCES
     "engine/source/entity/*.cpp"
     "engine/source/core/event/*.cpp"
     "engine/source/event/*.cpp"
-    "engine/source/config/*.cpp"
-    "engine/source/utils/*.cpp"
 )
 
-add_library(engine SHARED ${ENGINE_SOURCES}
-        engine/include/components/staticMoveComponent.hpp)
+add_library(engine STATIC ${ENGINE_SOURCES})
+set_target_properties(engine PROPERTIES
+    IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/lib/engine.so"
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/include/libengine")
 
 target_include_directories(engine PUBLIC
     engine/include
     engine/include/components
     engine/include/core
-    engine/include/renderer
+    engine/include/core/entities
+    engine/include/core/eventBus
     engine/include/systems
     engine/include/entity
     engine/include/core/event
     engine/include/event
-    engine/include/config
-    engine/include/utils
     engine/include/event/data
 )
 
-file(GLOB_RECURSE SERVER_SOURCES "r-type/server/src/*.cpp")
-add_executable(r-type_server ${SERVER_SOURCES})
-target_include_directories(r-type_server PRIVATE ${SERVER_INCLUDE_DIRS} ${GAME_INCLUDE_DIRS})
+file(GLOB_RECURSE SERVER_SOURCES
+    "r-type/server/src/*.cpp"
+)
+
+add_executable(r-type_server ${SERVER_SOURCES} ${SHARED_SOURCES})
+target_include_directories(r-type_server PRIVATE ${SERVER_INCLUDE_DIRS} ${SHARED_INCLUDE_DIRS})
 target_link_libraries(r-type_server PRIVATE engine)
 
-file(GLOB_RECURSE CLIENT_SOURCES "r-type/client/src/*.cpp")
-add_executable(r-type_client ${CLIENT_SOURCES})
-target_include_directories(r-type_client PRIVATE ${CLIENT_INCLUDE_DIRS} ${GAME_INCLUDE_DIRS})
+file(GLOB_RECURSE CLIENT_SOURCES
+    "r-type/client/src/*.cpp"
+)
+
+add_executable(r-type_client ${CLIENT_SOURCES} ${SHARED_SOURCES})
+target_include_directories(r-type_client PRIVATE ${CLIENT_INCLUDE_DIRS} ${SHARED_INCLUDE_DIRS})
 target_link_libraries(r-type_client PRIVATE engine)
 
 file(GLOB_RECURSE SERVER_SOURCES_TEST "r-type/server/tests/*.cpp" "r-type/server/tests/*.hpp")
 add_executable(r-type_server_test ${SERVER_SOURCES_TEST})
-target_link_libraries(r-type_server_test engine)
+#target_link_libraries(r-type_server_test engine)
 add_test(NAME ServerTests COMMAND r-type_server_test)
 
 file(GLOB_RECURSE CLIENT_SOURCES_TEST "r-type/client/tests/*.cpp" "r-type/client/tests/*.hpp")
 add_executable(r-type_client_test ${CLIENT_SOURCES_TEST})
-target_link_libraries(r-type_client_test engine)
+#target_link_libraries(r-type_client_test engine)
 add_test(NAME ClientTests COMMAND r-type_client_test)
 
 if(MSVC)
-    target_compile_options(r-type_server PRIVATE /W4)
-    target_compile_options(r-type_client PRIVATE /W4)
+#    target_compile_options(r-type_server PRIVATE /W4)
+#    target_compile_options(r-type_client PRIVATE /W4)
 else()
     target_compile_options(r-type_server PRIVATE -std=c++20 -g -Wall)
     target_compile_options(r-type_client PRIVATE -std=c++20 -g -Wall)
@@ -105,21 +128,14 @@ add_custom_target(re_client
 # SFML
 if(WIN32)
     find_package(SFML COMPONENTS system window graphics network audio  REQUIRED)
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(LIBCONFIG REQUIRED libconfig++)
 
     if(SFML_FOUND)
         message(STATUS "SFML found: ${SFML_LIBRARIES}.")
-        target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+        target_link_libraries(engine PRIVATE sfml-system sfml-window sfml-graphics sfml-audio ws2_32 winmm)
+        target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-audio ws2_32 winmm)
+        target_link_libraries(r-type_server PRIVATE ws2_32)
     else()
         message(FATAL_ERROR "SFML not found!")
-    endif()
-
-    if(LIBCONFIG_FOUND)
-        message(STATUS "libconfig found: ${LIBCONFIG_LIBRARIES}.")
-        target_link_libraries(r-type_client PRIVATE config++)
-    else()
-        message(FATAL_ERROR "libconfig not found!")
     endif()
 
     if(SFML_STATIC_LIBRARIES)
@@ -127,19 +143,15 @@ if(WIN32)
         target_link_libraries(r-type_client PRIVATE opengl32 freetype winmm gdi32)
     endif()
 
-    if(LIBCONFIG_STATIC_LIBRARIES)
-        target_link_libraries(r-type_client PRIVATE config++)
-        target_link_libraries(r-type_server PRIVATE config++)
-        target_link_libraries(engine PRIVATE config++)
-    endif()
 else()
+    set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-linux/share")
+    include_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-linux/include")
     find_package(SFML COMPONENTS system window graphics network audio REQUIRED)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(LIBCONFIG REQUIRED libconfig++)
 
     if(SFML_FOUND)
         target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
-        target_link_libraries(r-type_server PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
         target_link_libraries(engine PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
     else()
         message(FATAL_ERROR "SFML not found!")

@@ -6,9 +6,6 @@
 */
 
 #include "client_config.hpp"
-#include "Tools.hpp"
-#include "Lobby.hpp"
-#include "AssetFinder.hpp"
 
 int main()
 {

@@ -8,16 +8,14 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "game_config.hpp"
+#include "ServerInclude.hpp"
+#include "Config.hpp"
 
 #include <memory>
 #include <vector>
-#include <netinet/in.h>
 #include <iostream>
-#include <fcntl.h>
 #include <chrono>
 #include <cstring>
-#include <unistd.h>
 
 namespace RType
 {

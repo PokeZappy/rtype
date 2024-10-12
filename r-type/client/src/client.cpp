@@ -6,6 +6,7 @@
 */
 
 #include "client_config.hpp"
+#include "Config.hpp"
 
 RType::Client::Client() : player_id(0)
 {
@@ -19,11 +20,11 @@ RType::Client::Client() : player_id(0)
     server_addr.sin_port = htons(PORT);
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-    potEngine::ecsManager.registerSystem<potEngine::RenderSystem>();
-    potEngine::ecsManager.registerSystem<potEngine::InputSystem>();
-    potEngine::ecsManager.registerSystem<potEngine::AnimationSystem>();
-    potEngine::ecsManager.registerSystem<potEngine::AudioSystem>();
-    potEngine::ecsManager.registerSystem<potEngine::BackgroundSystem>();
+    potEngine::engine.registerSystem<potEngine::RenderSystem>();
+    potEngine::engine.registerSystem<potEngine::InputSystem>();
+    potEngine::engine.registerSystem<potEngine::AnimationSystem>();
+    potEngine::engine.registerSystem<potEngine::AudioSystem>();
+    potEngine::engine.registerSystem<potEngine::BackgroundSystem>();
 
 
     std::cout << "[CLIENT] Ready to connect to the server...\n";
@@ -31,33 +32,33 @@ RType::Client::Client() : player_id(0)
 
 RType::Client::~Client()
 {
-    close(client_fd);
+    CLOSESOCKET(client_fd)
 }
 
-void RType::Client::setNonBlockingInput()
-{
-    struct termios t;
-    tcgetattr(STDIN_FILENO, &t);
-    t.c_lflag &= ~ICANON;
-    t.c_lflag &= ~ECHO;
-    tcsetattr(STDIN_FILENO, TCSANOW, &t);
-
-    int flags = fcntl(client_fd, F_GETFL, 0);
-    fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
-    int flags_ = fcntl(STDIN_FILENO, F_GETFL, 0);
-    fcntl(STDIN_FILENO, F_SETFL, flags_ | O_NONBLOCK);
+void RType::Client::setNonBlockingInput() {
+    SET_SOCK_NONBLOCKING(client_fd)
 }
 
 void RType::Client::init_subscribe()
 {
-    auto connectionEvent = std::make_shared<potEngine::ConnectionEvent>();
-    auto disconnectionEvent = std::make_shared<potEngine::DisconnectionEvent>();
-    auto sendMessageToAllEvent = std::make_shared<potEngine::SendMessageToAllEvent>();
-    auto sendMessageToAllExeptEvent = std::make_shared<potEngine::SendMessageToAllExeptEvent>();
     auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
-    auto moveEvent = std::make_shared<potEngine::MoveEvent>();
     auto moveClientEvent = std::make_shared<potEngine::MoveClientEvent>();
     auto clientCollisionEvent = std::make_shared<potEngine::ClientCollisionEvent>();
+}
+
+void send_message(const struct sockaddr_in& addr, size_t entity_id, potEngine::EventType action, const std::vector<size_t>& params, size_t maxP, int fd)
+{
+    const size_t EVENT_TYPE_BITS = 8;
+    size_t packet_size = sizeof(size_t) + params.size() * sizeof(size_t);
+    std::vector<uint8_t> packet(packet_size);
+
+    size_t header = entity_id;
+    header |= (static_cast<size_t>(action) << (sizeof(size_t) * 8 - EVENT_TYPE_BITS));
+    std::memcpy(packet.data(), &header, sizeof(size_t));
+    for (size_t i = 0; i < params.size(); ++i) {
+        std::memcpy(packet.data() + sizeof(size_t) + i * sizeof(size_t), &params[i], sizeof(size_t));
+    }
+    SENDTO(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
 }
 
 void RType::Client::handle_connection()
@@ -69,9 +70,8 @@ void RType::Client::handle_connection()
     std::cin >> username;
 
     std::vector<size_t> params_username(username.begin(), username.end());
-    auto connectionEventInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, client_fd, server_addr, 0, potEngine::CONNECTION, params_username);
-    potEngine::eventBus.publish(connectionEventInfo);
-    potEngine::ecsManager.update(0.0f);
+    send_message(server_addr, 0, potEngine::CONNECTION, params_username, MAX_PLAYERS, client_fd);
+
     auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
     if (event_type == potEngine::EventType::CONNECTION) {
         std::cout << "[CLIENT] Connected to the server with {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
@@ -90,7 +90,7 @@ void RType::Client::handle_connection()
 }
 
 void RType::Client::create_background() {
-    auto entity =  potEngine::ecsManager.createEntity();
+    auto entity =  potEngine::engine.createEntity();
 
     sf::Texture backgroundTexture;
     if (!backgroundTexture.loadFromFile(assetFinder() + "/sprites/space_ background.png"))
@@ -100,9 +100,9 @@ void RType::Client::create_background() {
     auto positionComponent = std::make_shared<potEngine::PositionComponent>(0, 0);
     auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(0, 0, 1206, 207), sf::Vector2i(3140, 1080), sf::Vector2i(1206, 207));
     auto static_move_component = std::make_shared<potEngine::staticMoveComponent>(sf::Vector2i(-3000, 0), sf::Vector2i(0, 0));
-    potEngine::ecsManager.addComponent(entity, positionComponent);
-    potEngine::ecsManager.addComponent(entity, spriteComponent);
-    potEngine::ecsManager.addComponent(entity, static_move_component);
+    potEngine::engine.addComponent(entity, positionComponent);
+    potEngine::engine.addComponent(entity, spriteComponent);
+    potEngine::engine.addComponent(entity, static_move_component);
 
 
     std::cout << "[CLIENT] Background created." << std::endl;
@@ -116,15 +116,16 @@ void RType::Client::start()
     setNonBlockingInput();
 
     socklen_t addr_len = sizeof(server_addr);
-    potEngine::ecsManager.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
-    potEngine::ecsManager.registerSystem<potEngine::ShipAnimationSystem>(player_id);
-    potEngine::ecsManager.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, server_addr);
-    potEngine::ecsManager.registerSystem<potEngine::ShootEntityClientSystem>(client_fd, 0.001f);
+    potEngine::engine.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
+    potEngine::engine.registerSystem<potEngine::ShipAnimationSystem>(player_id);
+    potEngine::engine.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, server_addr);
+    potEngine::engine.registerSystem<potEngine::ShootEntityClientSystem>();
 
-    std::shared_ptr<potEngine::AEntity> window = potEngine::ecsManager.createWindowEntity();
+    std::shared_ptr<potEngine::AEntity> window = potEngine::engine.createWindowEntity();
 
+    potEngine::engine.timer.setTps(145);
     auto startEvent = std::make_shared<potEngine::StartEvent>();
+    potEngine::engine.publishEvent(startEvent);
 
-    potEngine::eventBus.publish(startEvent);
-    potEngine::ecsManager.update(0.016);
+    potEngine::engine.update();
 }

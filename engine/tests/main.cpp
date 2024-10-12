@@ -1,15 +1,15 @@
 #include <iostream>
-#include "../include/core/ECSManager.hpp"
+#include "../include/core/Engine.hpp"
 #include "../include/core/AEntity.hpp"
 #include "../include/components/RenderComponent.hpp"
 #include <SFML/Graphics.hpp>
 
 int mainPotEngine()
 {
-    potEngine::ECSManager ecsManager;
+    potEngine::Engine engine;
 
-    ecsManager.init();
-    potEngine::AEntity& test = ecsManager.createEntity();
+    engine.init();
+    potEngine::AEntity& test = engine.createEntity();
 
     const int cubeSize = 100;
 
@@ -25,10 +25,10 @@ int mainPotEngine()
 
     while (true)
     {
-        ecsManager.update(0.0f);
+        engine.update(0.0f);
     }
 
-    ecsManager.shutdown();
+    engine.shutdown();
 
     return 0;
 }
