@@ -30,6 +30,7 @@ namespace RType
         void create_background();
         void create_hurdle();
         void create_hurdle_destroyable();
+        void create_explosion(sf::Vector2i pos);
         void handle_connection();
 
     private:
