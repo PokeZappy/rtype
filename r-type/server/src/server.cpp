@@ -9,6 +9,7 @@
 
 RType::Server::Server() : current_players(0)
 {
+    INIT_WINSOCK();
     if ((server_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("Socket creation failed");
         exit(EXIT_FAILURE);
