@@ -20,5 +20,6 @@ namespace potEngine {
         void update(float) override {};
 
         void updateAnimations(std::shared_ptr<NoneEvent> event);
+        std::vector<std::shared_ptr<AEntity>> toRemove;
     };
 }

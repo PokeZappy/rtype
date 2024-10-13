@@ -23,6 +23,8 @@ namespace potEngine
         bool isLooping() { return (_looping); }
         sf::Clock &getClock() { return (_clock); }
         int getAnimationOffset() { return (_offset); }
+        void mustDestroyOnEnding(bool state) { _mustDestroyOnEnding = state; }
+        bool getMustDestroyOnEnding() { return (_mustDestroyOnEnding); }
     private:
         int _maxFrames;
         int _actualFrame = 0;
@@ -31,6 +33,7 @@ namespace potEngine
         bool _looping;
         std::function<sf::IntRect(int, int)> _changeFrame;
         int _offset = 0;
+        bool _mustDestroyOnEnding = false;
     };
 }
 

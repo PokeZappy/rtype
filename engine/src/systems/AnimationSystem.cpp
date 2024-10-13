@@ -26,26 +26,36 @@ namespace potEngine {
             int frame = animationComponent->get()->getActualFrame();
             int maxFrame = animationComponent->get()->getMaxFrames();
             bool isLooping = animationComponent->get()->isLooping();
+            bool mustDestroyAtTheEnd = animationComponent->get()->getMustDestroyOnEnding();
 
-            if (frame >= maxFrame && !isLooping)
-                continue;
+            
             sf::Sprite &sprite = spriteComponent->get()->getSprite();
             sf::Clock &clock = animationComponent->get()->getClock();
 
-            if (clock.getElapsedTime().asSeconds() >= interval) {
-                if (frame >= maxFrame) {
-                    frame = 1;
-                } else {
-                    frame++;
+            if (clock.getElapsedTime().asSeconds() < interval)
+                continue;
+            
+            if (frame >= maxFrame) {
+                if (!isLooping && mustDestroyAtTheEnd) {
+                    toRemove.push_back(entity);
+                    std::cout << "animation removed" << std::endl;
+                    // engine.removeComponent<AnimationComponent>(entity);
+                    continue;
                 }
-                auto changeFrameFunction = animationComponent->get()->getChangeFrame();
-                auto offset = animationComponent->get()->getAnimationOffset();
-                sf::IntRect newTextureRect = changeFrameFunction(frame, offset);
-                sprite.setTextureRect(newTextureRect);
-                animationComponent->get()->setActualFrame(frame);
-                clock.restart();
+                frame = isLooping ? 1 : maxFrame;
+            } else {
+                frame++;
             }
-
+            auto changeFrameFunction = animationComponent->get()->getChangeFrame();
+            auto offset = animationComponent->get()->getAnimationOffset();
+            sf::IntRect newTextureRect = changeFrameFunction(frame, offset);
+            sprite.setTextureRect(newTextureRect);
+            animationComponent->get()->setActualFrame(frame);
+            clock.restart();
         }
+        for (auto animation : toRemove) {
+            engine.removeEntity(animation);
+        }
+        toRemove.clear();
     }
 };
