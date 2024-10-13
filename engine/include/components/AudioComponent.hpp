@@ -9,7 +9,7 @@ namespace potEngine
 {
     class AudioComponent : public AComponent {
     public:
-        explicit AudioComponent(const std::string &fileName, bool playOnLoop = false);
+        explicit AudioComponent(const std::string &fileName, bool playOnLoop = false, bool isPlaying = false);
         ~AudioComponent() override;
 
         sf::Sound &getSound() { return _sound; }
@@ -17,10 +17,13 @@ namespace potEngine
         bool isOnLoop() { return _playOnLoop; }
         bool isPlaying() { return _isPlaying; }
         void setPlaying(bool state) { _isPlaying = state; }
+        void hasPlayedOnce(bool state) { _hasPlayedOnce = state; }
+        bool getHasPlayedOnce() { return (_hasPlayedOnce); }
         private:
         sf::SoundBuffer _buffer;
         sf::Sound _sound;
         bool _playOnLoop;       // si le son doit se répéter
-        bool _isPlaying = false;        // l'état de la lecture
+        bool _isPlaying = false;       // l'état de la lecture
+        bool _hasPlayedOnce = false;
     };
 }

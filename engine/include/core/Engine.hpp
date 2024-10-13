@@ -72,6 +72,9 @@ namespace potEngine
         template <typename T>
         void addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component);
 
+        template <typename T>
+        void removeComponent(std::shared_ptr<AEntity> entity);
+
         void removeEntity(const std::size_t id);
         void removeEntity(std::shared_ptr<AEntity> entity);
 
@@ -129,6 +132,12 @@ namespace potEngine
     template <typename T>
     void Engine::addComponent(std::shared_ptr<AEntity> entity, std::shared_ptr<T> component) {
         entity->addComponent<T>(component);
+        EntitySignatureChanged(entity);
+    }
+
+    template <typename T>
+    void Engine::removeComponent(std::shared_ptr<AEntity> entity) {
+        entity->removeComponent<T>();
         EntitySignatureChanged(entity);
     }
     static Engine& engine = Engine::getInstance();

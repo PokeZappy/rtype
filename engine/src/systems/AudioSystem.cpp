@@ -20,8 +20,16 @@ namespace potEngine {
            if (!audioComponent)
                 continue;
             sf::Sound &sound = audioComponent->get()->getSound();
+            bool hasPlayedOnce = audioComponent->get()->getHasPlayedOnce();
+            bool isLooping = audioComponent->get()->isOnLoop();
             bool isPlaying = audioComponent->get()->isPlaying();
+
+            if (sound.getStatus() == sf::Sound::Stopped && !isLooping && hasPlayedOnce) {
+                engine.removeComponent<AudioComponent>(entity);
+                continue;
+            }
             if (isPlaying && sound.getStatus() == sf::Sound::Stopped) {
+                audioComponent->get()->hasPlayedOnce(true);
                 sound.play();
             }
             if (!isPlaying && sound.getStatus() == sf::Sound::Playing) {

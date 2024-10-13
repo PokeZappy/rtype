@@ -169,8 +169,8 @@ void RType::Client::create_explosion(sf::Vector2i pos) {
     auto positionComponent = std::make_shared<potEngine::PositionComponent>(pos.x, pos.y); // TODO - remplacer par les pos.x, pos.y
     auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(72, 30, 22, 30), sf::Vector2i(3140, 1080), sf::Vector2i(1206, 207));
     auto animeComponent = std::make_shared<potEngine::AnimationComponent>(5, 0.15, false, explosion_animation);
-    auto soundComponent = std::make_shared<potEngine::AudioComponent>(soundPath, false);
-//    soundComponent->setPlaying(true); TODO -Check avec le S pourquoi c'est en loop ???
+    auto soundComponent = std::make_shared<potEngine::AudioComponent>(soundPath, false, true);
+    soundComponent->setPlaying(true); // TODO -Check avec le S pourquoi c'est en loop ???
     potEngine::engine.addComponent(entity, positionComponent);
     potEngine::engine.addComponent(entity, spriteComponent);
     potEngine::engine.addComponent(entity, animeComponent);
