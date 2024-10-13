@@ -20,3 +20,7 @@
 #include "MoveEvent.hpp"
 #include "EntityCreateEvent.hpp"
 #include "CollisionEvent.hpp"
+#include "StartStageEvent.hpp"
+#include "StageEvent.hpp"
+
+#include "StageComponent.hpp"

@@ -9,13 +9,9 @@
 #include "Engine.hpp"
 #include "WindowComponent.hpp"
 #include <netinet/in.h>
-#include "BlcEvent.hpp"
 #include <libconfig.h++>
-
-// #include "game_config.hpp" // TODO faire marcher cet include trop la flemme actuellement
 #include "Config.hpp"
 #include "NoneEvent.hpp"
-// #include "GameInclude.hpp" // TODO faire marcher cet include trop la flemme actuellement
 
 namespace potEngine {
     class RecvMessageSystem : public ASystem {

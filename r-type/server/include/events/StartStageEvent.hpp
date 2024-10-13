@@ -5,12 +5,8 @@
 #include <SFML/System.hpp>
 #include <memory>
 
-#include "IEvent.hpp"
-#include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "server_config.hpp"
 #include "StageComponent.hpp"
-#include "game_config.hpp"
-#include "AssetFinder.hpp"
 #include "StageEvent.hpp"
 
 namespace potEngine
@@ -24,15 +20,15 @@ namespace potEngine
         uint8_t entity_id;
         std::vector<unsigned short> _params;
 
-            StratStageInfoEvent(const int maxPlayers, int serverFd, unsigned char entityId, std::vector<unsigned short>& params)
-            : max_players(maxPlayers), fd(serverFd), entity_id(entityId), _params(params) {}
+            StratStageInfoEvent(int maxPlayers, int serverFd, std::size_t entityId)
+            : max_players(maxPlayers), fd(serverFd), entity_id(entityId) {}
     };
 
     class StartStageEvent : public IEvent
     {
     public:
         StartStageEvent() {
-            eventBus.subscribe(this, &StartStageEvent::StartStage);
+            engine.subscribeEvent(this, &StartStageEvent::StartStage);
         };
 
         void StartStage(std::shared_ptr<StratStageInfoEvent> info)
@@ -40,22 +36,22 @@ namespace potEngine
             std::optional<std::shared_ptr<potEngine::StageComponent>> stageComponent = std::nullopt;
             std::shared_ptr<potEngine::AEntity> entity;
 
-            for (auto entity : ecsManager.getEntities()) {
+            for (auto entity : engine.getEntities()) {
                 if (entity->hasComponent<StageComponent>()) {
                     stageComponent = entity->getComponent<StageComponent>();
                     return;
                 }
             }
             if (stageComponent == std::nullopt) {
-                entity = ecsManager.createEntity();
+                entity = engine.createEntity();
                 auto newStageComponent = std::make_shared<StageComponent>();
-                ecsManager.addComponent(entity, newStageComponent);
+                engine.addComponent(entity, newStageComponent);
                 stageComponent = newStageComponent;
             }
             stageComponent->get()->_level++;
             try {
                 libconfig::Config cfg;
-                cfg.readFile(potEngine::assetFinder() + "/../server/config/stage_" + std::to_string(stageComponent->get()->_level) + ".cfg");
+                cfg.readFile(assetFinder() + "/../server/config/stage_" + std::to_string(stageComponent->get()->_level) + ".cfg");
                 libconfig::Setting &root = cfg.getRoot();
                 stageComponent->get()->_clock.restart();
                 stageComponent->get()->_start_time = root["stage_info"]["start_time"];
@@ -106,7 +102,7 @@ namespace potEngine
                 std::cerr << "Setting type error in configuration file." << stex.getPath() << std::endl;
                 return;
             }
-            eventBus.publish(std::make_shared<StageInfoEvent>(entity));
+            engine.publishEvent(std::make_shared<StageInfoEvent>(entity));
         };
     };
 }

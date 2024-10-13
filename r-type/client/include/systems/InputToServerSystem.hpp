@@ -83,17 +83,16 @@ namespace potEngine {
                         auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::MOVE_RIGHT, std::vector<size_t>{});
                         potEngine::engine.publishEvent(moveInfo);
                     }
-                    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
-                    //     auto startStage = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::START_STAGE, std::vector<uint16_t>{});
-                    //     potEngine::engine.publishEvent(startStage);
-                    // }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
+                        auto startStage = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::START_STAGE, std::vector<size_t>{});
+                        potEngine::engine.publishEvent(startStage);
+                    }
                     // if (event->type == sf::Event::KeyReleased) {
                     //     if (event->key == sf::Keyboard::L) {
                     //         auto startStage = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::START_STAGE, std::vector<uint16_t>{});
                     //         potEngine::eventBus.publish(startStage);
                     //     }
                     // }
-                    auto playerEntity = engine.getEntity(_playerId);
                     auto playerEntity = engine.getEntity(_playerId);
                     auto playerComponent = playerEntity->getComponent<PlayerComponent>();
                     if (!playerComponent)

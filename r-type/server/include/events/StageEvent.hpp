@@ -5,10 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 
-#include "IEvent.hpp"
-#include "EventBus.hpp"
-#include "StageComponent.hpp"
-#include "ECSManager.hpp"
+#include "server_config.hpp"
 
 namespace potEngine
 {
@@ -26,7 +23,7 @@ namespace potEngine
     {
     public:
         StageEvent() {
-            eventBus.subscribe(this, &StageEvent::StageGame);
+            engine.subscribeEvent(this, &StageEvent::StageGame);
             std::srand(time(nullptr));
         };
 
@@ -40,7 +37,7 @@ namespace potEngine
             if ((std::size_t) stage->_actual_wave > stage->_stageInfo.size())
                 return;
             if (stage->_actual_wave == 0 && stage->_clock.getElapsedTime().asSeconds() < stage->_start_time) {
-                eventBus.publish(info);
+                engine.publishEvent(info);
                 return;
             }
             if (stage->_actual_wave == 0) {
@@ -63,7 +60,7 @@ namespace potEngine
 
                     }
                     std::cout << "apparition_time: " << wave->_apparition_time[i] << std::endl;
-                    monster = ecsManager.createEntity();
+                    monster = engine.createEntity();
                     std::shared_ptr<PositionComponent> comp;
                     std::cout << "monster: " << wave->_monsters[i] << std::endl;
                     // for (std::size_t j = 0; j < wave->_apparition_point->size(); j++) {
@@ -82,12 +79,12 @@ namespace potEngine
                         // comp = std::make_shared<PositionComponent>(wave->_apparition_point[i][0], wave->_apparition_point[i][1]);
                         // ecsManager->addComponent(monster, comp);
                     }
-                    ecsManager.addComponent(monster, comp);
+                    engine.addComponent(monster, comp);
                     wave->_nb_monsters[i]++;
                     std::cout << "nb_monsters: " << wave->_nb_monsters[i] << std::endl << std::endl;
                 }
             }
-            eventBus.publish(info);
+            engine.publishEvent(info);
         }
     };
 }
