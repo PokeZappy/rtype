@@ -1,14 +1,13 @@
 #include "AudioSystem.hpp"
 #include "SpriteComponent.hpp"
 #include "InputInfoEvent.hpp"
-#include <iostream>
 
 namespace potEngine {
 
     AudioSystem::AudioSystem() : ASystem()
     {
         _signature.set(AComponent::getID<AudioComponent>(), true);
-        eventBus.subscribe(this, &AudioSystem::updateSounds);
+        engine.subscribeEvent(this, &AudioSystem::updateSounds);
     }
 
     AudioSystem::~AudioSystem() {

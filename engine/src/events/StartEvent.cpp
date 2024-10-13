@@ -2,7 +2,7 @@
 
 namespace potEngine {
     StartEvent::StartEvent() {
-            eventBus.subscribe(this, &StartEvent::eventStart);
+            engine.subscribeEvent(this, &StartEvent::eventStart);
         };
     
     void StartEvent::eventStart(std::shared_ptr<StartEvent>) 
@@ -10,8 +10,8 @@ namespace potEngine {
         if (!_mainLoopEvent) {
             _mainLoopEvent = std::make_shared<MainLoopEvent>();
         }
-        eventBus.subscribe(_mainLoopEvent.get(), &MainLoopEvent::eventMainLoop);
-        eventBus.publish(_mainLoopEvent);
+        engine.subscribeEvent(_mainLoopEvent.get(), &MainLoopEvent::eventMainLoop);
+        engine.publishEvent(_mainLoopEvent);
     };
 
     // void StartEvent::addEvent(std::shared_ptr<IEvent> e) {

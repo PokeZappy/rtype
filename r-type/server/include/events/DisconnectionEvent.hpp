@@ -1,14 +1,14 @@
 #pragma once
 
+#include <vector>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "SendMessageToAllEvent.hpp"
 #include "PlayerComponent.hpp"
 #include "NetworkComponent.hpp"
-
-#include <netinet/in.h>
-#include <vector>
+#include "Config.hpp"
 
 namespace potEngine
 {
@@ -26,13 +26,13 @@ namespace potEngine
     class DisconnectionEvent : public IEvent {
     public:
         DisconnectionEvent() {
-            eventBus.subscribe(this, &DisconnectionEvent::disconnect);
+            engine.subscribeEvent(this, &DisconnectionEvent::disconnect);
         };
 
         void disconnect(std::shared_ptr<DisconnectionInfoEvent> info) {
-            if (ecsManager.getEntity(info->entity_id) == nullptr)
+            if (engine.getEntity(info->entity_id) == nullptr)
                 return;
-            std::string player_name = ecsManager.getEntity(info->entity_id).get()->getComponent<potEngine::PlayerComponent>()->get()->username;
+            std::string player_name = engine.getEntity(info->entity_id).get()->getComponent<PlayerComponent>()->get()->username;
             std::cout << "[SERVER] Player disconnected: {id}-[" << std::to_string(static_cast<int>(info->entity_id)) << "], {username}-[" << player_name << "]" << std::endl;
 
             auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(
@@ -41,9 +41,9 @@ namespace potEngine
                 info->entity_id,
                 DISCONNECT,
                 info->params,
-                ecsManager.getEntities()
+                engine.getEntities()
             );
-            eventBus.publish(sendMessageToAllEventInfo);
+            engine.publishEvent(sendMessageToAllEventInfo);
         }
     };
 }

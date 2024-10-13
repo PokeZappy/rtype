@@ -6,11 +6,13 @@
 */
 
 #include "client_config.hpp"
+#include "Config.hpp"
+#include "IEvent.hpp"
 
 std::tuple<size_t, potEngine::EventType, std::vector<size_t>> RType::Client::recv_message(struct sockaddr_in& addr, socklen_t& addr_len)
 {
-    uint8_t buffer[1024];
-    ssize_t recv_len = recvfrom(client_fd, buffer, sizeof(buffer), 0, (struct sockaddr*)&addr, &addr_len);
+    uint8_t buffer[BUFFER_SIZE];
+    ssize_t recv_len = RECVFROM(client_fd, buffer, sizeof(buffer), 0, (struct sockaddr*)&addr, &addr_len);
 
     if (recv_len < 0 || static_cast<size_t>(recv_len) < sizeof(size_t)) {
         return std::make_tuple(0, potEngine::EventType::UNKNOW, std::vector<size_t>{});

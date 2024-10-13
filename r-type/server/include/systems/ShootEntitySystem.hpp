@@ -11,53 +11,38 @@
 #include "ASystem.hpp"
 #include "AEntity.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "NoneEvent.hpp"
 #include "ShootComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MoveEvent.hpp"
-
-#include <chrono>
 
 namespace potEngine
 {
     class ShootEntitySystem : public ASystem {
     public:
         int _serverFd;
-        std::chrono::time_point<std::chrono::steady_clock> lastUpdateTime;
-        float updateInterval;
-        int i = 0;
 
-        void update(float) override {};
-
-        ShootEntitySystem(int server_fd, float interval) : _serverFd(server_fd), updateInterval(interval)
+        ShootEntitySystem()
         {
-            lastUpdateTime = std::chrono::steady_clock::now();
             _signature.set(AComponent::getID<ShootComponent>(), true);
-            eventBus.subscribe(this, &ShootEntitySystem::updateSystem);
+            engine.subscribeEvent(this, &ShootEntitySystem::updateSystem);
         }
 
         ~ShootEntitySystem() {}
 
+        void update(float) override {}
+
         void updateSystem(std::shared_ptr<NoneEvent> event)
         {
-            auto currentTime = std::chrono::steady_clock::now();
-            std::chrono::duration<float> elapsedTime = currentTime - lastUpdateTime;
-
-            if (elapsedTime.count() >= updateInterval) {
-                lastUpdateTime = currentTime;
-
-                for (auto entity : _entitiesSystem) {
-                    // std::cout << "I: " << i++ << std::endl;
-                    auto moveInfo = std::make_shared<MoveInfoEvent>(
-                        4,
-                        -1,
-                        MOVE_RIGHT,
-                        entity->getID(),
-                        std::vector<size_t> {}
-                    );
-                    eventBus.publish(moveInfo);
-                }
+            for (auto entity : _entitiesSystem) {
+                auto moveInfo = std::make_shared<MoveInfoEvent>(
+                    4,
+                    -1,
+                    MOVE_RIGHT,
+                    entity->getID()
+                );
+                engine.publishEvent(moveInfo);
             }
         }
     };

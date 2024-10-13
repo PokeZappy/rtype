@@ -9,6 +9,7 @@
 
 RType::Server::Server() : current_players(0)
 {
+    INIT_WINSOCK();
     if ((server_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("Socket creation failed");
         exit(EXIT_FAILURE);
@@ -50,8 +51,7 @@ void RType::Server::init_subscribe()
 
 void RType::Server::setNonBlockingInput()
 {
-    int flags = fcntl(server_fd, F_GETFL, 0);
-    fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
+    SET_NONBLOCKING(server_fd)
 }
 
 void RType::Server::start()
@@ -59,11 +59,11 @@ void RType::Server::start()
     init_subscribe();
     setNonBlockingInput();
 
-    potEngine::ecsManager.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
-    potEngine::ecsManager.registerSystem<potEngine::ShootEntitySystem>(server_fd, 0.001f);
+    potEngine::engine.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
+    potEngine::engine.registerSystem<potEngine::ShootEntitySystem>();
 
+    potEngine::engine.timer.setTps(145);
     auto startEvent = std::make_shared<potEngine::StartEvent>();
-
-    potEngine::eventBus.publish(startEvent);
-    potEngine::ecsManager.update(0.016);
+    potEngine::engine.publishEvent(startEvent);
+    potEngine::engine.update();
 }

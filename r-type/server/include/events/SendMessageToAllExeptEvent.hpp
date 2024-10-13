@@ -1,14 +1,14 @@
 #pragma once
 
+#include <cmath>
+#include <vector>
+#include <cstring>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "AEntity.hpp"
 #include "NetworkComponent.hpp"
-
-#include <netinet/in.h>
-#include <cmath>
-#include <vector>
-#include <cstring>
+#include "Config.hpp"
 
 namespace potEngine
 {
@@ -28,12 +28,12 @@ namespace potEngine
     class SendMessageToAllExeptEvent : public IEvent {
     public:
         SendMessageToAllExeptEvent() {
-            eventBus.subscribe(this, &SendMessageToAllExeptEvent::SendMessageToAllExept);
+            engine.subscribeEvent(this, &SendMessageToAllExeptEvent::SendMessageToAllExept);
         };
 
         void SendMessageToAllExept(std::shared_ptr<SendMessageToAllExeptEventInfo> info)
         {
-            if (ecsManager.getEntity(info->entity_id) == nullptr)
+            if (engine.getEntity(info->entity_id) == nullptr)
                 return;
             send_message_to_all(info->entity_id, info->event_type, info->params, info->entities, info->max_players, info->fd);
         }
@@ -50,7 +50,7 @@ namespace potEngine
             for (size_t i = 0; i < params.size(); ++i) {
                 std::memcpy(packet.data() + sizeof(size_t) + i * sizeof(size_t), &params[i], sizeof(size_t));
             }
-            sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
+            SENDTO(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
         }
 
 

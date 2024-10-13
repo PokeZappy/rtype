@@ -1,6 +1,8 @@
 #pragma once
+
 #include <vector>
 #include <memory>
+#include <thread>
 
 #include "IEvent.hpp"
 #include "EventBus.hpp"
@@ -10,23 +12,13 @@
 
 namespace potEngine
 {
-    struct MainLoopEvent : public IEvent
-    {
-        MainLoopEvent()
-        {
-            eventBus.subscribe(this, &MainLoopEvent::stopMainLoop);
-        };
+    class MainLoopEvent : public IEvent {
+        public:
+        bool isRunning;
 
-        void eventMainLoop(std::shared_ptr<MainLoopEvent> event) {
-            if (!isRunning)
-                return;
-            eventBus.publish(std::make_shared<NoneEvent>());
-            eventBus.publish(event);
-        }
+        MainLoopEvent();
 
-        void stopMainLoop(std::shared_ptr<StopMainLoopEvent> event) {
-            isRunning = false;
-        }
-        bool isRunning = true;
+        void eventMainLoop(std::shared_ptr<MainLoopEvent> event);
+        void stopMainLoop(std::shared_ptr<StopMainLoopEvent> event);
     };
 }

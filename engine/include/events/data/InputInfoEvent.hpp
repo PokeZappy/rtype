@@ -1,10 +1,12 @@
 #pragma once
 
 #include <memory>
+
 #include <SFML/Graphics.hpp>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 
 namespace potEngine {
     class InputInfoEvent : public IEvent {

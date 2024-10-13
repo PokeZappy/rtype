@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <cmath>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
 #include "InputInfoEvent.hpp"
@@ -10,9 +12,7 @@
 #include "TextComponent.hpp"
 #include "staticMoveComponent.hpp"
 #include "ASystem.hpp"
-
-#include <netinet/in.h>
-#include <cmath>
+#include "Config.hpp"
 
 namespace potEngine {
 
@@ -21,7 +21,7 @@ namespace potEngine {
             BackgroundSystem() : ASystem() {
                 _signature.set(AComponent::getID<staticMoveComponent>(), true);
                 _signature.set(AComponent::getID<PositionComponent>(), true);
-                eventBus.subscribe(this, &BackgroundSystem::moveBackground);
+                engine.subscribeEvent(this, &BackgroundSystem::moveBackground);
             };
 
             void moveBackground(std::shared_ptr<NoneEvent> event) {

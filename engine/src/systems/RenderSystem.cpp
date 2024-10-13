@@ -1,13 +1,11 @@
+#include <filesystem>
+
 #include "RenderSystem.hpp"
 #include "SpriteComponent.hpp"
 #include "TextComponent.hpp"
 #include "WindowEntity.hpp"
 #include "WindowComponent.hpp"
 #include "PositionComponent.hpp"
-#include <iostream>
-#include <filesystem>
-#include <stdexcept>
-#include <unistd.h>
 
 namespace potEngine
 {
@@ -16,7 +14,7 @@ namespace potEngine
         _signature.set(AComponent::getID<SpriteComponent>(), true);
         _signature.set(AComponent::getID<TextComponent>(), true);
         _signature.set(AComponent::getID<WindowComponent>(), true);
-        eventBus.subscribe(this, &RenderSystem::renderWindow);
+        engine.subscribeEvent(this, &RenderSystem::renderWindow);
     }
 
     RenderSystem::~RenderSystem() {

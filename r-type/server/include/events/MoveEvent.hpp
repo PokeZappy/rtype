@@ -1,18 +1,19 @@
 #pragma once
 
+#include <vector>
+
+#include <SFML/Graphics.hpp>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "SendMessageToAllEvent.hpp"
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
 #include "CollisionComponent.hpp"
 #include "CollisionEvent.hpp"
-
-#include <netinet/in.h>
-#include <vector>
-#include <SFML/Graphics.hpp>
+#include "Config.hpp"
 
 namespace potEngine
 {
@@ -23,23 +24,23 @@ namespace potEngine
         EventType event;
         size_t entity_id;
 
-        MoveInfoEvent(int maxP, int fd, EventType event, size_t id, std::vector<size_t> p)
+        MoveInfoEvent(int maxP, int fd, EventType event, size_t id)
             : max_players(maxP), fd(fd), event(event), entity_id(id) {}
     };
 
     class MoveEvent : public IEvent {
     public:
         MoveEvent() {
-            eventBus.subscribe(this, &MoveEvent::Move);
+            engine.subscribeEvent(this, &MoveEvent::Move);
         };
 
         std::shared_ptr<AEntity> check_collision(std::shared_ptr<MoveInfoEvent> info, std::vector<int> current_pos)
         {
-            auto current_entity = ecsManager.getEntity(info->entity_id);
+            auto current_entity = engine.getEntity(info->entity_id);
             if (current_entity->getComponent<CollisionComponent>() == nullptr || current_entity->getComponent<PositionComponent>() == nullptr)
                 return nullptr;
 
-            for (auto entity : ecsManager.getEntities()) {
+            for (auto entity : engine.getEntities()) {
                 if (entity->getComponent<CollisionComponent>() == nullptr || entity->getComponent<PositionComponent>() == nullptr || entity->getID() == info->entity_id
                     || (entity->getComponent<PlayerComponent>() && current_entity->getComponent<PlayerComponent>()))
                     continue;
@@ -60,18 +61,21 @@ namespace potEngine
             if (!shootComponent || !posComponent)
                 return 0;
 
-            if ((info->event == MOVE_RIGHT && posComponent->get()->_position[0] >= 1920) ||
-                (info->event == MOVE_LEFT && posComponent->get()->_position[0] <= 0)) {
+            if ((info->event == MOVE_RIGHT && posComponent->get()->_position[0] == 800) ||
+                (info->event == MOVE_LEFT && posComponent->get()->_position[0] == 0)) {
                 auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(
                     info->max_players,
                     info->fd,
                     entity->getID(),
                     DEATH,
                     std::vector<size_t>{},
-                    ecsManager.getEntities()
+                    engine.getEntities()
                 );
-                eventBus.publish(sendMessageToAllEventInfo);
-                std::cout << "[SERVER] Shoot with {ID}-[" << entity->getID() << "] is dead." << std::endl;
+                engine.publishEvent(sendMessageToAllEventInfo);
+                return 1;
+            }
+            if ((info->event == MOVE_RIGHT && posComponent->get()->_position[0] > 800) ||
+                (info->event == MOVE_LEFT && posComponent->get()->_position[0] < 0)) {
                 return 1;
             }
             return 0;
@@ -79,9 +83,9 @@ namespace potEngine
 
         void Move(std::shared_ptr<MoveInfoEvent> info)
         {
-            auto _entity = ecsManager.getEntity(info->entity_id);
+            auto _entity = engine.getEntity(info->entity_id);
             if (!_entity) {
-                std::cout << "[SERVER] {ID}-[" << static_cast<int>(info->entity_id) << "] not found." << std::endl;
+                // std::cout << "[SERVER] {ID}-[" << info->entity_id << "] not found." << std::endl;
                 return;
             }
 
@@ -100,10 +104,10 @@ namespace potEngine
             int speed = _entity->getComponent<MovementComponent>()->get()->speed;
             if (info->event == MOVE_UP && position[1] > 0)
                 position[1] = (position[1] > speed) ? position[1] - speed : 0;
-            if (info->event == MOVE_DOWN && position[1] < 1080)
-                position[1] = (position[1] + speed < 1080) ? position[1] + speed : 1080;
-            if (info->event == MOVE_RIGHT && position[0] < 1920)
-                position[0] = (position[0] + speed < 1920) ? position[0] + speed : 1920;
+            if (info->event == MOVE_DOWN && position[1] < 600)
+                position[1] = (position[1] + speed < 600) ? position[1] + speed : 600;
+            if (info->event == MOVE_RIGHT && position[0] < 800)
+                position[0] = (position[0] + speed < 800) ? position[0] + speed : 800;
             if (info->event == MOVE_LEFT && position[0] > 0)
                 position[0] = (position[0] > speed) ? position[0] - speed : 0;
 
@@ -119,7 +123,7 @@ namespace potEngine
                     info->entity_id,
                     entity_collide->getID()
                 );
-                eventBus.publish(collisionEventInfo);
+                engine.publishEvent(collisionEventInfo);
             }
             if (info->fd != -1) {
                 auto sendMessageEventInfo = std::make_shared<SendMessageToAllEventInfo>(
@@ -128,9 +132,9 @@ namespace potEngine
                     info->entity_id,
                     info->event,
                     _pos,
-                    ecsManager.getEntities()
+                    engine.getEntities()
                 );
-                eventBus.publish(sendMessageEventInfo);
+                engine.publishEvent(sendMessageEventInfo);
             }
             // std::cout << "[SERVER] Entity {ID}-[" << std::to_string(static_cast<int>(info->entity_id))
             //     << "], {username}-[" << username << "], is moving to {" << _pos[0] << "," << _pos[1] << "}" << std::endl;

@@ -1,13 +1,14 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+
 #include "ASystem.hpp"
 #include "AEntity.hpp"
 #include "WindowEntity.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "WindowComponent.hpp"
-#include <netinet/in.h>
+#include "Config.hpp"
 #include "NoneEvent.hpp"
 // #include "GameInclude.hpp" // TODO faire marcher cet include trop la flemme actuellement
 
@@ -25,6 +26,7 @@ namespace potEngine {
 
         void updateSystem(std::shared_ptr<NoneEvent> event);
         std::tuple<size_t, potEngine::EventType, std::vector<size_t>> recv_message();
+    private:
         int _clientFd;
         struct sockaddr_in _addr;
         socklen_t _addrLen;

@@ -1,16 +1,14 @@
 #include "InputSystem.hpp"
-#include "SpriteComponent.hpp"
 #include "WindowEntity.hpp"
 #include "WindowComponent.hpp"
 #include "InputInfoEvent.hpp"
-#include <iostream>
 
 namespace potEngine {
 
     InputSystem::InputSystem() : ASystem()
     {
         _signature.set(AComponent::getID<WindowComponent>(), true);
-        eventBus.subscribe(this, &InputSystem::pollInputs);
+        engine.subscribeEvent(this, &InputSystem::pollInputs);
     }
 
     InputSystem::~InputSystem() {
@@ -30,19 +28,19 @@ namespace potEngine {
             {
                 if (sfmlEvent.type == sf::Event::KeyPressed) {
                 auto key = sfmlEvent.key.code;
-                // if (ecsManager.getInputs().find(key) != ecsManager.getInputs().end()) {
-                    // ecsManager.setInput(key, true);
+                // if (engine.getInputs().find(key) != engine.getInputs().end()) {
+                    // engine.setInput(key, true);
                 // }
             }
         
             if (sfmlEvent.type == sf::Event::KeyReleased) {
                 auto key = sfmlEvent.key.code;
-                // if (ecsManager.getInputs().find(key) != ecsManager.getInputs().end()) {
-                //     ecsManager.setInput(key, false);
+                // if (engine.getInputs().find(key) != engine.getInputs().end()) {
+                //     engine.setInput(key, false);
                 // }
             }
                 // std::shared_ptr<InputInfoEvent> input = std::make_shared<InputInfoEvent>(sfmlEvent.type, sfmlEvent.key.code);
-                // eventBus.publish(input);
+                // engine.publishEvent(input);
             }
         }
             // if (sfmlEvent.type == sf::Event::Closed)

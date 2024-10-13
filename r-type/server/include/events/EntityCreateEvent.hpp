@@ -1,17 +1,17 @@
 #pragma once
 
+#include <vector>
+
 #include "IEvent.hpp"
 #include "EventBus.hpp"
-#include "ECSManager.hpp"
+#include "Engine.hpp"
 #include "SendMessageToAllEvent.hpp"
 #include "PlayerComponent.hpp"
 #include "PositionComponent.hpp"
 #include "MovementComponent.hpp"
 #include "ShootComponent.hpp"
 #include "MonstreComponent.hpp"
-
-#include <netinet/in.h>
-#include <vector>
+#include "Config.hpp"
 
 namespace potEngine
 {
@@ -30,7 +30,7 @@ namespace potEngine
     class EntityCreateEvent : public IEvent {
     public:
         EntityCreateEvent() {
-            eventBus.subscribe(this, &EntityCreateEvent::EntityCreate);
+            engine.subscribeEvent(this, &EntityCreateEvent::EntityCreate);
         };
 
         void createShootEntity(std::shared_ptr<potEngine::AEntity> &entity, std::vector<int> pos)
@@ -40,10 +40,10 @@ namespace potEngine
             std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
             std::shared_ptr<ShootComponent> shootComponent = std::make_shared<ShootComponent>();
 
-            ecsManager.addComponent(entity, positionComponent);
-            ecsManager.addComponent(entity, movementComponent);
-            ecsManager.addComponent(entity, collisionComponent);
-            ecsManager.addComponent(entity, shootComponent);
+            engine.addComponent(entity, positionComponent);
+            engine.addComponent(entity, movementComponent);
+            engine.addComponent(entity, collisionComponent);
+            engine.addComponent(entity, shootComponent);
         }
 
         void createMonstreEntity(std::shared_ptr<potEngine::AEntity> &entity, std::vector<int> pos)
@@ -53,7 +53,7 @@ namespace potEngine
 
         void EntityCreate(std::shared_ptr<EntityCreateInfoEvent> info)
         {
-            auto entity = ecsManager.createEntity();
+            auto entity = engine.createEntity();
             auto entity_id = entity->getID();
 
             std::vector<size_t> _pos;
@@ -66,9 +66,9 @@ namespace potEngine
                 entity_id,
                 INFORMATION,
                 _pos,
-                ecsManager.getEntities()
+                engine.getEntities()
             );
-            eventBus.publish(sendMessageToAllEventInfo);
+            engine.publishEvent(sendMessageToAllEventInfo);
 
             if (info->entityType == EntityType::PEW)
                 createShootEntity(entity, info->position);
