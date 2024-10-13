@@ -4,7 +4,7 @@
 #define BUFFER_SIZE 1024
 
 #ifdef _WIN32
-    #define NOMINMAX
+    // #define NOMINMAX
     #include <winsock2.h>
     #include <ws2tcpip.h>
     #include <windows.h>
@@ -12,8 +12,6 @@
     #include <io.h>
 
     typedef SSIZE_T ssize_t;
-
-    #define STDIN_FILENO 0;
 
     #define INIT_WINSOCK() \
     WSADATA wsaData; \

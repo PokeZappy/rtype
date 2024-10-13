@@ -10,6 +10,7 @@
 
 RType::Client::Client() : player_id(0)
 {
+    INIT_WINSOCK();
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("Socket creation failed");
         exit(EXIT_FAILURE);
