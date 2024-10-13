@@ -18,6 +18,7 @@
 #include <chrono>
 #include <cstring>
 #include <unistd.h>
+#include <thread>
 
 namespace RType
 {

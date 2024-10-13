@@ -59,7 +59,7 @@ namespace potEngine
             std::cout << "[SERVER] Player connected: {id}-[" << std::to_string(static_cast<int>(player_id))
                 << "], {username}-[" << player_name << "]" << std::endl;
 
-            auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->fd, info->client_addr, player_id, CONNECTION, std::vector<size_t> {});
+            auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->fd, info->client_addr, player_id, CONNECTION, std::vector<size_t>{});
             engine.publishEvent(sendMessageEventInfo);
 
             std::vector<int> position = {0, 0};

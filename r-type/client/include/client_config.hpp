@@ -17,6 +17,7 @@
 #include <iostream>
 #include <fcntl.h>
 #include <termios.h>
+#include <thread>
 
 void title_screen(const std::string& asset_path);
 

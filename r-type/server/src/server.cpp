@@ -6,7 +6,6 @@
 */
 
 #include "server_config.hpp"
-#include <thread>
 
 RType::Server::Server() : current_players(0)
 {
@@ -14,20 +13,16 @@ RType::Server::Server() : current_players(0)
         perror("Socket creation failed");
         exit(EXIT_FAILURE);
     }
-
     _addr_len = sizeof(_addr);
     memset(&_addr, 0, _addr_len);
     _addr.sin_family = AF_INET;
     _addr.sin_addr.s_addr = INADDR_ANY;
     _addr.sin_port = htons(PORT);
-
-
     if (bind(server_fd, (const struct sockaddr *)&_addr, _addr_len) < 0) {
         perror("Bind failed");
         close(server_fd);
         exit(EXIT_FAILURE);
     }
-
     std::cout << "[SERVER] started on port " << PORT << ". Waiting for clients...\n";
 }
 
@@ -70,6 +65,5 @@ void RType::Server::start()
     auto startEvent = std::make_shared<potEngine::StartEvent>();
     potEngine::engine.publishEvent(startEvent);
     potEngine::engine.update();
-
     recvThread.join();
 }

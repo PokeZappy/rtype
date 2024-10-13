@@ -32,8 +32,6 @@ std::tuple<size_t, potEngine::EventType, std::vector<size_t>> RType::Server::rec
 void RType::Server::handle_message()
 {
     auto [entity_id, event_type, params] = recv_message();
-    // if (event_type != EventType::UNKNOW)
-    //     std::cout << "[SERVER] Received event from client: " << static_cast<int>(event_type) << std::endl;
 
     if (event_type == potEngine::CONNECTION && 4 > current_players) {
         auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(4, server_fd, _addr, params);

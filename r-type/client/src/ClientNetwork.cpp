@@ -59,7 +59,7 @@ void RType::Client::createPlayerEntity(std::vector<size_t> params, size_t entity
 
     std::shared_ptr<potEngine::PlayerComponent> playerComponent = std::make_shared<potEngine::PlayerComponent>(username);
     std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(position[0], position[1]);
-    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(1.0f);
+    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(5.0f);
     std::shared_ptr<potEngine::LifeComponent> lifeComponent = std::make_shared<potEngine::LifeComponent>(3);
     std::shared_ptr<potEngine::CollisionComponent> collisionComponent = std::make_shared<potEngine::CollisionComponent>();
     std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
@@ -112,19 +112,15 @@ void RType::Client::handleCreateEntity(std::vector<size_t> params, size_t entity
 void RType::Client::handle_message()
 {
     auto [entity_id, event_type, params] = recv_message();
-    if (event_type != potEngine::EventType::UNKNOW) {
-        // std::cout << "[CLIENT] Received event from server: " << static_cast<int>(event_type) << std::endl;
-    }
+
     if (event_type == potEngine::EventType::CONNECTION) {
         createPlayerEntity(params, entity_id);
     }
     if (event_type == potEngine::EventType::DISCONNECT) {
         if (entity_id == player_id) {
             std::cout << "[CLIENT] Disconnected from server." << std::endl;
-            // TODO: fermer le client ici.
             return;
         }
-        // std::cout << "[CLIENT] Client with {ID}-[" << static_cast<int>(entity_id) << "] disconnected from server." << std::endl;
     }
     if (event_type == potEngine::EventType::MOVE_UP || event_type == potEngine::EventType::MOVE_DOWN || event_type == potEngine::EventType::MOVE_LEFT || event_type == potEngine::EventType::MOVE_RIGHT) {
         auto entity = potEngine::engine.getEntity(entity_id);
@@ -132,16 +128,8 @@ void RType::Client::handle_message()
             std::cout << "[CLIENT] {ID}-[" << static_cast<int>(entity_id) << "] not found." << std::endl;
             return;
         }
-        std::vector<int> convertedParams(params.begin(), params.end());
-        entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
-
-        // auto player_comp = entity->getComponent<PlayerComponent>();
-        // std::string username = "";
-        // if (player_comp)
-        //     username = player_comp->get()->username;
-
-        // std::cout << "[CLIENT] Entity {ID}-[" << std::to_string(static_cast<int>(entity_id))
-        //     << "], {username}-[" << username << "], has move to {" << convertedParams[0] << "," << convertedParams[1] << "}" << std::endl;
+        // std::vector<int> convertedParams(params.begin(), params.end());
+        // entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
     }
     if (event_type == potEngine::EventType::INFORMATION) {
         handleCreateEntity(params, entity_id);

@@ -56,21 +56,6 @@ void RType::Client::init_subscribe()
     auto clientCollisionEvent = std::make_shared<potEngine::ClientCollisionEvent>();
 }
 
-void send_message(const struct sockaddr_in& addr, size_t entity_id, potEngine::EventType action, const std::vector<size_t>& params, size_t maxP, int fd)
-{
-    const size_t EVENT_TYPE_BITS = 8;
-    size_t packet_size = sizeof(size_t) + params.size() * sizeof(size_t);
-    std::vector<uint8_t> packet(packet_size);
-
-    size_t header = entity_id;
-    header |= (static_cast<size_t>(action) << (sizeof(size_t) * 8 - EVENT_TYPE_BITS));
-    std::memcpy(packet.data(), &header, sizeof(size_t));
-    for (size_t i = 0; i < params.size(); ++i) {
-        std::memcpy(packet.data() + sizeof(size_t) + i * sizeof(size_t), &params[i], sizeof(size_t));
-    }
-    sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
-}
-
 void RType::Client::handle_connection()
 {
     std::string username;
@@ -112,7 +97,6 @@ void RType::Client::create_background() {
     potEngine::engine.addComponent(entity, spriteComponent);
     potEngine::engine.addComponent(entity, static_move_component);
 
-
     std::cout << "[CLIENT] Background created." << std::endl;
 }
 
@@ -123,8 +107,12 @@ void RType::Client::start()
     handle_connection();
     setNonBlockingInput();
 
-    socklen_t addr_len = sizeof(_addr);
-    potEngine::engine.registerSystem<potEngine::RecvMessageSystem>(client_fd, _addr, addr_len, player_id);
+    std::thread recvThread([this]() {
+        while (true) {
+            handle_message();
+        }
+    });
+
     potEngine::engine.registerSystem<potEngine::ShipAnimationSystem>(player_id);
     potEngine::engine.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, _addr);
     potEngine::engine.registerSystem<potEngine::ShootEntityClientSystem>();
@@ -134,7 +122,6 @@ void RType::Client::start()
     potEngine::engine.timer.setTps(60);
     auto startEvent = std::make_shared<potEngine::StartEvent>();
     potEngine::engine.publishEvent(startEvent);
-
     potEngine::engine.update();
+    recvThread.join();
 }
-
