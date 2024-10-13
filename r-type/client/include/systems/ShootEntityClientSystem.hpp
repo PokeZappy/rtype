@@ -17,13 +17,16 @@
 #include "PositionComponent.hpp"
 #include "MoveClientEvent.hpp"
 
+#include <netinet/in.h>
+
 namespace potEngine
 {
     class ShootEntityClientSystem : public ASystem {
     public:
         int _serverFd;
+        struct sockaddr_in _addr;
 
-        ShootEntityClientSystem()
+        ShootEntityClientSystem(int fd, struct sockaddr_in addr) : _serverFd(fd), _addr(addr)
         {
             _signature.set(AComponent::getID<ShootComponent>(), true);
             engine.subscribeEvent(this, &ShootEntityClientSystem::updateSystem);
@@ -37,6 +40,8 @@ namespace potEngine
         {
             for (auto entity : _entitiesSystem) {
                 auto moveInfo = std::make_shared<MoveClientInfoEvent>(
+                    _serverFd,
+                    _addr,
                     MOVE_RIGHT,
                     engine.getClientIdFromServerId(entity->getID())
                 );

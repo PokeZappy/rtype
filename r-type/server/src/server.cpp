@@ -39,7 +39,7 @@ void RType::Server::init_subscribe()
     auto sendAllDataEvent = std::make_shared<potEngine::SendAllDataEvent>();
     auto sendMessageToAllExeptEvent = std::make_shared<potEngine::SendMessageToAllExeptEvent>();
     auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
-    auto moveEvent = std::make_shared<potEngine::MoveEvent>();
+    auto MoveServerEvent = std::make_shared<potEngine::MoveServerEvent>();
     auto collisionEvent = std::make_shared<potEngine::CollisionEvent>();
     auto entityCreateEvent = std::make_shared<potEngine::EntityCreateEvent>();
 }

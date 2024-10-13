@@ -78,7 +78,7 @@ void RType::Client::handle_connection()
             _pos.push_back(static_cast<size_t>(c));
         }
         _pos.insert(_pos.end(), position.begin(), position.end());
-        potEngine::RecvMessageSystem::createPlayerEntity(_pos, entity_id);
+        createPlayerEntity(_pos, entity_id);
     }
 }
 
@@ -115,7 +115,7 @@ void RType::Client::start()
 
     potEngine::engine.registerSystem<potEngine::ShipAnimationSystem>(player_id);
     potEngine::engine.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, _addr);
-    potEngine::engine.registerSystem<potEngine::ShootEntityClientSystem>();
+    potEngine::engine.registerSystem<potEngine::ShootEntityClientSystem>(client_fd, _addr);
 
     std::shared_ptr<potEngine::AEntity> window = potEngine::engine.createWindowEntity();
 

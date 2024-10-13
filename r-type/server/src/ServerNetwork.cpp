@@ -44,7 +44,7 @@ void RType::Server::handle_message()
         current_players--;
     }
     if (event_type == potEngine::MOVE_UP || event_type == potEngine::MOVE_DOWN || event_type == potEngine::MOVE_RIGHT || event_type == potEngine::MOVE_LEFT) {
-        auto moveInfo = std::make_shared<potEngine::MoveInfoEvent>(4, server_fd, event_type, entity_id);
+        auto moveInfo = std::make_shared<potEngine::MoveServerInfoEvent>(4, server_fd, event_type, entity_id);
         potEngine::engine.publishEvent(moveInfo);
     }
     if (event_type == potEngine::SHOOT) {

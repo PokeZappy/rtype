@@ -15,7 +15,7 @@
 #include "NoneEvent.hpp"
 #include "ShootComponent.hpp"
 #include "PositionComponent.hpp"
-#include "MoveEvent.hpp"
+#include "MoveServerEvent.hpp"
 
 namespace potEngine
 {
@@ -36,7 +36,7 @@ namespace potEngine
         void updateSystem(std::shared_ptr<NoneEvent> event)
         {
             for (auto entity : _entitiesSystem) {
-                auto moveInfo = std::make_shared<MoveInfoEvent>(
+                auto moveInfo = std::make_shared<MoveServerInfoEvent>(
                     4,
                     -1,
                     MOVE_RIGHT,

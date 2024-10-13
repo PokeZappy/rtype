@@ -69,9 +69,6 @@ void RType::Client::createPlayerEntity(std::vector<size_t> params, size_t entity
     potEngine::engine.addComponent(entity, lifeComponent);
     potEngine::engine.addComponent(entity, collisionComponent);
     potEngine::engine.addComponent(entity, spriteComponent);
-
-    // std::cout << "[CLIENT] New PlayerEntity created {ID}-[" << static_cast<int>(entity_id)
-    //     << "] {username}-[" << username <<  "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
 }
 
 void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_id)

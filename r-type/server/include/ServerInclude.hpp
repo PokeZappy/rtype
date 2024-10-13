@@ -16,6 +16,6 @@
 #include "SendAllDataEvent.hpp"
 #include "DisconnectionEvent.hpp"
 #include "ConnectionEvent.hpp"
-#include "MoveEvent.hpp"
+#include "MoveServerEvent.hpp"
 #include "EntityCreateEvent.hpp"
 #include "CollisionEvent.hpp"

@@ -16,24 +16,24 @@
 
 namespace potEngine
 {
-    class MoveInfoEvent : public IEvent {
+    class MoveServerInfoEvent : public IEvent {
     public:
         int max_players;
         int fd;
         EventType event;
         size_t entity_id;
 
-        MoveInfoEvent(int maxP, int fd, EventType event, size_t id)
+        MoveServerInfoEvent(int maxP, int fd, EventType event, size_t id)
             : max_players(maxP), fd(fd), event(event), entity_id(id) {}
     };
 
-    class MoveEvent : public IEvent {
+    class MoveServerEvent : public IEvent {
     public:
-        MoveEvent() {
-            engine.subscribeEvent(this, &MoveEvent::Move);
+        MoveServerEvent() {
+            engine.subscribeEvent(this, &MoveServerEvent::Move);
         };
 
-        std::shared_ptr<AEntity> check_collision(std::shared_ptr<MoveInfoEvent> info, std::vector<int> current_pos)
+        std::shared_ptr<AEntity> check_collision(std::shared_ptr<MoveServerInfoEvent> info, std::vector<int> current_pos)
         {
             auto current_entity = engine.getEntity(info->entity_id);
             if (current_entity->getComponent<CollisionComponent>() == nullptr || current_entity->getComponent<PositionComponent>() == nullptr)
@@ -52,7 +52,7 @@ namespace potEngine
             return nullptr;
         }
 
-        int removeShoot(std::shared_ptr<potEngine::AEntity> entity, std::shared_ptr<MoveInfoEvent> info)
+        int removeShoot(std::shared_ptr<potEngine::AEntity> entity, std::shared_ptr<MoveServerInfoEvent> info)
         {
             auto posComponent = entity->getComponent<PositionComponent>();
             auto shootComponent = entity->getComponent<ShootComponent>();
@@ -80,24 +80,14 @@ namespace potEngine
             return 0;
         }
 
-        void Move(std::shared_ptr<MoveInfoEvent> info)
+        void Move(std::shared_ptr<MoveServerInfoEvent> info)
         {
             auto _entity = engine.getEntity(info->entity_id);
-            if (!_entity) {
-                // std::cout << "[SERVER] {ID}-[" << info->entity_id << "] not found." << std::endl;
-                return;
-            }
-
-            if (removeShoot(_entity, info))
+            if (!_entity || removeShoot(_entity, info))
                 return;
 
             int save_x = _entity->getComponent<PositionComponent>()->get()->_position[0];
             int save_y = _entity->getComponent<PositionComponent>()->get()->_position[1];
-
-            auto player_comp = _entity->getComponent<PlayerComponent>();
-            std::string username = "";
-            if (player_comp)
-                username = player_comp->get()->username;
 
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
             int speed = _entity->getComponent<MovementComponent>()->get()->speed;
@@ -135,8 +125,6 @@ namespace potEngine
                 );
                 engine.publishEvent(sendMessageEventInfo);
             }
-            // std::cout << "[SERVER] Entity {ID}-[" << std::to_string(static_cast<int>(info->entity_id))
-            //     << "], {username}-[" << username << "], is moving to {" << _pos[0] << "," << _pos[1] << "}" << std::endl;
         }
     };
 }
