@@ -86,6 +86,7 @@ void RType::Client::handle_connection()
             _pos.push_back(static_cast<size_t>(c));
         }
         _pos.insert(_pos.end(), position.begin(), position.end());
+        _pos.insert(_pos.end(), params.begin(), params.end());
         potEngine::RecvMessageSystem::createPlayerEntity(_pos, entity_id);
     }
 }
@@ -153,7 +154,7 @@ void RType::Client::create_hurdle_destroyable() {
     std::cout << "[CLIENT] Hurdle Destroyable created." << std::endl;
 }
 
-static sf::IntRect explosion_animation(int frame) {
+static sf::IntRect explosion_animation(int frame, int offset) {
             return sf::IntRect(sf::Vector2i(130 + 32 * frame, 1), sf::Vector2i(32, 32));
 }
 

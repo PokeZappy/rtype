@@ -4,6 +4,7 @@
 
 #include "ShipAnimationSystem.hpp"
 #include "Config.hpp"
+#include "PlayerComponent.hpp"
 
 namespace potEngine {
     std::string getExecutablePath() {
@@ -72,7 +73,11 @@ std::string assetFinder() {
             auto playerEntity = engine.getEntity(_playerId);
 
             if (playerEntity->getComponent<AnimationComponent>() == std::nullopt) {
-                std::shared_ptr<AnimationComponent> upAnimation = std::make_shared<AnimationComponent>(2, 0.5, false, changeUpAnimationRect);
+                auto playerComponent = playerEntity->getComponent<PlayerComponent>();
+                if (!playerComponent)
+                    return;
+                
+                std::shared_ptr<AnimationComponent> upAnimation = std::make_shared<AnimationComponent>(2, 0.5, false, changeUpAnimationRect, 17 * playerComponent->get()->getPlayerNumber());
                 engine.addComponent(playerEntity, upAnimation);
             }
         // on monte le ship vers le bas
@@ -80,7 +85,11 @@ std::string assetFinder() {
             auto playerEntity = engine.getEntity(_playerId);
 
             if (playerEntity->getComponent<AnimationComponent>() == std::nullopt) {
-                std::shared_ptr<AnimationComponent> upAnimation = std::make_shared<AnimationComponent>(2, 0.5, false, changeDownAnimationRect);
+                auto playerComponent = playerEntity->getComponent<PlayerComponent>();
+                if (!playerComponent)
+                    return;
+
+                std::shared_ptr<AnimationComponent> upAnimation = std::make_shared<AnimationComponent>(2, 0.5, false, changeDownAnimationRect, 17 * playerComponent->get()->getPlayerNumber());
                 engine.addComponent(playerEntity, upAnimation);
             }
         } 

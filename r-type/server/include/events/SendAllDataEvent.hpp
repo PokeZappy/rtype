@@ -60,12 +60,14 @@ namespace potEngine
 
                 if (_entityType == EntityType::PLAYER) {
                     auto username = entity->getComponent<PlayerComponent>()->get()->username;
+                    auto playerNumber = entity->getComponent<PlayerComponent>()->get()->getPlayerNumber();
                     _pos.push_back(_entityType);
                     _pos.push_back(static_cast<size_t>(username.size()));
                     for (char c : username) {
                         _pos.push_back(static_cast<size_t>(c));
                     }
                     _pos.insert(_pos.end(), position.begin(), position.end());
+                    _pos.push_back(playerNumber);
                 } else {
                     _pos.push_back(_entityType);
                     _pos.insert(_pos.end(), position.begin(), position.end());

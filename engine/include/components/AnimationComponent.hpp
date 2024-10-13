@@ -11,24 +11,26 @@ namespace potEngine
 {
     class AnimationComponent : public AComponent {
     public:
-        AnimationComponent(int maxFrames, float interval, bool looping, std::function<sf::IntRect(int)> changeFrame);
+        AnimationComponent(int maxFrames, float interval, bool looping, std::function<sf::IntRect(int, int)> changeFrame, int offset = 0);
         ~AnimationComponent();
 
-        void setChangeFrame(std::function<sf::IntRect(int)> changeFrameFunc);
-        std::function<sf::IntRect(int)> getChangeFrame() const;
+        void setChangeFrame(std::function<sf::IntRect(int, int)> changeFrameFunc);
+        std::function<sf::IntRect(int, int)> getChangeFrame() const;
         int getMaxFrames() { return (_maxFrames); }
         int getActualFrame() { return (_actualFrame); }
         void setActualFrame(int frame) { _actualFrame = frame; }
         float getInterval() { return (_interval); }
         bool isLooping() { return (_looping); }
         sf::Clock &getClock() { return (_clock); }
+        int getAnimationOffset() { return (_offset); }
     private:
         int _maxFrames;
         int _actualFrame = 0;
         sf::Clock _clock;
         float _interval;
         bool _looping;
-        std::function<sf::IntRect(int)> _changeFrame;
+        std::function<sf::IntRect(int, int)> _changeFrame;
+        int _offset = 0;
     };
 }
 

@@ -20,7 +20,7 @@ namespace potEngine {
             std::chrono::time_point<std::chrono::steady_clock> lastUpdateTime;
             float updateInterval = 0.016f;
 
-            static sf::IntRect changeShootAnimationFrame(int frame) {
+            static sf::IntRect changeShootAnimationFrame(int frame, int offset) {
                 return sf::IntRect(sf::Vector2i(2 + 33 * (frame - 1) + std::abs((frame - 1) / 3), 51), sf::Vector2i(32, 30));
             }
             int createShootAnimation(std::shared_ptr<AEntity> playerEntity) {

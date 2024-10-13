@@ -45,9 +45,12 @@ namespace potEngine
             size_t header = entity_id;
             header |= (static_cast<size_t>(action) << (sizeof(size_t) * 8 - EVENT_TYPE_BITS));
             std::memcpy(packet.data(), &header, sizeof(size_t));
+            // std::cout << "params sur le point d'être send : ";
             for (size_t i = 0; i < params.size(); ++i) {
+                // std::cout << params[i] << " ";
                 std::memcpy(packet.data() + sizeof(size_t) + i * sizeof(size_t), &params[i], sizeof(size_t));
             }
+            // std::cout << std::endl;
             SENDTO(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
         }
 

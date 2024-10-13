@@ -39,7 +39,8 @@ namespace potEngine {
                     frame++;
                 }
                 auto changeFrameFunction = animationComponent->get()->getChangeFrame();
-                sf::IntRect newTextureRect = changeFrameFunction(frame);
+                auto offset = animationComponent->get()->getAnimationOffset();
+                sf::IntRect newTextureRect = changeFrameFunction(frame, offset);
                 sprite.setTextureRect(newTextureRect);
                 animationComponent->get()->setActualFrame(frame);
                 clock.restart();

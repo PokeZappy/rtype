@@ -36,11 +36,12 @@ namespace potEngine {
         //     std::cout << "[SERVER] Received event from client: " << static_cast<int>(event_type) << std::endl;
 
         if (event_type == CONNECTION && 4 > current_players) {
-            params.push_back(current_players);
+            std::cout << "le client nous envoie ces params : ";
+            // params.push_back(current_players);
             for (auto para : params)
                 std::cout << para << " ";
             std::cout << std::endl;
-            auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(4, _serverFd, _addr, params);
+            auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(4, _serverFd, _addr, params, current_players);
             engine.publishEvent(connectionInfo);
             current_players++;
         }

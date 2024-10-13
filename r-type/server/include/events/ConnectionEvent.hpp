@@ -20,9 +20,10 @@ namespace potEngine
         int fd;
         struct sockaddr_in client_addr;
         std::vector<size_t> params;
+        size_t playerNumber;
 
-        ConnectionInfoEvent(int maxP, int fd, struct sockaddr_in c_addr, std::vector<size_t> p)
-            : max_players(maxP), fd(fd), client_addr(c_addr), params(p) {}
+        ConnectionInfoEvent(int maxP, int fd, struct sockaddr_in c_addr, std::vector<size_t> p, size_t playerNb)
+            : max_players(maxP), fd(fd), client_addr(c_addr), params(p), playerNumber(playerNb) {}
     };
 
     class ConnectionEvent : public IEvent {
@@ -42,7 +43,10 @@ namespace potEngine
                 player_name.assign(info->params.begin(), info->params.end());
             }
 
-            std::shared_ptr<PlayerComponent> playerComponent = std::make_shared<PlayerComponent>(player_name);
+            auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->fd, info->client_addr, player_id, CONNECTION, std::vector<size_t>{info->playerNumber});
+            engine.publishEvent(sendMessageEventInfo);
+
+            std::shared_ptr<PlayerComponent> playerComponent = std::make_shared<PlayerComponent>(player_name, info->playerNumber);
             std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(0.0f, 0.0f);
             std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(5.0f);
             std::shared_ptr<NetworkComponent> networkComponent = std::make_shared<NetworkComponent>(info->client_addr, info->fd);
@@ -63,9 +67,6 @@ namespace potEngine
                     std::cout << para << " ";
             std::cout << std::endl;
 
-            auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->fd, info->client_addr, player_id, CONNECTION, info->params);
-            engine.publishEvent(sendMessageEventInfo);
-
             std::vector<int> position = {0, 0};
             std::vector<size_t> _pos;
             _pos.push_back(EntityType::PLAYER);
@@ -73,7 +74,16 @@ namespace potEngine
             for (char c : player_name) {
                 _pos.push_back(static_cast<size_t>(c));
             }
-            _pos.insert(_pos.end(), position.begin(), position.end());
+            _pos.push_back(0);
+            _pos.push_back(0);
+            _pos.push_back(static_cast<size_t>(info->playerNumber));
+            // _pos.insert(_pos.end(), position.begin(), position.end());
+            // std::cout << "player number = " << info->playerNumber << std::endl;
+            // std::cout << "params serveur : ";
+            // for (auto para: _pos)
+            //         std::cout << para << " ";
+            std::cout << std::endl;
+
             auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllExeptEventInfo>(info->max_players, info->fd, player_id, CONNECTION, _pos, engine.getEntities());
             engine.publishEvent(sendMessageToAllEventInfo);
 

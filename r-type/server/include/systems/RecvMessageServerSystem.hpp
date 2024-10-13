@@ -18,7 +18,7 @@ namespace potEngine
         int _serverFd;
         struct sockaddr_in _addr;
         socklen_t _addrLen;
-        int current_players;
+        size_t current_players = 0;
 
         void update(float) override {};
 

@@ -42,26 +42,28 @@ namespace potEngine
         size_t i = 0;
         for (; i < username_length; ++i) {
             username += static_cast<char>(params[2 + i]);
-            std::cout << params[2 + i] << " ";
+            // std::cout << params[2 + i] << " ";
         }
-        std::cout << std::endl;
-        for (auto para : params)
-            std::cout << para << " ";
-        std::cout << std::endl;
-        int nbr = params[i + 1];
-        std::cout << nbr << " WWWWWWWWWWWWWWWWWWWWWWWWWWWW" << std::endl;
+        // std::cout << std::endl;
+        // std::cout << "params client : ";
+        // for (auto para : params)
+        //     std::cout << para << " ";
+        // std::cout << std::endl;
         std::vector<size_t> position(params.begin() + 2 + username_length, params.end());
+        
+        int playerNbr = params[4 + username_length];
+        // std::cout << "numéro du player qui se connecte : " << playerNbr << std::endl;
 
         auto entity = engine.createServerEntity(entity_id);
 
         const std::string &texturePath = assetFinder() + "/sprites/r-typesheet42.gif";
 
-        std::shared_ptr<PlayerComponent> playerComponent = std::make_shared<PlayerComponent>(username);
+        std::shared_ptr<PlayerComponent> playerComponent = std::make_shared<PlayerComponent>(username, playerNbr);
         std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(position[0], position[1]);
         std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(1.0f);
         std::shared_ptr<LifeComponent> lifeComponent = std::make_shared<LifeComponent>(3);
         std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
-        std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
+        std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(66, 1 + (17 * playerNbr)), sf::Vector2i(33, 17)));
         engine.addComponent(entity, playerComponent);
         engine.addComponent(entity, positionComponent);
         engine.addComponent(entity, movementComponent);

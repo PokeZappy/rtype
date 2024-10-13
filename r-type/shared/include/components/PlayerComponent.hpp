@@ -19,14 +19,15 @@ namespace potEngine
     public:
         std::string username;
 
-
-        PlayerComponent(std::string username = "none")
-            : username(username) {}
+        PlayerComponent(std::string username = "none", size_t playerNb=0)
+            : username(username), _playerNumber(playerNb) {}
 
         void setShootAnimationEntityId(int value) {_shootAnimationEntityId = value; }
         std::optional<int> &getShootAnimationEntityId() { return (_shootAnimationEntityId); }
+        size_t getPlayerNumber() { return (_playerNumber); }
     private:
         std::optional<int> _shootAnimationEntityId;
+        size_t _playerNumber;
     };
 }
 
