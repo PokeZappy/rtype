@@ -37,8 +37,6 @@ namespace potEngine
         {
             for (auto entity : _entitiesSystem) {
                 auto moveInfo = std::make_shared<MoveClientInfoEvent>(
-                    4,
-                    -1,
                     MOVE_RIGHT,
                     engine.getClientIdFromServerId(entity->getID())
                 );

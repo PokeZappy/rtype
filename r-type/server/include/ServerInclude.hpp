@@ -10,7 +10,6 @@
 #include "SharedInclude.hpp"
 
 #include "ShootEntitySystem.hpp"
-#include "RecvMessageServerSystem.hpp"
 
 #include "SendMessageToAllEvent.hpp"
 #include "SendMessageToAllExeptEvent.hpp"

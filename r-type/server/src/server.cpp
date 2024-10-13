@@ -6,6 +6,7 @@
 */
 
 #include "server_config.hpp"
+#include <thread>
 
 RType::Server::Server() : current_players(0)
 {
@@ -14,14 +15,14 @@ RType::Server::Server() : current_players(0)
         exit(EXIT_FAILURE);
     }
 
-    server_addr_len = sizeof(server_addr);
-    memset(&server_addr, 0, server_addr_len);
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(PORT);
+    _addr_len = sizeof(_addr);
+    memset(&_addr, 0, _addr_len);
+    _addr.sin_family = AF_INET;
+    _addr.sin_addr.s_addr = INADDR_ANY;
+    _addr.sin_port = htons(PORT);
 
 
-    if (bind(server_fd, (const struct sockaddr *)&server_addr, server_addr_len) < 0) {
+    if (bind(server_fd, (const struct sockaddr *)&_addr, _addr_len) < 0) {
         perror("Bind failed");
         close(server_fd);
         exit(EXIT_FAILURE);
@@ -59,11 +60,16 @@ void RType::Server::start()
     init_subscribe();
     setNonBlockingInput();
 
-    potEngine::engine.registerSystem<potEngine::RecvMessageServerSystem>(server_fd, server_addr, server_addr_len);
-    potEngine::engine.registerSystem<potEngine::ShootEntitySystem>();
+    std::thread recvThread([this]() {
+        while (true) {
+            handle_message();
+        }
+    });
 
     potEngine::engine.timer.setTps(20);
     auto startEvent = std::make_shared<potEngine::StartEvent>();
     potEngine::engine.publishEvent(startEvent);
     potEngine::engine.update();
+
+    recvThread.join();
 }

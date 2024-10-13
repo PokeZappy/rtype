@@ -28,16 +28,22 @@ namespace RType
         ~Client();
 
         void start();
-        std::tuple<size_t, potEngine::EventType, std::vector<size_t>> recv_message(struct sockaddr_in& addr, socklen_t& addr_len);
         void init_subscribe();
         void setNonBlockingInput();
         void create_background();
         void handle_connection();
 
+        void send_message(size_t entity_id, potEngine::EventType action, const std::vector<size_t>& params, size_t maxP, int fd);
+        std::tuple<size_t, potEngine::EventType, std::vector<size_t>> recv_message();
+        void handle_message();
+        void createPlayerEntity(std::vector<size_t> params, size_t entity_id);
+        void createShootEntity(std::vector<size_t> params, size_t entity_id);
+        void handleCreateEntity(std::vector<size_t> params, size_t entity_id);
     private:
         size_t player_id;
         int client_fd;
-        struct sockaddr_in server_addr;
+        struct sockaddr_in _addr;
+        socklen_t _addr_len;
     };
 }
 

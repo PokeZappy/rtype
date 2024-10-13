@@ -14,10 +14,11 @@ RType::Client::Client() : player_id(0)
         exit(EXIT_FAILURE);
     }
 
-    memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    _addr_len = sizeof(_addr);
+    memset(&_addr, 0, _addr_len);
+    _addr.sin_family = AF_INET;
+    _addr.sin_port = htons(PORT);
+    _addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
     potEngine::engine.registerSystem<potEngine::RenderSystem>();
     potEngine::engine.registerSystem<potEngine::InputSystem>();
@@ -72,16 +73,14 @@ void send_message(const struct sockaddr_in& addr, size_t entity_id, potEngine::E
 
 void RType::Client::handle_connection()
 {
-    socklen_t addr_len = sizeof(server_addr);
-
     std::string username;
     std::cout << "Enter your username: ";
     std::cin >> username;
 
     std::vector<size_t> params_username(username.begin(), username.end());
-    send_message(server_addr, 0, potEngine::CONNECTION, params_username, MAX_PLAYERS, client_fd);
+    send_message(0, potEngine::CONNECTION, params_username, MAX_PLAYERS, client_fd);
 
-    auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
+    auto [entity_id, event_type, params] = recv_message();
     if (event_type == potEngine::EventType::CONNECTION) {
         std::cout << "[CLIENT] Connected to the server with {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
         player_id = entity_id;
@@ -124,10 +123,10 @@ void RType::Client::start()
     handle_connection();
     setNonBlockingInput();
 
-    socklen_t addr_len = sizeof(server_addr);
-    potEngine::engine.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
+    socklen_t addr_len = sizeof(_addr);
+    potEngine::engine.registerSystem<potEngine::RecvMessageSystem>(client_fd, _addr, addr_len, player_id);
     potEngine::engine.registerSystem<potEngine::ShipAnimationSystem>(player_id);
-    potEngine::engine.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, server_addr);
+    potEngine::engine.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, _addr);
     potEngine::engine.registerSystem<potEngine::ShootEntityClientSystem>();
 
     std::shared_ptr<potEngine::AEntity> window = potEngine::engine.createWindowEntity();

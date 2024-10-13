@@ -15,13 +15,11 @@ namespace potEngine
 {
     class MoveClientInfoEvent : public IEvent {
     public:
-        int max_players;
-        int fd; // TODO: pas besoin
         EventType event;
         size_t entity_id;
 
-        MoveClientInfoEvent(int maxP, int fd, EventType event, size_t id)
-            : max_players(maxP), fd(fd), event(event), entity_id(id) {}
+        MoveClientInfoEvent(EventType event, size_t id)
+            : event(event), entity_id(id) {}
     };
 
     class MoveClientEvent : public IEvent {
