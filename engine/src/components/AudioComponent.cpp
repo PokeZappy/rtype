@@ -5,6 +5,7 @@ namespace potEngine {
         _buffer.loadFromFile(fileName);
         _sound.setBuffer(_buffer);
         _playOnLoop = playOnLoop;
+        _isPlaying = isPlaying;
         _sound.setLoop(_playOnLoop);
     }
     
