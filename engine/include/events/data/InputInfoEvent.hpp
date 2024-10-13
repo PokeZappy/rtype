@@ -13,7 +13,7 @@ namespace potEngine {
     public:
         sf::Event::EventType type;
         sf::Keyboard::Key key;
-
+// todo shared pointer window entity
         InputInfoEvent(sf::Event::EventType eType, sf::Keyboard::Key eKey) : type(eType), key(eKey) {};
     };
 }

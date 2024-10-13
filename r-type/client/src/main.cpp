@@ -16,7 +16,7 @@ int main()
     }
 
     RType::Client client;
-    // title_screen(asset_path);
+//     title_screen(asset_path);
     client.start();
     return 0;
 }

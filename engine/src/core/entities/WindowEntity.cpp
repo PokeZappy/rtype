@@ -22,7 +22,7 @@ namespace potEngine
     }
 
     sf::RenderWindow* WindowEntity::getWindowEntity() {
-        return getComponent<WindowComponent>()->get()->getWindow();
+//        return getComponent<WindowComponent>()->get()->getWindow();
     }
 
     sf::Color WindowEntity::getColorClear() const {

@@ -57,9 +57,13 @@ namespace potEngine
             engine.addComponent(player_entity, collisionComponent);
 
             std::cout << "[SERVER] Player connected: {id}-[" << std::to_string(static_cast<int>(player_id))
-                << "], {username}-[" << player_name << "]" << std::endl;
+                << "], {username}-[" << player_name << "]" << "params : " ;
+            if (!info->params.empty())
+                for (auto para: info->params)
+                    std::cout << para << " ";
+            std::cout << std::endl;
 
-            auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->fd, info->client_addr, player_id, CONNECTION, std::vector<size_t> {});
+            auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->fd, info->client_addr, player_id, CONNECTION, info->params);
             engine.publishEvent(sendMessageEventInfo);
 
             std::vector<int> position = {0, 0};
@@ -70,7 +74,6 @@ namespace potEngine
                 _pos.push_back(static_cast<size_t>(c));
             }
             _pos.insert(_pos.end(), position.begin(), position.end());
-
             auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllExeptEventInfo>(info->max_players, info->fd, player_id, CONNECTION, _pos, engine.getEntities());
             engine.publishEvent(sendMessageToAllEventInfo);
 

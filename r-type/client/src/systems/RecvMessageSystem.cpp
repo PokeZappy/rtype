@@ -39,9 +39,17 @@ namespace potEngine
     {
         size_t username_length = params[1];
         std::string username;
-        for (size_t i = 0; i < username_length; ++i) {
+        size_t i = 0;
+        for (; i < username_length; ++i) {
             username += static_cast<char>(params[2 + i]);
+            std::cout << params[2 + i] << " ";
         }
+        std::cout << std::endl;
+        for (auto para : params)
+            std::cout << para << " ";
+        std::cout << std::endl;
+        int nbr = params[i + 1];
+        std::cout << nbr << " WWWWWWWWWWWWWWWWWWWWWWWWWWWW" << std::endl;
         std::vector<size_t> position(params.begin() + 2 + username_length, params.end());
 
         auto entity = engine.createServerEntity(entity_id);
@@ -93,8 +101,7 @@ namespace potEngine
     void RecvMessageSystem::handleCreateEntity(std::vector<size_t> params, size_t entity_id)
     {
         size_t type = params[0];
-
-        if (type == EntityType::PLAYER)
+         if (type == EntityType::PLAYER)
             return RecvMessageSystem::createPlayerEntity(params, entity_id);
         if (type == EntityType::PEW)
             return RecvMessageSystem::createShootEntity(params, entity_id);
