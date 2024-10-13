@@ -110,7 +110,7 @@ void RType::Client::create_background() {
 }
 
 void RType::Client::create_hurdle() {
-    auto entity =  potEngine::ecsManager.createEntity();
+    auto entity =  potEngine::engine.createEntity();
 
     if (sf::Texture hurdleTexture; !hurdleTexture.loadFromFile(assetFinder() + "/sprites/space_ background.png"))
         std::cout << assetFinder() << std::endl;
@@ -121,17 +121,17 @@ void RType::Client::create_hurdle() {
     auto staticMoveComponent = std::make_shared<potEngine::staticMoveComponent>(sf::Vector2i(-3000, 1000), sf::Vector2i(1920, 1000));
     auto collisionComponent = std::make_shared<potEngine::CollisionComponent>();
 
-    potEngine::ecsManager.addComponent(entity, positionComponent);
-    potEngine::ecsManager.addComponent(entity, spriteComponent);
-    potEngine::ecsManager.addComponent(entity, staticMoveComponent);
-    potEngine::ecsManager.addComponent(entity, collisionComponent);
+    potEngine::engine.addComponent(entity, positionComponent);
+    potEngine::engine.addComponent(entity, spriteComponent);
+    potEngine::engine.addComponent(entity, staticMoveComponent);
+    potEngine::engine.addComponent(entity, collisionComponent);
 
 
     std::cout << "[CLIENT] Hurdle created." << std::endl;
 }
 
 void RType::Client::create_hurdle_destroyable() {
-    auto entity =  potEngine::ecsManager.createEntity();
+    auto entity =  potEngine::engine.createEntity();
 
     if (sf::Texture hurdleTexture; !hurdleTexture.loadFromFile(assetFinder() + "/sprites/r-typesheet10.gif"))
         std::cout << assetFinder() << std::endl;
@@ -143,12 +143,37 @@ void RType::Client::create_hurdle_destroyable() {
     auto collisionComponent = std::make_shared<potEngine::CollisionComponent>();
     auto lifeComponent = std::make_shared<potEngine::LifeComponent>();
 
-    potEngine::ecsManager.addComponent(entity, positionComponent);
-    potEngine::ecsManager.addComponent(entity, spriteComponent);
-    potEngine::ecsManager.addComponent(entity, staticMoveComponent);
-    potEngine::ecsManager.addComponent(entity, collisionComponent);
-    potEngine::ecsManager.addComponent(entity, lifeComponent);
+    potEngine::engine.addComponent(entity, positionComponent);
+    potEngine::engine.addComponent(entity, spriteComponent);
+    potEngine::engine.addComponent(entity, staticMoveComponent);
+    potEngine::engine.addComponent(entity, collisionComponent);
+    potEngine::engine.addComponent(entity, lifeComponent);
 
+
+    std::cout << "[CLIENT] Hurdle Destroyable created." << std::endl;
+}
+
+static sf::IntRect explosion_animation(int frame) {
+            return sf::IntRect(sf::Vector2i(130 + 32 * frame, 1), sf::Vector2i(32, 32));
+}
+
+void RType::Client::create_explosion(sf::Vector2i pos) {
+    auto entity =  potEngine::engine.createEntity();
+
+    if (sf::Texture last; !last.loadFromFile(assetFinder() + "/sprites/r-typesheet44.gif")) // TODO - remplacer par le path
+        std::cout << assetFinder() << std::endl;
+    const std::string &soundPath = assetFinder() + "/Soundtracks/sound_fx/Boss_JunkTitan_Slam_Impact_01.wav";
+    const std::string &texturePath = assetFinder() + "/sprites/r-typesheet44.gif";
+
+    auto positionComponent = std::make_shared<potEngine::PositionComponent>(pos.x, pos.y); // TODO - remplacer par les pos.x, pos.y
+    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(72, 30, 22, 30), sf::Vector2i(3140, 1080), sf::Vector2i(1206, 207));
+    auto animeComponent = std::make_shared<potEngine::AnimationComponent>(5, 0.15, false, explosion_animation);
+    auto soundComponent = std::make_shared<potEngine::AudioComponent>(soundPath, false);
+//    soundComponent->setPlaying(true); TODO -Check avec le S pourquoi c'est en loop ???
+    potEngine::engine.addComponent(entity, positionComponent);
+    potEngine::engine.addComponent(entity, spriteComponent);
+    potEngine::engine.addComponent(entity, animeComponent);
+    potEngine::engine.addComponent(entity, soundComponent);
 
     std::cout << "[CLIENT] Hurdle Destroyable created." << std::endl;
 }
@@ -162,6 +187,7 @@ void RType::Client::start()
 
     create_hurdle();
     create_hurdle_destroyable();
+    create_explosion(sf::Vector2i(400, 400));
     socklen_t addr_len = sizeof(server_addr);
     potEngine::engine.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
     potEngine::engine.registerSystem<potEngine::ShipAnimationSystem>(player_id);
