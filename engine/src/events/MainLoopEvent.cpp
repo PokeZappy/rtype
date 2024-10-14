@@ -18,6 +18,7 @@ void potEngine::MainLoopEvent::eventMainLoop(std::shared_ptr<MainLoopEvent> even
 
     engine.timer.timerAddTick();
     engine.publishEvent(std::make_shared<NoneEvent>());
+    std::cout << "main loop" << std::endl;
     engine.publishEvent(event);
 
     double tickDuration = 1.0f / engine.timer.timerGetTps();

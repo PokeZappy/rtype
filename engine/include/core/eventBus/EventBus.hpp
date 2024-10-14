@@ -37,12 +37,12 @@ namespace potEngine {
             //     std::cout << "No handler" << std::endl;
             //     return;
             // }
-            for (auto& handler : *it->second) {
-                if (handler != nullptr) {
-                    _handlers.push_back(std::make_pair(event, it->second));
+            // for (auto& handler : *it->second) {
+            //     if (handler != nullptr) {
+            _handlers.push_back(std::make_pair(event, it->second));
                     // std::cout << "[EVENTBUS] Event published " << typeid(EventType).name() << std::endl;
-                }
-            }
+            //     }
+            // }
         }
 
         template<class T, class EventType>
@@ -58,6 +58,7 @@ namespace potEngine {
                 _subscribers[std::type_index(typeid(EventType))] = handlers;
             } else {
                 handlers = it->second;
+
             }
 
             // Add the new member handler for this event type

@@ -92,8 +92,8 @@ void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_
     potEngine::engine.addComponent(entity, shootComponent);
     potEngine::engine.addComponent(entity, spriteComponent);
 
-    std::cout << "[CLIENT] New ShootEntity created {ID}-[" << static_cast<int>(entity_id)
-        << "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
+    // std::cout << "[CLIENT] New ShootEntity created {ID}-[" << static_cast<int>(entity_id)
+    //     << "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
 }
 
 void RType::Client::handleCreateEntity(std::vector<size_t> params, size_t entity_id)
@@ -121,7 +121,7 @@ void RType::Client::handle_message()
     }
     if (event_type == potEngine::EventType::DISCONNECT) {
         if (entity_id == player_id) {
-            std::cout << "[CLIENT] Disconnected from server." << std::endl;
+            // std::cout << "[CLIENT] Disconnected from server." << std::endl;
             return;
         }
     }
@@ -166,7 +166,7 @@ void RType::Client::handle_message()
         handleCreateEntity(params, entity_id);
     }
     if (event_type == potEngine::EventType::DEATH) {
-        std::cout << "[CLIENT] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
+        // std::cout << "[CLIENT] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
         potEngine::engine.removeEntity(potEngine::engine.getClientIdFromServerId(entity_id));
         if (entity_id == player_id)
             potEngine::engine.publishEvent(std::make_shared<potEngine::StopMainLoopEvent>());

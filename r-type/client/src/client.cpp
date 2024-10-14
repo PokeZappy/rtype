@@ -29,7 +29,7 @@ RType::Client::Client(const std::string &ip, int port) : player_id(0)
     potEngine::engine.registerSystem<potEngine::BackgroundSystem>();
 
 
-    std::cout << "[CLIENT] Ready to connect to the server...\n";
+    // std::cout << "[CLIENT] Ready to connect to the server...\n";
 }
 
 RType::Client::~Client()
@@ -69,7 +69,7 @@ void RType::Client::handle_connection()
 
     auto [entity_id, event_type, params] = recv_message();
     if (event_type == potEngine::EventType::CONNECTION) {
-        std::cout << "[CLIENT] Connected to the server with {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
+        // std::cout << "[CLIENT] Connected to the server with {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
         player_id = entity_id;
         std::string player_name = username;
         std::vector<float> position = {0, 0};
