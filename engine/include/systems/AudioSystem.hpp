@@ -21,5 +21,6 @@ namespace potEngine {
         void update(float) override {};
 
         void updateSounds(std::shared_ptr<NoneEvent> event);
+        std::vector<std::shared_ptr<AEntity>> toRemove;
     };
 }
