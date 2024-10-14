@@ -80,7 +80,7 @@ namespace potEngine
         {
             if (tmp != engine.timer.timerGetTick())
                 return;
-            tmp = (tmp + 1) % 20;
+            tmp = (tmp + 1) % 60;
             for (auto entity : engine.getEntities()) {
                 auto moveComponent = entity->getComponent<MovementComponent>();
                 if (!moveComponent)
