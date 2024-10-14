@@ -44,8 +44,34 @@ void RType::Server::handle_message()
         current_players--;
     }
     if (event_type == potEngine::MOVE_UP || event_type == potEngine::MOVE_DOWN || event_type == potEngine::MOVE_RIGHT || event_type == potEngine::MOVE_LEFT) {
-        auto moveInfo = std::make_shared<potEngine::MoveServerInfoEvent>(4, server_fd, event_type, entity_id);
-        potEngine::engine.publishEvent(moveInfo);
+        auto entity = potEngine::engine.getEntity(entity_id);
+        if (!entity)
+            return;
+
+        auto movementComponent = entity->getComponent<potEngine::MovementComponent>();
+        if (!movementComponent)
+            return;
+
+        if (event_type == potEngine::MOVE_UP || event_type == potEngine::MOVE_DOWN) {
+            movementComponent->get()->moveDirectionY = event_type;
+        } else {
+            movementComponent->get()->moveDirectionX = event_type;
+        }
+    }
+    if (event_type == potEngine::MOVE_X_STOP || event_type == potEngine::MOVE_Y_STOP) {
+        auto entity = potEngine::engine.getEntity(entity_id);
+        if (!entity)
+            return;
+
+        auto movementComponent = entity->getComponent<potEngine::MovementComponent>();
+        if (!movementComponent)
+            return;
+
+        if (event_type == potEngine::MOVE_X_STOP) {
+            movementComponent->get()->moveDirectionX = event_type;
+        } else {
+            movementComponent->get()->moveDirectionY = event_type;
+        }
     }
     if (event_type == potEngine::SHOOT) {
         auto createShootEntity = std::make_shared<potEngine::EntityCreateInfoEvent>(

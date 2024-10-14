@@ -125,8 +125,8 @@ void RType::Client::handle_message()
             std::cout << "[CLIENT] {ID}-[" << static_cast<int>(entity_id) << "] not found." << std::endl;
             return;
         }
-        // std::vector<int> convertedParams(params.begin(), params.end());
-        // entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
+        std::vector<int> convertedParams(params.begin(), params.end());
+        entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
     }
     if (event_type == potEngine::EventType::INFORMATION) {
         handleCreateEntity(params, entity_id);
