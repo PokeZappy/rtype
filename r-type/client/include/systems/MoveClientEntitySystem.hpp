@@ -93,6 +93,8 @@ namespace potEngine
                 }
                 if (entity->getComponent<PlayerComponent>())
                     movePlayerEntity(entity, directionX, directionY);
+                else
+                    moveNonPlayerEntity(entity, directionX, directionY);
             }
         }
     };

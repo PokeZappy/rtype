@@ -79,7 +79,7 @@ void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_
 
 
     std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(position[0], position[1]);
-    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(60.0f);
+    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(600.0f, potEngine::MOVE_RIGHT, potEngine::MOVE_Y_STOP);
     std::shared_ptr<potEngine::CollisionComponent> collisionComponent = std::make_shared<potEngine::CollisionComponent>();
     std::shared_ptr<potEngine::ShootComponent> shootComponent = std::make_shared<potEngine::ShootComponent>();
 

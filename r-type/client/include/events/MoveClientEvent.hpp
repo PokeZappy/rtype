@@ -87,7 +87,7 @@ namespace potEngine
                 }
                 _entity->getComponent<PositionComponent>()->get()->_position = position;
             }
-            std::cout << "[CLIENT] position: [" << position[0] << ", " << position[1] << "] previousTime: " << multiplicator << std::endl;
+            // std::cout << "[CLIENT] position: [" << position[0] << ", " << position[1] << "] previousTime: " << multiplicator << std::endl;
 
             if (info->fd != -1) {
                 auto sendInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, info->fd, info->_addr, info->entity_id, info->event, std::vector<size_t>{position.begin(), position.end()});

@@ -18,8 +18,8 @@ namespace potEngine
         EventType moveDirectionX;
         EventType moveDirectionY;
 
-        MovementComponent(int speed = 1)
-            : speed(speed), moveDirectionX(MOVE_X_STOP), moveDirectionY(MOVE_Y_STOP) {}
+        MovementComponent(int speed = 1, EventType directionX = MOVE_X_STOP, EventType directionY = MOVE_Y_STOP)
+            : speed(speed), moveDirectionX(directionX), moveDirectionY(directionY) {}
     };
 }
 

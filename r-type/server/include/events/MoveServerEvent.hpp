@@ -134,7 +134,7 @@ namespace potEngine
                 );
                 engine.publishEvent(sendMessageEventInfo);
             }
-            std::cout << "[SERVER] position: [" << position[0] << ", " << position[1] << "] previousTime: " << multiplicator << std::endl;
+            // std::cout << "[SERVER] position: [" << position[0] << ", " << position[1] << "] previousTime: " << multiplicator << std::endl;
         }
     };
 }
