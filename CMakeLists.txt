@@ -5,7 +5,14 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(cmake/auto-vcpkg.cmake)
+<<<<<<< Updated upstream
 vcpkg_add_package(sfml)
+=======
+vcpkg_bootstrap()
+vcpkg_install_packages(sfml)
+vcpkg_install_packages(libconfig)
+# vcpkg_add_package(sfml)
+>>>>>>> Stashed changes
 
 set(CLIENT_INCLUDE_DIRS
     r-type/client/include
@@ -39,7 +46,7 @@ file(GLOB_RECURSE ENGINE_SOURCES
 
 add_library(engine STATIC ${ENGINE_SOURCES})
 set_target_properties(engine PROPERTIES
-    IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/lib/engine.a"
+    IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/lib/engine.so"
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/include/libengine")
 
 target_include_directories(engine PUBLIC
@@ -119,23 +126,56 @@ if(WIN32)
     set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/share")
     include_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/include")
     find_package(SFML COMPONENTS system window graphics audio  REQUIRED)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(LIBCONFIG REQUIRED libconfig++)
 
     if(SFML_FOUND)
         message(STATUS "SFML found: ${SFML_LIBRARIES}.")
+<<<<<<< Updated upstream
         target_link_libraries(engine PRIVATE sfml-system sfml-window sfml-graphics sfml-audio)
         target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-audio ws2_32)
         target_link_libraries(r-type_server PRIVATE sfml-system sfml-window sfml-graphics sfml-audio ws2_32)
     else()
         message(FATAL_ERROR "SFML not found!")
     endif()
+=======
+        target_link_libraries(engine PRIVATE sfml-system sfml-window sfml-graphics sfml-audio ws2_32 winmm)
+        target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-audio ws2_32 winmm)
+        target_link_libraries(r-type_server PRIVATE ws2_32)
+    else()
+        message(FATAL_ERROR "SFML not found!")
+    endif()
+
+    if(LIBCONFIG_STATIC_LIBRARIES)
+        target_link_libraries(r-type_client PRIVATE config++)
+        target_link_libraries(r-type_server PRIVATE config++)
+        target_link_libraries(engine PRIVATE config++)
+    endif()
+>>>>>>> Stashed changes
 else()
     set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-linux/share")
     include_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-linux/include")
     find_package(SFML COMPONENTS system window graphics network audio REQUIRED)
+<<<<<<< Updated upstream
+=======
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(LIBCONFIG REQUIRED libconfig++)
+
+>>>>>>> Stashed changes
     if(SFML_FOUND)
         target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-audio)
         target_link_libraries(engine PRIVATE sfml-system sfml-window sfml-graphics sfml-audio)
     else()
         message(FATAL_ERROR "SFML not found!")
     endif()
+<<<<<<< Updated upstream
+=======
+    if(LIBCONFIG_FOUND)
+        target_link_libraries(r-type_client PRIVATE config++)
+        target_link_libraries(r-type_server PRIVATE config++)
+        target_link_libraries(engine PRIVATE config++)
+    else()
+        message(FATAL_ERROR "libconfig not found!")
+    endif()
+>>>>>>> Stashed changes
 endif()
