@@ -36,7 +36,7 @@ namespace potEngine
         void createShootEntity(std::shared_ptr<potEngine::AEntity> &entity, std::vector<float> pos)
         {
             std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(pos[0], pos[1]);
-            std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(600.0f, MOVE_RIGHT, MOVE_Y_STOP);
+            std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(600.0f, MOVE_RIGHT);
             std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
             std::shared_ptr<ShootComponent> shootComponent = std::make_shared<ShootComponent>();
 

@@ -6,6 +6,7 @@
 */
 
 #include "client_config.hpp"
+#include <cmath>
 
 void RType::Client::send_message(size_t entity_id, potEngine::EventType action, const std::vector<size_t>& params, size_t maxP, int fd)
 {
@@ -60,7 +61,7 @@ void RType::Client::createPlayerEntity(std::vector<size_t> params, size_t entity
 
     std::shared_ptr<potEngine::PlayerComponent> playerComponent = std::make_shared<potEngine::PlayerComponent>(username);
     std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(position[0], position[1]);
-    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(60.0f);
+    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(300.0f);
     std::shared_ptr<potEngine::LifeComponent> lifeComponent = std::make_shared<potEngine::LifeComponent>(3);
     std::shared_ptr<potEngine::CollisionComponent> collisionComponent = std::make_shared<potEngine::CollisionComponent>();
     std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
@@ -83,7 +84,7 @@ void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_
     auto id = potEngine::engine.getClientIdFromServerId(entity_id);
 
     std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(position[0], position[1]);
-    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(600.0f, potEngine::MOVE_RIGHT, potEngine::MOVE_Y_STOP);
+    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(600.0f, potEngine::MOVE_RIGHT);
     std::shared_ptr<potEngine::CollisionComponent> collisionComponent = std::make_shared<potEngine::CollisionComponent>();
     std::shared_ptr<potEngine::ShootComponent> shootComponent = std::make_shared<potEngine::ShootComponent>();
 
@@ -110,10 +111,29 @@ void RType::Client::handleCreateEntity(std::vector<size_t> params, size_t entity
         return createShootEntity(params, entity_id);
 }
 
-float uint32ToFloat(uint32_t value) {
+float uint32ToFloat(uint32_t value)
+{
     float result;
     std::memcpy(&result, &value, sizeof(float));
     return result;
+}
+
+std::vector<float> lerp(const std::vector<float>& startPos, const std::vector<float>& targetPos, float alpha)
+{
+    std::vector<float> newPos(2);
+    newPos[0] = startPos[0] + alpha * (targetPos[0] - startPos[0]);
+    newPos[1] = startPos[1] + alpha * (targetPos[1] - startPos[1]);
+    return newPos;
+}
+
+void smoothUpdatePosition(std::shared_ptr<potEngine::AEntity> entity, const std::vector<float>& serverPos)
+{
+    auto positionComponent = entity->getComponent<potEngine::PositionComponent>();
+    auto& currentPos = positionComponent->get()->_position;
+
+    float alpha = 0.1f;
+    std::vector<float> newPos = lerp(currentPos, serverPos, alpha);
+    positionComponent->get()->_position = newPos;
 }
 
 void RType::Client::handle_message()
@@ -143,8 +163,7 @@ void RType::Client::handle_message()
         for (const auto& param : params) {
             convertedParams.push_back(uint32ToFloat(param));
         }
-
-        entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
+        smoothUpdatePosition(entity, convertedParams);
         if (event_type == potEngine::MOVE_UP || event_type == potEngine::MOVE_DOWN) {
             movementComponent->get()->moveDirectionY = event_type;
         } else {
