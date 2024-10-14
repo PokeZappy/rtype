@@ -7,6 +7,15 @@
 
 #include "Parameters.hpp"
 
+/*!
+* @brief Construct a new Parameters object.
+*
+* This constructor initializes the Parameters object with default values for IP and port.
+*
+* @param argc The number of arguments.
+* @param argv The array of arguments.
+* @throws std::runtime_error If an invalid port number is provided.
+*/
 Parameters::Parameters(int argc, char **argv) : _ip("127.0.0.1"), _port(8080)
 {
     for (int i = 1; i < argc; i++) {
@@ -24,16 +33,28 @@ Parameters::Parameters(int argc, char **argv) : _ip("127.0.0.1"), _port(8080)
         }
     }
 }
-
+/*!
+* @brief Destroy the Parameters object.
+*/
 Parameters::~Parameters()
 {
 }
 
+/*!
+* @brief Get the IP address.
+*
+* @return std::string The IP address.
+*/
 std::string Parameters::getIp() const
 {
     return _ip;
 }
 
+/*!
+* @brief Get the port number.
+*
+* @return int The port number.
+*/
 int Parameters::getPort() const
 {
     return _port;

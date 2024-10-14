@@ -11,6 +11,11 @@
     #include <string>
     #include <iostream>
 
+/*!
+* @brief Class to handle command line parameters.
+*
+* This class is responsible for parsing and storing the IP address and port number from the command line arguments.
+*/
 class Parameters {
     public :
         Parameters(int argc, char **argv);
