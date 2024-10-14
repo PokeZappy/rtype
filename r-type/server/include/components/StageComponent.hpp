@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-#include "AComponent.hpp"
+#include "server_config.hpp"
 
 typedef std::vector<int> Position;
 

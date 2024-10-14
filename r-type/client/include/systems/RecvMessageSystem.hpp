@@ -1,17 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-
-#include "ASystem.hpp"
-#include "AEntity.hpp"
-#include "WindowEntity.hpp"
-#include "EventBus.hpp"
-#include "Engine.hpp"
-#include "WindowComponent.hpp"
-#include <netinet/in.h>
-#include <libconfig.h++>
-#include "Config.hpp"
-#include "NoneEvent.hpp"
+#include "client_config.hpp"
 
 namespace potEngine {
     class RecvMessageSystem : public ASystem {

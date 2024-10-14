@@ -36,38 +36,6 @@ RType::Server::~Server()
     close(server_fd);
 }
 
-// void RType::Server::handle_action(uint8_t entity_id, struct sockaddr_in client_addr, potEngine::EventType action, std::vector<uint16_t> params)
-// {
-//     if (action == potEngine::CONNECTION && MAX_PLAYERS > current_players) {
-//         auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(
-//             MAX_PLAYERS, server_fd, client_addr, params
-//         );
-//         potEngine::eventBus.publish(connectionInfo);
-//         current_players++;
-//     }
-
-//     if (action == potEngine::DISCONNECT) {
-//         auto disconnectInfo = std::make_shared<potEngine::DisconnectionInfoEvent>(MAX_PLAYERS, server_fd, entity_id, params);
-//         potEngine::eventBus.publish(disconnectInfo);
-//         current_players--;
-//     }
-
-//     if (action == potEngine::MOVE_UP || action == potEngine::MOVE_DOWN || action == potEngine::MOVE_RIGHT || action == potEngine::MOVE_LEFT) {
-//         auto moveInfo = std::make_shared<potEngine::MoveInfoEvent>(MAX_PLAYERS, server_fd, action, entity_id, params);
-//         potEngine::eventBus.publish(moveInfo);
-//     }
-
-//     if (action == potEngine::START_STAGE) {
-//         for (auto entity : potEngine::ecsManager.getEntities()) {
-//             if (entity->hasComponent<potEngine::StageComponent>()) {
-//                 return;
-//             }
-//         }
-//         auto startStage = std::make_shared<potEngine::StratStageInfoEvent>(MAX_PLAYERS, server_fd, entity_id, params);
-//         potEngine::eventBus.publish(startStage);
-//     }
-// }
-
 void RType::Server::init_subscribe()
 {
     auto connectionEvent = std::make_shared<potEngine::ConnectionEvent>();

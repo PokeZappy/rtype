@@ -5,11 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(cmake/auto-vcpkg.cmake)
-#vcpkg_bootstrap()
-#vcpkg_install_packages(sfml)
-#vcpkg_install_packages(libconfig)
 vcpkg_add_package(sfml)
-vcpkg_add_package(libconfig)
 
 set(CLIENT_INCLUDE_DIRS
     r-type/client/include
@@ -118,7 +114,7 @@ add_custom_target(re_client
     COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/r-type_client
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target r-type_client)
 
-# Packages
+# SFML
 if(WIN32)
     set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/share")
     include_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-windows/include")
@@ -132,33 +128,14 @@ if(WIN32)
     else()
         message(FATAL_ERROR "SFML not found!")
     endif()
-
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(LIBCONFIG REQUIRED libconfig++)
-    if(LIBCONFIG_STATIC_LIBRARIES)
-        target_link_libraries(r-type_client PRIVATE config++)
-        target_link_libraries(r-type_server PRIVATE config++)
-        target_link_libraries(engine PRIVATE config++)
-    endif()
 else()
     set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/vcpkg/installed/x64-linux/share")
     include_directories("${CMAKE_BINARY_DIR}/vcpkg/installed/x64-linux/include")
     find_package(SFML COMPONENTS system window graphics network audio REQUIRED)
-
     if(SFML_FOUND)
         target_link_libraries(r-type_client PRIVATE sfml-system sfml-window sfml-graphics sfml-audio)
         target_link_libraries(engine PRIVATE sfml-system sfml-window sfml-graphics sfml-audio)
     else()
         message(FATAL_ERROR "SFML not found!")
-    endif()
-
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(LIBCONFIG REQUIRED libconfig++)
-    if(LIBCONFIG_FOUND)
-        target_link_libraries(r-type_client PRIVATE config++)
-        target_link_libraries(r-type_server PRIVATE config++)
-        target_link_libraries(engine PRIVATE config++)
-    else()
-        message(FATAL_ERROR "libconfig not found!")
     endif()
 endif()
