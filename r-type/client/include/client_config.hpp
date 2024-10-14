@@ -10,7 +10,6 @@
 
 #include <cstring>
 #include <iostream>
-#include <libconfig.h++>
 
 #include "ClientInclude.hpp"
 #include "Config.hpp"

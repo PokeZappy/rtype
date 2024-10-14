@@ -16,7 +16,7 @@
 #include <iostream>
 #include <chrono>
 #include <cstring>
-#include <libconfig.h++>
+
 
 namespace RType
 {

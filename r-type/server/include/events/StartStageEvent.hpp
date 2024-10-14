@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "server_config.hpp"
+#include "Config.hpp"
 #include "StageComponent.hpp"
 #include "StageEvent.hpp"
 
