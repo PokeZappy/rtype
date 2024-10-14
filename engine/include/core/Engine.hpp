@@ -9,14 +9,17 @@
 #include "ASystem.hpp"
 #include "EventBus.hpp"
 #include "StartEvent.hpp"
-#include <SFML/Graphics.hpp>
 
+#include <SFML/Graphics.hpp>
+#include <SFML/System/Clock.hpp>
 #include <chrono>
 
 namespace potEngine
 {
     class Timer {
     public:
+        double fdp;
+
         Timer() : _countTick(0), _firstCall(true) {}
 
         ~Timer() {}
@@ -46,6 +49,12 @@ namespace potEngine
             _firstCall = false;
         }
 
+        double getPreviousTime() {
+            auto now = std::chrono::high_resolution_clock::now();
+            auto duration = now - _previousTime;
+            return std::chrono::duration<double>(duration).count();
+        }
+
         std::chrono::duration<double> getElapsedTimeSinceLastTick() {
             auto now = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> elapsed = now - _previousTime;
@@ -53,7 +62,7 @@ namespace potEngine
             return elapsed;
         }
 
-        float getTickDuration() {
+        double getTickDuration() {
             return 1.0f / _tps;
         }
 

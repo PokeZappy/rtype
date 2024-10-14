@@ -20,9 +20,13 @@ namespace potEngine
         struct sockaddr_in _addr;
         EventType event;
         size_t entity_id;
+        std::chrono::time_point<std::chrono::high_resolution_clock> _time;
 
         MoveClientInfoEvent(int fd, struct sockaddr_in addr, EventType event, size_t id)
-            : fd(fd), _addr(addr), event(event), entity_id(id) {}
+            : fd(fd), _addr(addr), event(event), entity_id(id)
+        {
+            _time = std::chrono::high_resolution_clock::now();
+        }
     };
 
     class MoveClientEvent : public IEvent {
@@ -56,8 +60,13 @@ namespace potEngine
             if (!_entity)
                 return;
 
+            auto _timeTemp = std::chrono::high_resolution_clock::now();
+            auto tmp = _timeTemp - info->_time;
+            auto multiplicator = std::chrono::duration<double>(tmp).count();
+
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
-            float speed = _entity->getComponent<MovementComponent>()->get()->speed * engine.timer.getTickDuration();
+            float speed = _entity->getComponent<MovementComponent>()->get()->speed * multiplicator;
+
 
             if (info->event == MOVE_UP && position[1] > 0)
                 position[1] = (position[1] - speed > 0) ? position[1] - speed : 0;
@@ -78,10 +87,10 @@ namespace potEngine
                 }
                 _entity->getComponent<PositionComponent>()->get()->_position = position;
             }
-            std::cout << "[CLIENT] position: [" << position[0] << ", " << position[1] << "]" << std::endl;
+            std::cout << "[CLIENT] position: [" << position[0] << ", " << position[1] << "] previousTime: " << multiplicator << std::endl;
 
             if (info->fd != -1) {
-                auto sendInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, info->fd, info->_addr, info->entity_id, info->event, std::vector<size_t>{});
+                auto sendInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, info->fd, info->_addr, info->entity_id, info->event, std::vector<size_t>{position.begin(), position.end()});
                 potEngine::engine.publishEvent(sendInfo);
             }
         }

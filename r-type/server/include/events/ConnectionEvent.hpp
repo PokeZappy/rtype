@@ -44,7 +44,7 @@ namespace potEngine
 
             std::shared_ptr<PlayerComponent> playerComponent = std::make_shared<PlayerComponent>(player_name);
             std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(0.0f, 0.0f);
-            std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(5.0f);
+            std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(20.0f);
             std::shared_ptr<NetworkComponent> networkComponent = std::make_shared<NetworkComponent>(info->client_addr, info->fd);
             std::shared_ptr<LifeComponent> lifeComponent = std::make_shared<LifeComponent>(3);
             std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();

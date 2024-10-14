@@ -51,6 +51,18 @@ void RType::Server::handle_message()
         auto movementComponent = entity->getComponent<potEngine::MovementComponent>();
         if (!movementComponent)
             return;
+        auto pos = entity->getComponent<potEngine::PositionComponent>()->get()->_position;
+        std::vector<size_t> _tmp = {pos.begin(), pos.end()};
+
+        auto sendMessageEventInfo = std::make_shared<potEngine::SendMessageToAllEventInfo>(
+            MAX_PLAYERS,
+            -1,
+            entity_id,
+            event_type,
+            _tmp,
+            potEngine::engine.getEntities()
+        );
+        potEngine::engine.publishEvent(sendMessageEventInfo);
 
         if (event_type == potEngine::MOVE_UP || event_type == potEngine::MOVE_DOWN) {
             movementComponent->get()->moveDirectionY = event_type;

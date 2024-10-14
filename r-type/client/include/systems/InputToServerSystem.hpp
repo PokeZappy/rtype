@@ -11,7 +11,8 @@
 #include <vector>
 #include <chrono>
 
-namespace potEngine {
+namespace potEngine
+{
     class InputToServerSystem : public ASystem {
         public:
             InputToServerSystem(size_t playerId, int clientFd, struct sockaddr_in serverAddr) : _playerId(playerId), _clientFd(clientFd), _serverAddr(serverAddr) {
@@ -107,7 +108,7 @@ namespace potEngine {
                     }
                 }
             }
-            void update(float deltaTime) { };
+            void update(float deltaTime) {}
         private:
             size_t _playerId;
             int _clientFd;

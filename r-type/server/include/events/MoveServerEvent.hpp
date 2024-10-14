@@ -22,9 +22,13 @@ namespace potEngine
         int fd;
         EventType event;
         size_t entity_id;
+        std::chrono::time_point<std::chrono::high_resolution_clock> _time;
 
         MoveServerInfoEvent(int maxP, int fd, EventType event, size_t id)
-            : max_players(maxP), fd(fd), event(event), entity_id(id) {}
+            : max_players(maxP), fd(fd), event(event), entity_id(id)
+        {
+            _time = std::chrono::high_resolution_clock::now();
+        }
     };
 
     class MoveServerEvent : public IEvent {
@@ -86,11 +90,15 @@ namespace potEngine
             if (!_entity || removeShoot(_entity, info))
                 return;
 
+            auto _timeTemp = std::chrono::high_resolution_clock::now();
+            auto tmp = _timeTemp - info->_time;
+            auto multiplicator = std::chrono::duration<double>(tmp).count();
+
             int save_x = _entity->getComponent<PositionComponent>()->get()->_position[0];
             int save_y = _entity->getComponent<PositionComponent>()->get()->_position[1];
 
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
-            float speed = _entity->getComponent<MovementComponent>()->get()->speed * engine.timer.getTickDuration();
+            float speed = _entity->getComponent<MovementComponent>()->get()->speed * multiplicator;
 
             if (info->event == MOVE_UP && position[1] > 0)
                 position[1] = (position[1] - speed > 0) ? position[1] - speed : 0;
@@ -126,7 +134,7 @@ namespace potEngine
                 );
                 engine.publishEvent(sendMessageEventInfo);
             }
-            std::cout << "[SERVER] position: [" << position[0] << ", " << position[1] << "]" << std::endl;
+            std::cout << "[SERVER] position: [" << position[0] << ", " << position[1] << "] previousTime: " << multiplicator << std::endl;
         }
     };
 }
