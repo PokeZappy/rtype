@@ -22,6 +22,11 @@
 
 namespace RType
 {
+    /*!
+    * @brief Class representing the server.
+    *
+    * This class handles the server-side operations, including initializing the server, handling messages, and managing connections.
+    */
     class Server {
     public:
         Server();
