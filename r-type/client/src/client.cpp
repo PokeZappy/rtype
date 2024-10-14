@@ -9,6 +9,14 @@
 
 std::string assetFinder();
 
+/*!
+* @brief Construct a new Client object.
+*
+* This constructor initializes the client, sets up the socket, and registers the necessary systems.
+*
+* @param ip The IP address of the server.
+* @param port The port number of the server.
+*/
 RType::Client::Client(const std::string &ip, int port) : player_id(0)
 {
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -32,11 +40,21 @@ RType::Client::Client(const std::string &ip, int port) : player_id(0)
     std::cout << "[CLIENT] Ready to connect to the server...\n";
 }
 
+/*!
+* @brief Destroy the Client object.
+*
+* This destructor closes the client socket.
+*/
 RType::Client::~Client()
 {
     close(client_fd);
 }
 
+/*!
+* @brief Set non-blocking input.
+*
+* This function sets the input mode to non-blocking for both the client socket and standard input.
+*/
 void RType::Client::setNonBlockingInput()
 {
     struct termios t;
@@ -51,6 +69,11 @@ void RType::Client::setNonBlockingInput()
     fcntl(STDIN_FILENO, F_SETFL, flags_ | O_NONBLOCK);
 }
 
+/*!
+* @brief Initialize subscriptions.
+*
+* This function initializes the event subscriptions for the client.
+*/
 void RType::Client::init_subscribe()
 {
     auto sendMessageEvent = std::make_shared<potEngine::SendMessageEvent>();
@@ -58,6 +81,11 @@ void RType::Client::init_subscribe()
     auto clientCollisionEvent = std::make_shared<potEngine::ClientCollisionEvent>();
 }
 
+/*!
+* @brief Handle the connection process.
+*
+* This function handles the connection process by sending the connection message and creating the player entity.
+*/
 void RType::Client::handle_connection()
 {
     std::string username;
@@ -84,6 +112,11 @@ void RType::Client::handle_connection()
     }
 }
 
+/*!
+* @brief Create the background entity.
+*
+* This function creates the background entity with the necessary components.
+*/
 void RType::Client::create_background() {
     auto entity =  potEngine::engine.createEntity();
 
@@ -102,6 +135,11 @@ void RType::Client::create_background() {
     std::cout << "[CLIENT] Background created." << std::endl;
 }
 
+/*!
+* @brief Start the client.
+*
+* This function starts the client by initializing subscriptions, creating the background, handling the connection, and setting non-blocking input.
+*/
 void RType::Client::start()
 {
     init_subscribe();

@@ -23,6 +23,11 @@ void title_screen(const std::string& asset_path);
 
 namespace RType
 {
+    /*!
+    * @brief Class to handle command line parameters.
+    *
+    * This class is responsible for parsing and storing the IP address and port number from the command line arguments.
+    */
     class Client {
     public:
         Client(const std::string& ip, int port);
