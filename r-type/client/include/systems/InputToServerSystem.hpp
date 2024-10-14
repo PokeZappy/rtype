@@ -98,6 +98,10 @@ namespace potEngine {
                         }
                     } else {
                         if (playerComponent->get()->getShootAnimationEntityId().has_value()) {
+                            auto entity = engine.createEntity();
+                            std::string audio = assetFinder() + "/Soundtracks/sound_fx/Laser_V100.wav";
+                            auto shoot_sound = std::make_shared<potEngine::AudioComponent>(audio, false, true);
+                            engine.addComponent(entity, shoot_sound);
                             engine.removeEntity(playerComponent->get()->getShootAnimationEntityId().value());
                             playerComponent->get()->getShootAnimationEntityId().reset();
                             auto moveInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::SHOOT, std::vector<size_t>{});
