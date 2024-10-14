@@ -10,13 +10,27 @@
 
 namespace potEngine {
 
+    /*!
+    * @brief Construct a new Engine object.
+    *
+    * This constructor initializes the Engine and sets the entity counter to 1.
+    */
     Engine::Engine()
     {
         _entityCounter = 1;
     }
 
+    /*!
+    * @brief Destroy the Engine object.
+    */
     Engine::~Engine() {}
 
+        /*!
+        * @brief Create a new server entity.
+        *
+        * @param serverId The server ID of the entity.
+        * @return A shared pointer to the created entity.
+        */
         std::shared_ptr<AEntity> Engine::createServerEntity(size_t serverId)
         {
             auto entity = std::make_shared<AEntity>(_entityCounter);
@@ -26,6 +40,11 @@ namespace potEngine {
             return entity;
         }
 
+        /*!
+        * @brief Create a new entity.
+        *
+        * @return A shared pointer to the created entity.
+        */
         std::shared_ptr<AEntity> Engine::createEntity()
         {
             auto entity = std::make_shared<AEntity>(_entityCounter);
@@ -34,7 +53,12 @@ namespace potEngine {
             return entity;
         }
 
-
+    /*!
+    * @brief Create a new sprite entity.
+    *
+    * @param texturePath The path to the texture.
+    * @return A shared pointer to the created sprite entity.
+    */
     std::shared_ptr<AEntity> Engine::createSpriteEntity(const std::string &texturePath) {
         auto entity = std::make_shared<AEntity>(32);
 
@@ -45,6 +69,11 @@ namespace potEngine {
         return (entity);
     }
 
+    /*!
+    * @brief Create a new window entity.
+    *
+    * @return A shared pointer to the created window entity.
+    */
     std::shared_ptr<AEntity> Engine::createWindowEntity() {
         auto entity = std::make_shared<AEntity>(_entityCounter);
         _entityCounter++;
@@ -56,6 +85,11 @@ namespace potEngine {
         return (entity);
     }
 
+    /*!
+    * @brief Remove an entity by its ID.
+    *
+    * @param id The ID of the entity to remove.
+    */
     void Engine::removeEntity(const std::size_t id)
     {
         std::size_t newId = getClientIdFromServerId(id);
@@ -72,6 +106,11 @@ namespace potEngine {
         }
     }
 
+    /*!
+    * @brief Remove an entity by its shared pointer.
+    *
+    * @param entity The shared pointer to the entity to remove.
+    */
     void Engine::removeEntity(std::shared_ptr<AEntity> entity)
     {
         auto it = std::find(_entities.begin(), _entities.end(), entity);
@@ -83,6 +122,11 @@ namespace potEngine {
         }
     }
 
+    /*!
+    * @brief Erase an entity from all systems.
+    *
+    * @param entity The shared pointer to the entity to erase.
+    */
     void Engine::EraseEntitySystem(std::shared_ptr<AEntity> entity) {
         for (auto const &system : _systems) {
             auto &systemEntities = system->getEntities();
@@ -95,6 +139,11 @@ namespace potEngine {
         }
     }
 
+    /*!
+    * @brief Update the entity signature in all systems.
+    *
+    * @param entity The shared pointer to the entity whose signature changed.
+    */
     void Engine::EntitySignatureChanged(std::shared_ptr<AEntity> entity) {
         auto const &entitySignature = entity->getSignature();
 
@@ -126,6 +175,11 @@ namespace potEngine {
         }
     }
 
+    /*!
+    * @brief Update the engine.
+    *
+    * This function processes all events in the event bus.
+    */
     void Engine::update()
     {
         auto handler = _eventBus.getHandler();
@@ -137,15 +191,31 @@ namespace potEngine {
         }
     }
 
+    /*!
+    * @brief Shutdown the engine.
+    *
+    * Shutdown the engine ????
+    */
     void Engine::shutdown()
     {
         // TODO: pourquoi faire ????
     }
 
+    /*!
+    * @brief Get all entities.
+    *
+    * @return A vector of shared pointers to all entities.
+    */
     std::vector<std::shared_ptr<AEntity>> Engine::getEntities() const {
         return _entities;
     }
 
+    /*!
+    * @brief Get an entity by its ID.
+    *
+    * @param entity_id The ID of the entity to get.
+    * @return A shared pointer to the entity, or nullptr if not found.
+    */
     std::shared_ptr<AEntity> Engine::getEntity(size_t entity_id) {
         size_t newId = getClientIdFromServerId(entity_id);
         for (const auto& entity : _entities) {
@@ -156,6 +226,12 @@ namespace potEngine {
         return nullptr;
     }
 
+    /*!
+    * @brief Get the client ID from the server ID.
+    *
+    * @param serverId The server ID.
+    * @return The client ID.
+    */
     size_t Engine::getClientIdFromServerId(size_t serverId) {
         if (_serverToClientId.find(serverId) != _serverToClientId.end()) {
             return (_serverToClientId[serverId]);

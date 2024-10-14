@@ -15,37 +15,72 @@
 
 namespace potEngine
 {
+    /*!
+    * @brief The Timer class manages timing functionality for the game engine.
+    */
     class Timer {
     public:
+        /*!
+        * @brief Construct a new Timer object.
+        */
         Timer() : _countTick(0), _firstCall(true) {}
 
+        /*!
+        * @brief Destroy the Timer object.
+        */
         ~Timer() {}
 
+        /*!
+        * @brief Increment the tick count by one.
+        */
         void timerAddTick() {
             _countTick += 1;
         }
 
+        /*!
+        * @brief Set the tick count to a specific value.
+        * @param counter The new tick count.
+        */
         void timerSetTick(int counter) {
             _countTick = counter;
         }
 
+        /*!
+        * @brief Get the current tick count.
+        * @return The current tick count.
+        */
         int timerGetTick() const {
             return _countTick;
         }
 
+        /*!
+        * @brief Set the ticks per second (TPS) value.
+        * @param number The number of ticks per second.
+        */
         void setTps(int number) {
             _tps = number;
         }
 
+        /*!
+        * @brief Get the ticks per second (TPS) value.
+        * @return The ticks per second value.
+        */
         int timerGetTps() const {
             return _tps;
         }
 
+        /*!
+        * @brief Initialize the previous time to the current time.
+        */
         void initializePreviousTime() {
             _previousTime = std::chrono::high_resolution_clock::now();
             _firstCall = false;
         }
 
+        /*!
+        * @brief Get the elapsed time since the last tick.
+        * @return The elapsed time since the last tick.
+        */
         std::chrono::duration<double> getElapsedTimeSinceLastTick() {
             auto now = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> elapsed = now - _previousTime;
@@ -53,12 +88,20 @@ namespace potEngine
             return elapsed;
         }
 
+        /*!
+        * @brief Get the duration of the current tick.
+        * @return The duration of the current tick in seconds.
+        */
         float getTickDuration() {
             auto now = std::chrono::high_resolution_clock::now();
             std::chrono::duration<float> elapsedTime = now - _previousTime;
             return elapsedTime.count();
         }
 
+        /*!
+        * @brief Check if this is the first call to the timer.
+        * @return True if this is the first call, false otherwise.
+        */
         bool isFirstCall() const {
             return _firstCall;
         }
@@ -70,7 +113,9 @@ namespace potEngine
         std::chrono::time_point<std::chrono::high_resolution_clock> _previousTime;
     };
 
-
+    /*!
+    * @brief The Engine class manages the core functionality of the game engine.
+    */
     class Engine {
     public:
         Timer timer;
