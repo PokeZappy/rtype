@@ -130,6 +130,7 @@ namespace potEngine {
         auto handler = _eventBus.getHandler();
         while (handler != std::pair<std::shared_ptr<IEvent>, std::shared_ptr<HandlerList>>(nullptr, nullptr)) {
             for (auto event : *handler.second) {
+                // std::cout << "event publié de type : " << typeid(*handler.first).name() << std::endl;
                 event->exec(handler.first);
             }
             handler = _eventBus.getHandler();

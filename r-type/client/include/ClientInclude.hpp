@@ -11,11 +11,10 @@
 
 // Include Systems
 
-#include "RecvMessageSystem.hpp"
 #include "ShipAnimationSystem.hpp"
 #include "BackgroundSystem.hpp"
-#include "ShootEntityClientSystem.hpp"
-#include "InputToServerSystem.hpp"
+#include "MoveClientEntitySystem.hpp"
+#include "InputToServerEvent.hpp"
 
 // Include Components
 

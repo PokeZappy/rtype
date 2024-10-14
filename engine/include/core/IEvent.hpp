@@ -11,9 +11,11 @@ namespace potEngine
         MOVE_DOWN = 0x05,
         MOVE_LEFT = 0x06,
         MOVE_RIGHT = 0x07,
-        COLLISION = 0x08,
-        DEATH = 0x09,
-        SHOOT = 0x10,
+        MOVE_X_STOP = 0x08,
+        MOVE_Y_STOP = 0x09,
+        COLLISION = 0x10,
+        DEATH = 0x11,
+        SHOOT = 0x12,
         START_STAGE = 0x11
     };
     // TODO à enlever

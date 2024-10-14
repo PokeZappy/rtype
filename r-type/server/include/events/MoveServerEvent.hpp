@@ -17,24 +17,28 @@
 
 namespace potEngine
 {
-    class MoveInfoEvent : public IEvent {
+    class MoveServerInfoEvent : public IEvent {
     public:
         int max_players;
         int fd;
         EventType event;
         size_t entity_id;
+        std::chrono::time_point<std::chrono::high_resolution_clock> _time;
 
-        MoveInfoEvent(int maxP, int fd, EventType event, size_t id)
-            : max_players(maxP), fd(fd), event(event), entity_id(id) {}
+        MoveServerInfoEvent(int maxP, int fd, EventType event, size_t id)
+            : max_players(maxP), fd(fd), event(event), entity_id(id)
+        {
+            _time = std::chrono::high_resolution_clock::now();
+        }
     };
 
-    class MoveEvent : public IEvent {
+    class MoveServerEvent : public IEvent {
     public:
-        MoveEvent() {
-            engine.subscribeEvent(this, &MoveEvent::Move);
+        MoveServerEvent() {
+            engine.subscribeEvent(this, &MoveServerEvent::Move);
         };
 
-        std::shared_ptr<AEntity> check_collision(std::shared_ptr<MoveInfoEvent> info, std::vector<int> current_pos)
+        std::shared_ptr<AEntity> check_collision(std::shared_ptr<MoveServerInfoEvent> info, std::vector<float> current_pos)
         {
             auto current_entity = engine.getEntity(info->entity_id);
             if (current_entity->getComponent<CollisionComponent>() == nullptr || current_entity->getComponent<PositionComponent>() == nullptr)
@@ -53,7 +57,7 @@ namespace potEngine
             return nullptr;
         }
 
-        int removeShoot(std::shared_ptr<potEngine::AEntity> entity, std::shared_ptr<MoveInfoEvent> info)
+        int removeShoot(std::shared_ptr<potEngine::AEntity> entity, std::shared_ptr<MoveServerInfoEvent> info)
         {
             auto posComponent = entity->getComponent<PositionComponent>();
             auto shootComponent = entity->getComponent<ShootComponent>();
@@ -81,35 +85,31 @@ namespace potEngine
             return 0;
         }
 
-        void Move(std::shared_ptr<MoveInfoEvent> info)
+        void Move(std::shared_ptr<MoveServerInfoEvent> info)
         {
+            // std::cout << "MOVE SERVEUR" << std::endl;
             auto _entity = engine.getEntity(info->entity_id);
-            if (!_entity) {
-                // std::cout << "[SERVER] {ID}-[" << info->entity_id << "] not found." << std::endl;
+            if (!_entity || removeShoot(_entity, info))
                 return;
-            }
 
-            if (removeShoot(_entity, info))
-                return;
+            auto _timeTemp = std::chrono::high_resolution_clock::now();
+            auto tmp = _timeTemp - info->_time;
+            auto multiplicator = std::chrono::duration<double>(tmp).count();
 
             int save_x = _entity->getComponent<PositionComponent>()->get()->_position[0];
             int save_y = _entity->getComponent<PositionComponent>()->get()->_position[1];
 
-            auto player_comp = _entity->getComponent<PlayerComponent>();
-            std::string username = "";
-            if (player_comp)
-                username = player_comp->get()->username;
-
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
-            int speed = _entity->getComponent<MovementComponent>()->get()->speed;
+            float speed = _entity->getComponent<MovementComponent>()->get()->speed * multiplicator;
+
             if (info->event == MOVE_UP && position[1] > 0)
-                position[1] = (position[1] > speed) ? position[1] - speed : 0;
+                position[1] = (position[1] - speed > 0) ? position[1] - speed : 0;
             if (info->event == MOVE_DOWN && position[1] < 600)
                 position[1] = (position[1] + speed < 600) ? position[1] + speed : 600;
             if (info->event == MOVE_RIGHT && position[0] < 800)
                 position[0] = (position[0] + speed < 800) ? position[0] + speed : 800;
             if (info->event == MOVE_LEFT && position[0] > 0)
-                position[0] = (position[0] > speed) ? position[0] - speed : 0;
+                position[0] = (position[0] - speed > 0) ? position[0] - speed : 0;
 
             auto entity_collide = check_collision(info, position);
             std::vector<size_t> _pos = {static_cast<size_t>(save_x), static_cast<size_t>(save_y)};
@@ -123,9 +123,11 @@ namespace potEngine
                     info->entity_id,
                     entity_collide->getID()
                 );
+                std::cout << "Collision serveur" << std::endl;
                 engine.publishEvent(collisionEventInfo);
             }
             if (info->fd != -1) {
+                std::cout << "LE SERVEUR ENVOIE LA POSITION AUX CLIENTS" << std::endl;
                 auto sendMessageEventInfo = std::make_shared<SendMessageToAllEventInfo>(
                     info->max_players,
                     info->fd,
@@ -136,8 +138,7 @@ namespace potEngine
                 );
                 engine.publishEvent(sendMessageEventInfo);
             }
-            // std::cout << "[SERVER] Entity {ID}-[" << std::to_string(static_cast<int>(info->entity_id))
-            //     << "], {username}-[" << username << "], is moving to {" << _pos[0] << "," << _pos[1] << "}" << std::endl;
+            // std::cout << "[SERVER] position: [" << position[0] << ", " << position[1] << "] previousTime: " << multiplicator << std::endl;
         }
     };
 }

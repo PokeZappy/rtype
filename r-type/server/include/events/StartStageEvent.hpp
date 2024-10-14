@@ -7,6 +7,7 @@
 #include "server_config.hpp"
 #include "StageComponent.hpp"
 #include "StageEvent.hpp"
+#include <libconfig.h++>
 
 namespace potEngine
 {
@@ -50,14 +51,14 @@ namespace potEngine
             stageComponent->get()->_level++;
             try {
                 libconfig::Config cfg;
-                cfg.readFile(assetFinder() + "/../server/config/stage_" + std::to_string(stageComponent->get()->_level) + ".cfg");
+                cfg.readFile((assetFinder() + "/../server/config/stage_" + std::to_string(stageComponent->get()->_level) + ".cfg").c_str());
                 libconfig::Setting &root = cfg.getRoot();
                 stageComponent->get()->_clock.restart();
                 stageComponent->get()->_start_time = root["stage_info"]["start_time"];
                 stageComponent->get()->_stageInfo.clear();
                 for (int i = 0; i < root["waves"].getLength(); i++) {
                     struct StageInfo stageInfo;
-                    libconfig::Setting &waves = root["waves"]["wave_" + std::to_string(i + 1)];
+                    libconfig::Setting &waves = root["waves"][("wave_" + std::to_string(i + 1)).c_str()];
                     stageInfo._waves_time = waves["wave_time"];
                     for (int j = 0; j < waves["monsters"].getLength(); j++) {
                         stageInfo._monsters.push_back(waves["monsters"][j]);

@@ -9,15 +9,14 @@
 
 #include "SharedInclude.hpp"
 
-#include "ShootEntitySystem.hpp"
-#include "RecvMessageServerSystem.hpp"
+#include "MoveServerEntitySystem.hpp"
 
 #include "SendMessageToAllEvent.hpp"
 #include "SendMessageToAllExeptEvent.hpp"
 #include "SendAllDataEvent.hpp"
 #include "DisconnectionEvent.hpp"
 #include "ConnectionEvent.hpp"
-#include "MoveEvent.hpp"
+#include "MoveServerEvent.hpp"
 #include "EntityCreateEvent.hpp"
 #include "CollisionEvent.hpp"
 #include "StartStageEvent.hpp"

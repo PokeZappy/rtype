@@ -8,7 +8,9 @@
 #include "client_config.hpp"
 #include "Config.hpp"
 
-RType::Client::Client() : player_id(0)
+std::string assetFinder();
+
+RType::Client::Client(const std::string &ip, int port) : player_id(0)
 {
     INIT_WINSOCK();
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -16,10 +18,11 @@ RType::Client::Client() : player_id(0)
         exit(EXIT_FAILURE);
     }
 
-    memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    _addr_len = sizeof(_addr);
+    memset(&_addr, 0, _addr_len);
+    _addr.sin_family = AF_INET;
+    _addr.sin_port = htons(port);
+    _addr.sin_addr.s_addr = inet_addr(ip.c_str());
 
     potEngine::engine.registerSystem<potEngine::RenderSystem>();
     potEngine::engine.registerSystem<potEngine::InputSystem>();
@@ -28,7 +31,7 @@ RType::Client::Client() : player_id(0)
     potEngine::engine.registerSystem<potEngine::BackgroundSystem>();
 
 
-    std::cout << "[CLIENT] Ready to connect to the server...\n";
+    // std::cout << "[CLIENT] Ready to connect to the server...\n";
 }
 
 RType::Client::~Client()
@@ -47,38 +50,21 @@ void RType::Client::init_subscribe()
     auto clientCollisionEvent = std::make_shared<potEngine::ClientCollisionEvent>();
 }
 
-void send_message(const struct sockaddr_in& addr, size_t entity_id, potEngine::EventType action, const std::vector<size_t>& params, size_t maxP, int fd)
-{
-    const size_t EVENT_TYPE_BITS = 8;
-    size_t packet_size = sizeof(size_t) + params.size() * sizeof(size_t);
-    std::vector<uint8_t> packet(packet_size);
-
-    size_t header = entity_id;
-    header |= (static_cast<size_t>(action) << (sizeof(size_t) * 8 - EVENT_TYPE_BITS));
-    std::memcpy(packet.data(), &header, sizeof(size_t));
-    for (size_t i = 0; i < params.size(); ++i) {
-        std::memcpy(packet.data() + sizeof(size_t) + i * sizeof(size_t), &params[i], sizeof(size_t));
-    }
-    SENDTO(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&addr, sizeof(addr));
-}
-
 void RType::Client::handle_connection()
 {
-    socklen_t addr_len = sizeof(server_addr);
-
     std::string username;
     std::cout << "Enter your username: ";
     std::cin >> username;
 
     std::vector<size_t> params_username(username.begin(), username.end());
-    send_message(server_addr, 0, potEngine::CONNECTION, params_username, MAX_PLAYERS, client_fd);
+    send_message(0, potEngine::CONNECTION, params_username, MAX_PLAYERS, client_fd);
 
-    auto [entity_id, event_type, params] = recv_message(server_addr, addr_len);
+    auto [entity_id, event_type, params] = recv_message();
     if (event_type == potEngine::EventType::CONNECTION) {
-        std::cout << "[CLIENT] Connected to the server with {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
+        // std::cout << "[CLIENT] Connected to the server with {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
         player_id = entity_id;
         std::string player_name = username;
-        std::vector<int> position = {0, 0};
+        std::vector<float> position = {0, 0};
         std::vector<size_t> _pos;
         _pos.push_back(potEngine::EntityType::PLAYER);
         _pos.push_back(static_cast<size_t>(player_name.size()));
@@ -86,7 +72,7 @@ void RType::Client::handle_connection()
             _pos.push_back(static_cast<size_t>(c));
         }
         _pos.insert(_pos.end(), position.begin(), position.end());
-        potEngine::RecvMessageSystem::createPlayerEntity(_pos, entity_id);
+        createPlayerEntity(_pos, entity_id);
     }
 }
 
@@ -105,7 +91,6 @@ void RType::Client::create_background() {
     potEngine::engine.addComponent(entity, spriteComponent);
     potEngine::engine.addComponent(entity, static_move_component);
 
-
     std::cout << "[CLIENT] Background created." << std::endl;
 }
 
@@ -116,17 +101,21 @@ void RType::Client::start()
     handle_connection();
     setNonBlockingInput();
 
-    socklen_t addr_len = sizeof(server_addr);
-    potEngine::engine.registerSystem<potEngine::RecvMessageSystem>(client_fd, server_addr, addr_len, player_id);
-    potEngine::engine.registerSystem<potEngine::ShipAnimationSystem>(player_id);
-    potEngine::engine.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, server_addr);
-    potEngine::engine.registerSystem<potEngine::ShootEntityClientSystem>();
+    std::thread recvThread([this]() {
+        while (true) {
+            handle_message();
+        }
+    });
 
+    potEngine::engine.registerSystem<potEngine::MoveClientEntitySystem>(client_fd, _addr);
+    potEngine::engine.registerSystem<potEngine::ShipAnimationSystem>(player_id);
+
+    auto inputEvent = std::make_shared<potEngine::InputToServerEvent>(player_id, client_fd, _addr);
     std::shared_ptr<potEngine::AEntity> window = potEngine::engine.createWindowEntity();
 
-    potEngine::engine.timer.setTps(145);
+    potEngine::engine.timer.setTps(60);
     auto startEvent = std::make_shared<potEngine::StartEvent>();
     potEngine::engine.publishEvent(startEvent);
-
     potEngine::engine.update();
+    recvThread.join();
 }

@@ -1,0 +1,6 @@
+name: Generate Doxygen
+
+on:
+  pull_request:
+    branches: ["dev", "main"]
+

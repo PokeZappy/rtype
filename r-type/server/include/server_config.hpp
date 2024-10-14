@@ -17,23 +17,29 @@
 #include <chrono>
 #include <cstring>
 #include <libconfig.h++>
+#include <unistd.h>
+#include <thread>
 
 namespace RType
 {
     class Server {
     public:
         Server();
+        Server(int port);
         ~Server();
 
         void start();
         void init_subscribe();
         void setNonBlockingInput();
 
+        std::tuple<size_t, potEngine::EventType, std::vector<size_t>> recv_message();
+        void handle_message();
     private:
         int current_players;
         int server_fd;
-        struct sockaddr_in server_addr;
-        socklen_t server_addr_len;
+        struct sockaddr_in _addr;
+        socklen_t _addr_len;
+        void init(int port);
     };
 }
 

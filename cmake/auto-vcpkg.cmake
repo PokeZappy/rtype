@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 #------------------------------------------------------------------------------------------------------------
 #
 # Automate-VCPKG by Andre Taulien
@@ -57,7 +55,6 @@
 # specifying their locations.
 #------------------------------------------------------------------------------------------------------------
 
->>>>>>> Stashed changes
 cmake_minimum_required (VERSION 3.12)
 
 if(WIN32)
@@ -128,28 +125,18 @@ macro(_install_or_update_vcpkg)
         # The following command has no effect if the vcpkg repository is in a detached head state.
         message(STATUS "Auto-updating vcpkg in ${VCPKG_ROOT}")
         execute_process(COMMAND git pull WORKING_DIRECTORY ${VCPKG_ROOT})
-<<<<<<< Updated upstream
     endif()
 
     if(NOT EXISTS ${VCPKG_ROOT}/README.md)
         message(FATAL_ERROR "***** FATAL ERROR: Could not clone vcpkg *****")
     endif()
 
-=======
-    endif()
-
-    if(NOT EXISTS ${VCPKG_ROOT}/README.md)
-        message(FATAL_ERROR "***** FATAL ERROR: Could not clone vcpkg *****")
-    endif()
-
->>>>>>> Stashed changes
     if(WIN32)
         set(VCPKG_EXEC ${VCPKG_ROOT}/vcpkg.exe)
         set(VCPKG_BOOTSTRAP ${VCPKG_ROOT}/bootstrap-vcpkg.bat)
     else()
         set(VCPKG_EXEC ${VCPKG_ROOT}/vcpkg)
         set(VCPKG_BOOTSTRAP ${VCPKG_ROOT}/bootstrap-vcpkg.sh)
-<<<<<<< Updated upstream
     endif()
 
     if(NOT EXISTS ${VCPKG_EXEC})
@@ -175,40 +162,10 @@ macro(vcpkg_install_packages)
         set(ENV{VCPKG_DEFAULT_TRIPLET} "${VCPKG_TRIPLET}")
     endif()
 
-=======
-    endif()
-
-    if(NOT EXISTS ${VCPKG_EXEC})
-        message("Bootstrapping vcpkg in ${VCPKG_ROOT}")
-        execute_process(COMMAND ${VCPKG_BOOTSTRAP} WORKING_DIRECTORY ${VCPKG_ROOT})
-    endif()
-
-    if(NOT EXISTS ${VCPKG_EXEC})
-        message(FATAL_ERROR "***** FATAL ERROR: Could not bootstrap vcpkg *****")
-    endif()
-   
-endmacro()
-
-# Installs the list of packages given as parameters using Vcpkg
-macro(vcpkg_install_packages)
-    
-    # Need the given list to be space-separated
-    #string (REPLACE ";" " " PACKAGES_LIST_STR "${ARGN}")
-
-    message(STATUS "Installing/Updating the following vcpkg-packages: ${PACKAGES_LIST_STR}")
-
-    if (VCPKG_TRIPLET)
-        set(ENV{VCPKG_DEFAULT_TRIPLET} "${VCPKG_TRIPLET}")
-    endif()
-
->>>>>>> Stashed changes
     execute_process(
         COMMAND ${VCPKG_EXEC} install ${ARGN}
         WORKING_DIRECTORY ${VCPKG_ROOT}
         )
-<<<<<<< Updated upstream
-endmacro()
-=======
 endmacro()
     
 # MIT License
@@ -232,4 +189,3 @@ endmacro()
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
->>>>>>> Stashed changes

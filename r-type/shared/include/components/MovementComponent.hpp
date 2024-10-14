@@ -15,9 +15,11 @@ namespace potEngine
     class MovementComponent : public AComponent {
     public:
         int speed;
+        EventType moveDirectionX;
+        EventType moveDirectionY;
 
-        MovementComponent(int speed = 1)
-            : speed(speed) {}
+        MovementComponent(int speed = 1, EventType directionX = MOVE_X_STOP, EventType directionY = MOVE_Y_STOP)
+            : speed(speed), moveDirectionX(directionX), moveDirectionY(directionY) {}
     };
 }
 

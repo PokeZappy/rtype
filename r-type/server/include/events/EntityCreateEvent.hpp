@@ -19,11 +19,11 @@ namespace potEngine
     public:
         int max_players;
         int fd;
-        std::vector<int> position;
+        std::vector<float> position;
         size_t entity_id; // de qui viens l'action si elle vient de quelqun
         EntityType entityType;
 
-        EntityCreateInfoEvent(int maxP, int fd, std::vector<int> p, size_t entity_id, EntityType type)
+        EntityCreateInfoEvent(int maxP, int fd, std::vector<float> p, size_t entity_id, EntityType type)
             : max_players(maxP), fd(fd), position(p), entity_id(entity_id), entityType(type) {}
     };
 
@@ -33,10 +33,10 @@ namespace potEngine
             engine.subscribeEvent(this, &EntityCreateEvent::EntityCreate);
         };
 
-        void createShootEntity(std::shared_ptr<potEngine::AEntity> &entity, std::vector<int> pos)
+        void createShootEntity(std::shared_ptr<potEngine::AEntity> &entity, std::vector<float> pos)
         {
             std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(pos[0], pos[1]);
-            std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(1.0f);
+            std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(600.0f, MOVE_RIGHT, MOVE_Y_STOP);
             std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
             std::shared_ptr<ShootComponent> shootComponent = std::make_shared<ShootComponent>();
 
@@ -46,7 +46,7 @@ namespace potEngine
             engine.addComponent(entity, shootComponent);
         }
 
-        void createMonstreEntity(std::shared_ptr<potEngine::AEntity> &entity, std::vector<int> pos)
+        void createMonstreEntity(std::shared_ptr<potEngine::AEntity> &entity, std::vector<float> pos)
         {
             // TODO: ajouter les composants d'un monstre ici.
         }

@@ -14,14 +14,17 @@
 #include "EventBus.hpp"
 #include "StartEvent.hpp"
 
+#include <SFML/Graphics.hpp>
+#include <SFML/System/Clock.hpp>
+#include <chrono>
 
 namespace potEngine
 {
     class Timer {
     public:
-        Timer() {
-            _countTick = 0;
-        }
+        double fdp;
+
+        Timer() : _countTick(0), _firstCall(true) {}
 
         ~Timer() {}
 
@@ -45,10 +48,39 @@ namespace potEngine
             return _tps;
         }
 
+        void initializePreviousTime() {
+            _previousTime = std::chrono::high_resolution_clock::now();
+            _firstCall = false;
+        }
+
+        double getPreviousTime() {
+            auto now = std::chrono::high_resolution_clock::now();
+            auto duration = now - _previousTime;
+            return std::chrono::duration<double>(duration).count();
+        }
+
+        std::chrono::duration<double> getElapsedTimeSinceLastTick() {
+            auto now = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> elapsed = now - _previousTime;
+            _previousTime = now;
+            return elapsed;
+        }
+
+        double getTickDuration() {
+            return 1.0f / _tps;
+        }
+
+        bool isFirstCall() const {
+            return _firstCall;
+        }
+
     private:
         int _tps = 0;
         int _countTick = 0;
+        bool _firstCall;
+        std::chrono::time_point<std::chrono::high_resolution_clock> _previousTime;
     };
+
 
     class Engine {
     public:
