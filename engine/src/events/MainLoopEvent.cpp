@@ -29,7 +29,7 @@ void potEngine::MainLoopEvent::eventMainLoop(std::shared_ptr<MainLoopEvent> even
 
     std::chrono::duration<double> timeAfterSleep = engine.timer.getElapsedTimeSinceLastTick();
 
-    std::cout << "TEMPS DE FOU: " << timeAfterSleep << std::endl;
+    // std::cout << "TEMPS DE FOU: " << elapsedTime << std::endl;
     if (engine.timer.timerGetTick() >= engine.timer.timerGetTps()) {
         engine.timer.timerSetTick(0);
     }

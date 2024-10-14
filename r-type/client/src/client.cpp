@@ -115,11 +115,11 @@ void RType::Client::start()
         }
     });
 
-    // potEngine::engine.registerSystem<potEngine::ShipAnimationSystem>(player_id);
-    // potEngine::engine.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, _addr);
     potEngine::engine.registerSystem<potEngine::MoveClientEntitySystem>(client_fd, _addr);
+    potEngine::engine.registerSystem<potEngine::ShipAnimationSystem>(player_id);
+    potEngine::engine.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, _addr);
 
-    // std::shared_ptr<potEngine::AEntity> window = potEngine::engine.createWindowEntity();
+    std::shared_ptr<potEngine::AEntity> window = potEngine::engine.createWindowEntity();
 
     potEngine::engine.timer.setTps(20);
     auto startEvent = std::make_shared<potEngine::StartEvent>();
