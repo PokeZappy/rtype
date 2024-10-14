@@ -100,7 +100,7 @@ void RType::Client::create_background() {
     const std::string &texturePath = assetFinder() + "/sprites/space_ background.png";
 
     auto positionComponent = std::make_shared<potEngine::PositionComponent>(0, 0);
-    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(0, 0, 1206, 207), sf::Vector2i(3140, 1080), sf::Vector2i(1206, 207));
+    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(0, 0, 1206, 207), sf::Vector2i(3140, 1080));
     auto static_move_component = std::make_shared<potEngine::staticMoveComponent>(sf::Vector2i(-3000, 0), sf::Vector2i(0, 0));
     potEngine::engine.addComponent(entity, positionComponent);
     potEngine::engine.addComponent(entity, spriteComponent);
@@ -118,7 +118,7 @@ void RType::Client::create_hurdle() {
     const std::string &texturePath = assetFinder() + "/sprites/space_ background.png";
 
     auto positionComponent = std::make_shared<potEngine::PositionComponent>(1920, 0);
-    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(417, 286, 279, 7), sf::Vector2i(3140, 1080), sf::Vector2i(1206, 207));
+    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(417, 286, 279, 7), sf::Vector2i(3140, 1080));
     auto staticMoveComponent = std::make_shared<potEngine::staticMoveComponent>(sf::Vector2i(-3000, 1000), sf::Vector2i(1920, 1000));
     auto collisionComponent = std::make_shared<potEngine::CollisionComponent>();
 
@@ -139,7 +139,7 @@ void RType::Client::create_hurdle_destroyable() {
     const std::string &texturePath = assetFinder() + "/sprites/r-typesheet10.gif";
 
     auto positionComponent = std::make_shared<potEngine::PositionComponent>(1000, 0);
-    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(72, 30, 22, 30), sf::Vector2i(3140, 1080), sf::Vector2i(1206, 207));
+    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(72, 30, 22, 30), sf::Vector2i(3140, 1080));
     auto staticMoveComponent = std::make_shared<potEngine::staticMoveComponent>(sf::Vector2i(-3000, 1000), sf::Vector2i(1000, 1000));
     auto collisionComponent = std::make_shared<potEngine::CollisionComponent>();
     auto lifeComponent = std::make_shared<potEngine::LifeComponent>();
@@ -167,7 +167,7 @@ void RType::Client::create_explosion(sf::Vector2i pos) {
     const std::string &texturePath = assetFinder() + "/sprites/r-typesheet44.gif";
 
     auto positionComponent = std::make_shared<potEngine::PositionComponent>(pos.x, pos.y); // TODO - remplacer par les pos.x, pos.y
-    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(72, 30, 22, 30), sf::Vector2i(3140, 1080), sf::Vector2i(1206, 207));
+    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(72, 30, 22, 30), sf::Vector2i(22 * 3, 30 * 3));
     auto animeComponent = std::make_shared<potEngine::AnimationComponent>(5, 0.15, false, explosion_animation);
     animeComponent->mustDestroyOnEnding(true);
     auto soundComponent = std::make_shared<potEngine::AudioComponent>(soundPath, false, true);

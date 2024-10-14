@@ -63,7 +63,7 @@ namespace potEngine
         std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(1.0f);
         std::shared_ptr<LifeComponent> lifeComponent = std::make_shared<LifeComponent>(3);
         std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
-        std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(66, 1 + (17 * playerNbr)), sf::Vector2i(33, 17)));
+        std::shared_ptr<SpriteComponent> spriteComponent = std::make_shared<SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(66, 1 + (17 * playerNbr)), sf::Vector2i(33, 17)), sf::Vector2i(33 * 3, 17 * 3));
         engine.addComponent(entity, playerComponent);
         engine.addComponent(entity, positionComponent);
         engine.addComponent(entity, movementComponent);
