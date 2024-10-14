@@ -58,7 +58,6 @@ namespace potEngine {
                 _subscribers[std::type_index(typeid(EventType))] = handlers;
             } else {
                 handlers = it->second;
-
             }
 
             // Add the new member handler for this event type

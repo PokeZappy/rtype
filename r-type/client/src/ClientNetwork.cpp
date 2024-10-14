@@ -148,6 +148,7 @@ void RType::Client::handle_message()
         }
     }
     if (event_type == potEngine::MOVE_X_STOP || event_type == potEngine::MOVE_Y_STOP) {
+        std::cout << "LE SERVEUR ME DIT DE M'ARRETER" << std::endl;
         auto entity = potEngine::engine.getEntity(entity_id);
         if (!entity)
             return;

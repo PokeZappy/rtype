@@ -56,6 +56,7 @@ namespace potEngine
 
         void MoveClient(std::shared_ptr<MoveClientInfoEvent> info)
         {
+            // std::cout << "MOVE CLIENT" << std::endl;
             auto _entity = engine.getEntity(info->entity_id);
             if (!_entity)
                 return;
@@ -80,9 +81,9 @@ namespace potEngine
             auto entity_collide = check_collision(info, position);
             if (entity_collide == nullptr) {
                 if (info->fd != -1) {
-                    if (info->event == MOVE_UP || info->event == MOVE_DOWN)
+                    if (info->event == MOVE_UP || info->event == MOVE_DOWN || info->event == MOVE_Y_STOP)
                         _entity->getComponent<MovementComponent>()->get()->moveDirectionY = info->event;
-                    if (info->event == MOVE_RIGHT || info->event == MOVE_LEFT)
+                    if (info->event == MOVE_RIGHT || info->event == MOVE_LEFT || info->event == MOVE_X_STOP)
                         _entity->getComponent<MovementComponent>()->get()->moveDirectionX = info->event;
                 }
                 _entity->getComponent<PositionComponent>()->get()->_position = position;

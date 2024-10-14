@@ -18,7 +18,7 @@ namespace potEngine {
     }
 
     void InputSystem::pollInputs(std::shared_ptr<NoneEvent> event) {
-        std::cout << "INPUT" << std::endl;
+        // std::cout << "INPUT" << std::endl;
         for (auto entity : _entitiesSystem) {
             auto windowComponent = entity->getComponent<WindowComponent>();
             if (!windowComponent)
@@ -28,19 +28,20 @@ namespace potEngine {
 
             while (window->pollEvent(sfmlEvent))
             {
-                if (sfmlEvent.type == sf::Event::KeyPressed) {
-                auto key = sfmlEvent.key.code;
-                // if (engine.getInputs().find(key) != engine.getInputs().end()) {
-                    // engine.setInput(key, true);
-                // }
-            }
+                engine.publishEvent(std::make_shared<InputInfoEvent>(sfmlEvent.type, sfmlEvent.key.code));
+            //     if (sfmlEvent.type == sf::Event::KeyPressed) {
+            //     auto key = sfmlEvent.key.code;
+            //     // if (engine.getInputs().find(key) != engine.getInputs().end()) {
+            //         // engine.setInput(key, true);
+            //     // }
+            // }
         
-            if (sfmlEvent.type == sf::Event::KeyReleased) {
-                auto key = sfmlEvent.key.code;
-                // if (engine.getInputs().find(key) != engine.getInputs().end()) {
-                //     engine.setInput(key, false);
-                // }
-            }
+            // if (sfmlEvent.type == sf::Event::KeyReleased) {
+            //     auto key = sfmlEvent.key.code;
+            //     // if (engine.getInputs().find(key) != engine.getInputs().end()) {
+            //     //     engine.setInput(key, false);
+            //     // }
+            // }
                 // std::shared_ptr<InputInfoEvent> input = std::make_shared<InputInfoEvent>(sfmlEvent.type, sfmlEvent.key.code);
                 // engine.publishEvent(input);
             }

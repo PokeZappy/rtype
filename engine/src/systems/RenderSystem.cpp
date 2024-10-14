@@ -24,7 +24,7 @@ namespace potEngine
     }
 
     void RenderSystem::renderWindow(std::shared_ptr<NoneEvent> event) {
-        std::cout << "RENDER" << std::endl;
+        // std::cout << "RENDER" << std::endl;
         // std::cout << _entitiesSystem.size() << std::endl;
         for (auto entity : _entitiesSystem) {
             auto windowComponent = entity->getComponent<WindowComponent>();

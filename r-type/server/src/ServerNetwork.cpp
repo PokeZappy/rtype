@@ -82,6 +82,7 @@ void RType::Server::handle_message()
         }
     }
     if (event_type == potEngine::MOVE_X_STOP || event_type == potEngine::MOVE_Y_STOP) {
+        std::cout << "LE CLIENT S'ARRETE" << std::endl;
         auto entity = potEngine::engine.getEntity(entity_id);
         if (!entity)
             return;
@@ -95,6 +96,13 @@ void RType::Server::handle_message()
         } else {
             movementComponent->get()->moveDirectionY = event_type;
         }
+        auto sendtoall = std::make_shared<potEngine::SendMessageToAllEventInfo>(MAX_PLAYERS, 
+        entity->getComponent<potEngine::NetworkComponent>()->get()->fd,
+        entity_id, 
+        event_type, 
+        std::vector<size_t>{}, 
+        potEngine::engine.getEntities());
+        potEngine::engine.publishEvent(sendtoall);
     }
     if (event_type == potEngine::SHOOT) {
         auto createShootEntity = std::make_shared<potEngine::EntityCreateInfoEvent>(
