@@ -57,7 +57,7 @@ namespace potEngine
                 return;
 
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
-            int speed = _entity->getComponent<MovementComponent>()->get()->speed * engine.timer.getTickDuration();
+            int speed = _entity->getComponent<MovementComponent>()->get()->speed;
             if (info->event == MOVE_UP && position[1] > 0)
                 position[1] = (position[1] - speed > 0) ? position[1] - speed : 0;
             if (info->event == MOVE_DOWN && position[1] < 600)
@@ -68,9 +68,15 @@ namespace potEngine
                 position[0] = (position[0] - speed > 0) ? position[0] - speed : 0;
 
             auto entity_collide = check_collision(info, position);
-
-            if (entity_collide == nullptr)
+            if (entity_collide == nullptr) {
+                if (info->fd != -1) {
+                    if (info->event == MOVE_UP || info->event == MOVE_DOWN)
+                        _entity->getComponent<MovementComponent>()->get()->moveDirectionY = info->event;
+                    if (info->event == MOVE_RIGHT || info->event == MOVE_LEFT)
+                        _entity->getComponent<MovementComponent>()->get()->moveDirectionX = info->event;
+                }
                 _entity->getComponent<PositionComponent>()->get()->_position = position;
+            }
 
             if (info->fd != -1) {
                 auto sendInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, info->fd, info->_addr, info->entity_id, info->event, std::vector<size_t>{});

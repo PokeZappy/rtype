@@ -35,9 +35,6 @@ namespace potEngine
 
         void movePlayerEntity(std::shared_ptr<AEntity> entity, EventType directionX, EventType directionY)
         {
-            auto networkComponent = entity->getComponent<NetworkComponent>();
-            if (!networkComponent)
-                return;
             if (directionX != MOVE_X_STOP) {
                 auto moveInfo = std::make_shared<MoveClientInfoEvent>(
                     -1,
@@ -92,9 +89,8 @@ namespace potEngine
                 }
                 if (entity->getComponent<PlayerComponent>())
                     movePlayerEntity(entity, directionX, directionY);
-                else {
+                else
                     moveNonPlayerEntity(entity, directionX, directionY);
-                }
             }
         }
     };

@@ -90,7 +90,7 @@ namespace potEngine
             int save_y = _entity->getComponent<PositionComponent>()->get()->_position[1];
 
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
-            int speed = _entity->getComponent<MovementComponent>()->get()->speed;
+            int speed = _entity->getComponent<MovementComponent>()->get()->speed * engine.timer.getTickDuration();
             if (info->event == MOVE_UP && position[1] > 0)
                 position[1] = (position[1] - speed > 0) ? position[1] - speed : 0;
             if (info->event == MOVE_DOWN && position[1] < 600)
