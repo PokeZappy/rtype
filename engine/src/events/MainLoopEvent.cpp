@@ -27,12 +27,12 @@ void potEngine::MainLoopEvent::eventMainLoop(std::shared_ptr<MainLoopEvent> even
         double timeToSleep = tickDuration;
         std::this_thread::sleep_for(std::chrono::duration<double>(timeToSleep));
     }
-    std::cout << "YOOOOO: " << std::chrono::high_resolution_clock::now() - now << std::endl;
+    // std::cout << "YOOOOO: " << std::chrono::high_resolution_clock::now() - now << std::endl;
 
 
     std::chrono::duration<double> timeAfterSleep = engine.timer.getElapsedTimeSinceLastTick();
 
-    std::cout << "TEMPS DE FOU: " << timeAfterSleep << std::endl;
+    // std::cout << "TEMPS DE FOU: " << timeAfterSleep << std::endl;
     if (engine.timer.timerGetTick() >= engine.timer.timerGetTps()) {
         engine.timer.timerSetTick(0);
     }

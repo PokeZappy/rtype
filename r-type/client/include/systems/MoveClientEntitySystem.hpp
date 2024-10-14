@@ -36,7 +36,6 @@ namespace potEngine
 
         void movePlayerEntity(std::shared_ptr<AEntity> entity, EventType directionX, EventType directionY)
         {
-            std::cout << "ENTREE MOVE PLAYER !\n";
             if (directionX != MOVE_X_STOP) {
                 auto moveInfo = std::make_shared<MoveClientInfoEvent>(
                     -1,
@@ -82,7 +81,6 @@ namespace potEngine
             if (tmp != engine.timer.timerGetTick())
                 return;
             tmp = (tmp + 1) % 20;
-            std::cout << "ENTREE SYSTEME !\n";
             for (auto entity : engine.getEntities()) {
                 auto moveComponent = entity->getComponent<MovementComponent>();
                 if (!moveComponent)
