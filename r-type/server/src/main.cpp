@@ -7,14 +7,15 @@
 
 #include "server_config.hpp"
 
-/*! @brief Main
-//*
-//* Main function to run the RType server.
-//*
-//* @param[argc] nbr of arguments
-//* @param[argv **] port number for server listen
-//* @return 0 if good else 84
-//*/
+/*!
+* @brief Main
+*
+* Main function to run the RType server.
+*
+* @param argc nbr of arguments.
+* @param argv** port number for server listen.
+* @return 0 if good else 84.
+*/
 int main(int argc, char **argv)
 {
     if (argc == 1) {
