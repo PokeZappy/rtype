@@ -44,7 +44,7 @@ namespace potEngine
 
             std::shared_ptr<PlayerComponent> playerComponent = std::make_shared<PlayerComponent>(player_name);
             std::shared_ptr<PositionComponent> positionComponent = std::make_shared<PositionComponent>(0.0f, 0.0f);
-            std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(1.0f);
+            std::shared_ptr<MovementComponent> movementComponent = std::make_shared<MovementComponent>(5.0f);
             std::shared_ptr<NetworkComponent> networkComponent = std::make_shared<NetworkComponent>(info->client_addr, info->fd);
             std::shared_ptr<LifeComponent> lifeComponent = std::make_shared<LifeComponent>(3);
             std::shared_ptr<CollisionComponent> collisionComponent = std::make_shared<CollisionComponent>();
@@ -61,7 +61,7 @@ namespace potEngine
             auto sendMessageEventInfo = std::make_shared<SendMessageEventInfo>(info->max_players, info->fd, info->client_addr, player_id, CONNECTION, std::vector<size_t>{});
             engine.publishEvent(sendMessageEventInfo);
 
-            std::vector<int> position = {0, 0};
+            std::vector<float> position = {0, 0};
             std::vector<size_t> _pos;
             _pos.push_back(EntityType::PLAYER);
             _pos.push_back(static_cast<size_t>(player_name.size()));

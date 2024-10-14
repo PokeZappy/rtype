@@ -31,7 +31,7 @@ namespace potEngine
             engine.subscribeEvent(this, &MoveClientEvent::MoveClient);
         };
 
-        std::shared_ptr<AEntity> check_collision(std::shared_ptr<MoveClientInfoEvent> info, std::vector<int> current_pos)
+        std::shared_ptr<AEntity> check_collision(std::shared_ptr<MoveClientInfoEvent> info, std::vector<float> current_pos)
         {
             auto current_entity = engine.getEntity(info->entity_id);
             if (current_entity->getComponent<CollisionComponent>() == nullptr || current_entity->getComponent<PositionComponent>() == nullptr)
@@ -57,7 +57,8 @@ namespace potEngine
                 return;
 
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
-            int speed = _entity->getComponent<MovementComponent>()->get()->speed;
+            float speed = _entity->getComponent<MovementComponent>()->get()->speed * engine.timer.getTickDuration();
+
             if (info->event == MOVE_UP && position[1] > 0)
                 position[1] = (position[1] - speed > 0) ? position[1] - speed : 0;
             if (info->event == MOVE_DOWN && position[1] < 600)
@@ -77,6 +78,7 @@ namespace potEngine
                 }
                 _entity->getComponent<PositionComponent>()->get()->_position = position;
             }
+            std::cout << "[CLIENT] position: [" << position[0] << ", " << position[1] << "]" << std::endl;
 
             if (info->fd != -1) {
                 auto sendInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, info->fd, info->_addr, info->entity_id, info->event, std::vector<size_t>{});

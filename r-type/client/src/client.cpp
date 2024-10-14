@@ -72,7 +72,7 @@ void RType::Client::handle_connection()
         std::cout << "[CLIENT] Connected to the server with {ID}-[" << static_cast<int>(entity_id) << "]" << std::endl;
         player_id = entity_id;
         std::string player_name = username;
-        std::vector<int> position = {0, 0};
+        std::vector<float> position = {0, 0};
         std::vector<size_t> _pos;
         _pos.push_back(potEngine::EntityType::PLAYER);
         _pos.push_back(static_cast<size_t>(player_name.size()));

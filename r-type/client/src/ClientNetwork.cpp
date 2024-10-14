@@ -59,7 +59,7 @@ void RType::Client::createPlayerEntity(std::vector<size_t> params, size_t entity
 
     std::shared_ptr<potEngine::PlayerComponent> playerComponent = std::make_shared<potEngine::PlayerComponent>(username);
     std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(position[0], position[1]);
-    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(1.0f);
+    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(5.0f);
     std::shared_ptr<potEngine::LifeComponent> lifeComponent = std::make_shared<potEngine::LifeComponent>(3);
     std::shared_ptr<potEngine::CollisionComponent> collisionComponent = std::make_shared<potEngine::CollisionComponent>();
     std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
@@ -79,7 +79,7 @@ void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_
 
 
     std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(position[0], position[1]);
-    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(1.0f);
+    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(5.0f);
     std::shared_ptr<potEngine::CollisionComponent> collisionComponent = std::make_shared<potEngine::CollisionComponent>();
     std::shared_ptr<potEngine::ShootComponent> shootComponent = std::make_shared<potEngine::ShootComponent>();
 
@@ -129,7 +129,7 @@ void RType::Client::handle_message()
         if (!movementComponent || !positionComponent)
             return;
 
-        std::vector<int> convertedParams(params.begin(), params.end());
+        std::vector<float> convertedParams(params.begin(), params.end());
         entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
         if (event_type == potEngine::MOVE_UP || event_type == potEngine::MOVE_DOWN) {
             movementComponent->get()->moveDirectionY = event_type;

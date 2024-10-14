@@ -54,9 +54,7 @@ namespace potEngine
         }
 
         float getTickDuration() {
-            auto now = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<float> elapsedTime = now - _previousTime;
-            return elapsedTime.count();
+            return 1.0f / _tps;
         }
 
         bool isFirstCall() const {

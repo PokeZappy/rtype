@@ -11,7 +11,6 @@
 
 // Include Systems
 
-#include "RecvMessageSystem.hpp"
 #include "ShipAnimationSystem.hpp"
 #include "BackgroundSystem.hpp"
 #include "MoveClientEntitySystem.hpp"

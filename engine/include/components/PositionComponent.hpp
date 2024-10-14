@@ -15,9 +15,9 @@ namespace potEngine
 {
     class PositionComponent : public AComponent {
     public:
-        std::vector<int> _position = {0, 0};
+        std::vector<float> _position = {0, 0};
 
-        PositionComponent(int posX = 0, int posY = 0) : _position({posX, posY}) {}
+        PositionComponent(float posX = 0, float posY = 0) : _position({posX, posY}) {}
         PositionComponent() = default;
         ~PositionComponent() = default;
     };

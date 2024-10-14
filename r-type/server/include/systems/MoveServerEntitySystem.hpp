@@ -38,7 +38,7 @@ namespace potEngine
             if (directionX != MOVE_X_STOP) {
                 auto moveInfo = std::make_shared<MoveServerInfoEvent>(
                     4,
-                    networkComponent->get()->fd,
+                    -1,
                     directionX,
                     entity->getID()
                 );
@@ -46,7 +46,7 @@ namespace potEngine
             } if (directionY != MOVE_Y_STOP) {
                 auto moveInfo = std::make_shared<MoveServerInfoEvent>(
                     4,
-                    networkComponent->get()->fd,
+                    -1,
                     directionY,
                     entity->getID()
                 );

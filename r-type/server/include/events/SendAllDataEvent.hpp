@@ -54,7 +54,7 @@ namespace potEngine
             for (auto entity : _entities) {
                 if (entity->getID() == info->player_id)
                     continue;
-                std::vector<int> position = entity->getComponent<PositionComponent>()->get()->_position;
+                std::vector<float> position = entity->getComponent<PositionComponent>()->get()->_position;
                 EntityType _entityType = checkEntity(entity);
                 std::vector<size_t> _pos;
 
