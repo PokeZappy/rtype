@@ -72,8 +72,10 @@ namespace potEngine
             if (entity_collide == nullptr)
                 _entity->getComponent<PositionComponent>()->get()->_position = position;
 
-            auto sendInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, info->fd, info->_addr, info->entity_id, info->event, std::vector<size_t>{});
-            potEngine::engine.publishEvent(sendInfo);
+            if (info->fd != -1) {
+                auto sendInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, info->fd, info->_addr, info->entity_id, info->event, std::vector<size_t>{});
+                potEngine::engine.publishEvent(sendInfo);
+            }
         }
     };
 }

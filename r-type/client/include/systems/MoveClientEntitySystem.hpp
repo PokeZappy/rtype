@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2024
 ** B-CPP-500-LYN-5-1-rtype-cyprien.diederichs
 ** File description:
-** MoveServerEntitySystem.hpp
+** MoveClientEntitySystem.hpp
 */
 
 #pragma once
@@ -15,18 +15,21 @@
 #include "NoneEvent.hpp"
 #include "ShootComponent.hpp"
 #include "PositionComponent.hpp"
-#include "MoveServerEvent.hpp"
+#include "MoveClientEvent.hpp"
 
 namespace potEngine
 {
-    class MoveServerEntitySystem : public ASystem {
+    class MoveClientEntitySystem : public ASystem {
     public:
-        MoveServerEntitySystem()
+        int _serverFd;
+        struct sockaddr_in _serverAddr;
+
+        MoveClientEntitySystem(int fd, struct sockaddr_in addr) : _serverFd(fd), _serverAddr(addr)
         {
-            engine.subscribeEvent(this, &MoveServerEntitySystem::updateSystem);
+            engine.subscribeEvent(this, &MoveClientEntitySystem::updateSystem);
         }
 
-        ~MoveServerEntitySystem() {}
+        ~MoveClientEntitySystem() {}
 
         void update(float) override {}
 
@@ -36,17 +39,17 @@ namespace potEngine
             if (!networkComponent)
                 return;
             if (directionX != MOVE_X_STOP) {
-                auto moveInfo = std::make_shared<MoveServerInfoEvent>(
-                    4,
-                    networkComponent->get()->fd,
+                auto moveInfo = std::make_shared<MoveClientInfoEvent>(
+                    -1,
+                    _serverAddr,
                     directionX,
                     entity->getID()
                 );
                 engine.publishEvent(moveInfo);
             } if (directionY != MOVE_Y_STOP) {
-                auto moveInfo = std::make_shared<MoveServerInfoEvent>(
-                    4,
-                    networkComponent->get()->fd,
+                auto moveInfo = std::make_shared<MoveClientInfoEvent>(
+                    -1,
+                    _serverAddr,
                     directionY,
                     entity->getID()
                 );
@@ -57,17 +60,17 @@ namespace potEngine
         void moveNonPlayerEntity(std::shared_ptr<AEntity> entity, EventType directionX, EventType directionY)
         {
             if (directionX != MOVE_X_STOP) {
-                auto moveInfo = std::make_shared<MoveServerInfoEvent>(
-                    4,
+                auto moveInfo = std::make_shared<MoveClientInfoEvent>(
                     -1,
+                    _serverAddr,
                     directionX,
                     entity->getID()
                 );
                 engine.publishEvent(moveInfo);
             } if (directionY != MOVE_Y_STOP) {
-                auto moveInfo = std::make_shared<MoveServerInfoEvent>(
-                    4,
+                auto moveInfo = std::make_shared<MoveClientInfoEvent>(
                     -1,
+                    _serverAddr,
                     directionY,
                     entity->getID()
                 );
@@ -84,8 +87,9 @@ namespace potEngine
                 auto directionX = moveComponent->get()->moveDirectionX;
                 auto directionY = moveComponent->get()->moveDirectionY;
 
-                if (directionX == MOVE_X_STOP && directionY == MOVE_Y_STOP)
+                if (directionX == MOVE_X_STOP && directionY == MOVE_Y_STOP) {
                     continue;
+                }
                 if (entity->getComponent<PlayerComponent>())
                     movePlayerEntity(entity, directionX, directionY);
                 else {

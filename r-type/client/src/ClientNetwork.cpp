@@ -97,14 +97,14 @@ void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_
 }
 
 void RType::Client::handleCreateEntity(std::vector<size_t> params, size_t entity_id)
-    {
-        size_t type = params[0];
+{
+    size_t type = params[0];
 
-        if (type == potEngine::EntityType::PLAYER)
-            return createPlayerEntity(params, entity_id);
-        if (type == potEngine::EntityType::PEW)
-            return createShootEntity(params, entity_id);
-    }
+    if (type == potEngine::EntityType::PLAYER)
+        return createPlayerEntity(params, entity_id);
+    if (type == potEngine::EntityType::PEW)
+        return createShootEntity(params, entity_id);
+}
 
 void RType::Client::handle_message()
 {
@@ -119,14 +119,38 @@ void RType::Client::handle_message()
             return;
         }
     }
-    if (event_type == potEngine::EventType::MOVE_UP || event_type == potEngine::EventType::MOVE_DOWN || event_type == potEngine::EventType::MOVE_LEFT || event_type == potEngine::EventType::MOVE_RIGHT) {
+    if (event_type == potEngine::MOVE_UP || event_type == potEngine::MOVE_DOWN || event_type == potEngine::MOVE_RIGHT || event_type == potEngine::MOVE_LEFT) {
         auto entity = potEngine::engine.getEntity(entity_id);
-        if (!entity) {
-            std::cout << "[CLIENT] {ID}-[" << static_cast<int>(entity_id) << "] not found." << std::endl;
+        if (!entity)
             return;
-        }
+
+        auto movementComponent = entity->getComponent<potEngine::MovementComponent>();
+        auto positionComponent = entity->getComponent<potEngine::PositionComponent>();
+        if (!movementComponent || !positionComponent)
+            return;
+
         std::vector<int> convertedParams(params.begin(), params.end());
         entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
+        if (event_type == potEngine::MOVE_UP || event_type == potEngine::MOVE_DOWN) {
+            movementComponent->get()->moveDirectionY = event_type;
+        } else {
+            movementComponent->get()->moveDirectionX = event_type;
+        }
+    }
+    if (event_type == potEngine::MOVE_X_STOP || event_type == potEngine::MOVE_Y_STOP) {
+        auto entity = potEngine::engine.getEntity(entity_id);
+        if (!entity)
+            return;
+
+        auto movementComponent = entity->getComponent<potEngine::MovementComponent>();
+        if (!movementComponent)
+            return;
+
+        if (event_type == potEngine::MOVE_X_STOP) {
+            movementComponent->get()->moveDirectionX = event_type;
+        } else {
+            movementComponent->get()->moveDirectionY = event_type;
+        }
     }
     if (event_type == potEngine::EventType::INFORMATION) {
         handleCreateEntity(params, entity_id);

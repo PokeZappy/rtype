@@ -115,7 +115,7 @@ void RType::Client::start()
 
     potEngine::engine.registerSystem<potEngine::ShipAnimationSystem>(player_id);
     potEngine::engine.registerSystem<potEngine::InputToServerSystem>(player_id, client_fd, _addr);
-    potEngine::engine.registerSystem<potEngine::ShootEntityClientSystem>(client_fd, _addr);
+    potEngine::engine.registerSystem<potEngine::MoveClientEntitySystem>(client_fd, _addr);
 
     std::shared_ptr<potEngine::AEntity> window = potEngine::engine.createWindowEntity();
 
