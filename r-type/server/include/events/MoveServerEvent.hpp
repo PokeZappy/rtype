@@ -86,7 +86,6 @@ namespace potEngine
 
         void Move(std::shared_ptr<MoveServerInfoEvent> info)
         {
-            // std::cout << "MOVE SERVEUR" << std::endl;
             auto _entity = engine.getEntity(info->entity_id);
             if (!_entity || removeShoot(_entity, info))
                 return;
@@ -122,11 +121,9 @@ namespace potEngine
                     info->entity_id,
                     entity_collide->getID()
                 );
-                std::cout << "Collision serveur" << std::endl;
                 engine.publishEvent(collisionEventInfo);
             }
             if (info->fd != -1) {
-                std::cout << "LE SERVEUR ENVOIE LA POSITION AUX CLIENTS" << std::endl;
                 auto sendMessageEventInfo = std::make_shared<SendMessageToAllEventInfo>(
                     info->max_players,
                     info->fd,
@@ -137,7 +134,6 @@ namespace potEngine
                 );
                 engine.publishEvent(sendMessageEventInfo);
             }
-            // std::cout << "[SERVER] position: [" << position[0] << ", " << position[1] << "] previousTime: " << multiplicator << std::endl;
         }
     };
 }

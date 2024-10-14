@@ -44,6 +44,8 @@ namespace potEngine
             engine.addComponent(entity, movementComponent);
             engine.addComponent(entity, collisionComponent);
             engine.addComponent(entity, shootComponent);
+
+            std::cout << "[SERVER] New entity created {ID}-[" << entity->getID() << "] {TYPE}-[pew]" << std::endl;
         }
 
         void createMonstreEntity(std::shared_ptr<potEngine::AEntity> &entity, std::vector<float> pos)
@@ -74,8 +76,6 @@ namespace potEngine
                 createShootEntity(entity, info->position);
             if (info->entityType == EntityType::MONSTRE)
                 createMonstreEntity(entity, info->position);
-
-            std::cout << "[SERVER] New entity created {ID}-[" << static_cast<int>(entity_id) << "] {TYPE}-[" << info->entityType << "]" << std::endl;
         }
     };
 }

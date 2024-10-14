@@ -39,13 +39,13 @@ void RType::Server::handle_message()
 {
     auto [entity_id, event_type, params] = recv_message();
 
-    if (event_type == potEngine::CONNECTION && 4 > current_players) {
-        auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(4, server_fd, _addr, params);
+    if (event_type == potEngine::CONNECTION && MAX_PLAYERS > current_players) {
+        auto connectionInfo = std::make_shared<potEngine::ConnectionInfoEvent>(MAX_PLAYERS, server_fd, _addr, params);
         potEngine::engine.publishEvent(connectionInfo);
         current_players++;
     }
     if (event_type == potEngine::DISCONNECT) {
-        auto disconnectInfo = std::make_shared<potEngine::DisconnectionInfoEvent>(4, server_fd, entity_id, params);
+        auto disconnectInfo = std::make_shared<potEngine::DisconnectionInfoEvent>(MAX_PLAYERS, server_fd, entity_id, params);
         potEngine::engine.publishEvent(disconnectInfo);
         current_players--;
     }
@@ -82,7 +82,6 @@ void RType::Server::handle_message()
         }
     }
     if (event_type == potEngine::MOVE_X_STOP || event_type == potEngine::MOVE_Y_STOP) {
-        std::cout << "LE CLIENT S'ARRETE" << std::endl;
         auto entity = potEngine::engine.getEntity(entity_id);
         if (!entity)
             return;
@@ -91,22 +90,25 @@ void RType::Server::handle_message()
         if (!movementComponent)
             return;
 
+        auto sendtoall = std::make_shared<potEngine::SendMessageToAllEventInfo>(
+            MAX_PLAYERS,
+            entity->getComponent<potEngine::NetworkComponent>()->get()->fd,
+            entity_id,
+            event_type,
+            std::vector<size_t>{},
+            potEngine::engine.getEntities()
+        );
+        potEngine::engine.publishEvent(sendtoall);
+
         if (event_type == potEngine::MOVE_X_STOP) {
             movementComponent->get()->moveDirectionX = event_type;
         } else {
             movementComponent->get()->moveDirectionY = event_type;
         }
-        auto sendtoall = std::make_shared<potEngine::SendMessageToAllEventInfo>(MAX_PLAYERS, 
-        entity->getComponent<potEngine::NetworkComponent>()->get()->fd,
-        entity_id, 
-        event_type, 
-        std::vector<size_t>{}, 
-        potEngine::engine.getEntities());
-        potEngine::engine.publishEvent(sendtoall);
     }
     if (event_type == potEngine::SHOOT) {
         auto createShootEntity = std::make_shared<potEngine::EntityCreateInfoEvent>(
-            4,
+            MAX_PLAYERS,
             server_fd,
             potEngine::engine.getEntity(entity_id)->getComponent<potEngine::PositionComponent>()->get()->_position,
             entity_id,

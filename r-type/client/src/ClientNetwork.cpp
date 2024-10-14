@@ -54,6 +54,7 @@ void RType::Client::createPlayerEntity(std::vector<size_t> params, size_t entity
     std::vector<size_t> position(params.begin() + 2 + username_length, params.end());
 
     auto entity = potEngine::engine.createServerEntity(entity_id);
+    auto id = potEngine::engine.getClientIdFromServerId(entity_id);
 
     const std::string &texturePath = assetFinder() + "/sprites/r-typesheet42.gif";
 
@@ -69,6 +70,9 @@ void RType::Client::createPlayerEntity(std::vector<size_t> params, size_t entity
     potEngine::engine.addComponent(entity, lifeComponent);
     potEngine::engine.addComponent(entity, collisionComponent);
     potEngine::engine.addComponent(entity, spriteComponent);
+
+    std::cout << "[CLIENT] New PlayerEntity created {ID}-[" << entity_id
+        << "-" << id << "] {USERNAME}-[" << username << "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
 }
 
 void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_id)
@@ -76,24 +80,24 @@ void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_
     std::vector<size_t> position(params.begin() + 1, params.end());
 
     auto entity = potEngine::engine.createServerEntity(entity_id);
-
+    auto id = potEngine::engine.getClientIdFromServerId(entity_id);
 
     std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(position[0], position[1]);
     std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(600.0f, potEngine::MOVE_RIGHT, potEngine::MOVE_Y_STOP);
     std::shared_ptr<potEngine::CollisionComponent> collisionComponent = std::make_shared<potEngine::CollisionComponent>();
     std::shared_ptr<potEngine::ShootComponent> shootComponent = std::make_shared<potEngine::ShootComponent>();
 
-    const std::string &texturePath = assetFinder() + "/sprites/r-typesheet1.gif";
-    std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(249, 89), sf::Vector2i(16, 6)));
+    // const std::string &texturePath = assetFinder() + "/sprites/r-typesheet1.gif";
+    // std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(249, 89), sf::Vector2i(16, 6)));
 
     potEngine::engine.addComponent(entity, positionComponent);
     potEngine::engine.addComponent(entity, movementComponent);
     potEngine::engine.addComponent(entity, collisionComponent);
     potEngine::engine.addComponent(entity, shootComponent);
-    potEngine::engine.addComponent(entity, spriteComponent);
+    // potEngine::engine.addComponent(entity, spriteComponent);
 
-    // std::cout << "[CLIENT] New ShootEntity created {ID}-[" << static_cast<int>(entity_id)
-    //     << "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
+    std::cout << "[CLIENT] New ShootEntity created {ID}-[" << entity_id
+        << "-" << id << "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
 }
 
 void RType::Client::handleCreateEntity(std::vector<size_t> params, size_t entity_id)
@@ -121,7 +125,7 @@ void RType::Client::handle_message()
     }
     if (event_type == potEngine::EventType::DISCONNECT) {
         if (entity_id == player_id) {
-            // std::cout << "[CLIENT] Disconnected from server." << std::endl;
+            std::cout << "[CLIENT] Disconnected from server." << std::endl;
             return;
         }
     }
@@ -148,7 +152,6 @@ void RType::Client::handle_message()
         }
     }
     if (event_type == potEngine::MOVE_X_STOP || event_type == potEngine::MOVE_Y_STOP) {
-        std::cout << "LE SERVEUR ME DIT DE M'ARRETER" << std::endl;
         auto entity = potEngine::engine.getEntity(entity_id);
         if (!entity)
             return;
@@ -167,7 +170,8 @@ void RType::Client::handle_message()
         handleCreateEntity(params, entity_id);
     }
     if (event_type == potEngine::EventType::DEATH) {
-        // std::cout << "[CLIENT] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
+        auto clientId = potEngine::engine.getClientIdFromServerId(entity_id);
+        std::cout << "[CLIENT] Entity {ID}-[" << entity_id << "-" << clientId << "] is removed." << std::endl;
         potEngine::engine.removeEntity(potEngine::engine.getClientIdFromServerId(entity_id));
         if (entity_id == player_id)
             potEngine::engine.publishEvent(std::make_shared<potEngine::StopMainLoopEvent>());
