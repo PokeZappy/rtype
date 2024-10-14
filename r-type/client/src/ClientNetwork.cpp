@@ -106,6 +106,12 @@ void RType::Client::handleCreateEntity(std::vector<size_t> params, size_t entity
         return createShootEntity(params, entity_id);
 }
 
+float uint32ToFloat(uint32_t value) {
+    float result;
+    std::memcpy(&result, &value, sizeof(float));
+    return result;
+}
+
 void RType::Client::handle_message()
 {
     auto [entity_id, event_type, params] = recv_message();
@@ -129,7 +135,11 @@ void RType::Client::handle_message()
         if (!movementComponent || !positionComponent)
             return;
 
-        std::vector<float> convertedParams(params.begin(), params.end());
+        std::vector<float> convertedParams;
+        for (const auto& param : params) {
+            convertedParams.push_back(uint32ToFloat(param));
+        }
+
         entity->getComponent<potEngine::PositionComponent>()->get()->_position = convertedParams;
         if (event_type == potEngine::MOVE_UP || event_type == potEngine::MOVE_DOWN) {
             movementComponent->get()->moveDirectionY = event_type;

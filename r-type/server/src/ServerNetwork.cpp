@@ -29,6 +29,12 @@ std::tuple<size_t, potEngine::EventType, std::vector<size_t>> RType::Server::rec
     return std::make_tuple(entity_id, event_type, params);
 }
 
+uint32_t floatToUint32(float value) {
+    uint32_t result;
+    std::memcpy(&result, &value, sizeof(float));
+    return result;
+}
+
 void RType::Server::handle_message()
 {
     auto [entity_id, event_type, params] = recv_message();
@@ -52,7 +58,11 @@ void RType::Server::handle_message()
         if (!movementComponent)
             return;
         auto pos = entity->getComponent<potEngine::PositionComponent>()->get()->_position;
-        std::vector<size_t> _tmp = {pos.begin(), pos.end()};
+
+        std::vector<size_t> _tmp = {
+            floatToUint32(pos[0]),
+            floatToUint32(pos[1])
+        };
 
         auto sendMessageEventInfo = std::make_shared<potEngine::SendMessageToAllEventInfo>(
             MAX_PLAYERS,
@@ -62,6 +72,7 @@ void RType::Server::handle_message()
             _tmp,
             potEngine::engine.getEntities()
         );
+
         potEngine::engine.publishEvent(sendMessageEventInfo);
 
         if (event_type == potEngine::MOVE_UP || event_type == potEngine::MOVE_DOWN) {
