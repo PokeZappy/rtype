@@ -92,13 +92,13 @@ namespace potEngine
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
             int speed = _entity->getComponent<MovementComponent>()->get()->speed;
             if (info->event == MOVE_UP && position[1] > 0)
-                position[1] = (position[1] > speed) ? position[1] - speed : 0;
+                position[1] = (position[1] - speed > 0) ? position[1] - speed : 0;
             if (info->event == MOVE_DOWN && position[1] < 600)
                 position[1] = (position[1] + speed < 600) ? position[1] + speed : 600;
             if (info->event == MOVE_RIGHT && position[0] < 800)
                 position[0] = (position[0] + speed < 800) ? position[0] + speed : 800;
             if (info->event == MOVE_LEFT && position[0] > 0)
-                position[0] = (position[0] > speed) ? position[0] - speed : 0;
+                position[0] = (position[0] - speed > 0) ? position[0] - speed : 0;
 
             auto entity_collide = check_collision(info, position);
             std::vector<size_t> _pos = {static_cast<size_t>(save_x), static_cast<size_t>(save_y)};
