@@ -91,6 +91,9 @@ namespace potEngine
                 auto sendInfo = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, info->fd, info->_addr, info->entity_id, info->event, std::vector<size_t>{position.begin(), position.end()});
                 potEngine::engine.publishEvent(sendInfo);
             }
+
+            std::cout << "[CLIENT] Entity with {ID}-[" << info->entity_id << "] has move to {POS}-["
+                << position[0] << ", " << position[1] << "]." << std::endl;
         }
     };
 }

@@ -56,6 +56,7 @@ namespace potEngine
 
         void updateSystem(std::shared_ptr<NoneEvent> event)
         {
+            // std::cout << "ENITTE TAILLE: " << engine.getEntities().size() << std::endl;
             for (auto entity : engine.getEntities()) {
                 auto moveComponent = entity->getComponent<MovementComponent>();
                 if (!moveComponent)

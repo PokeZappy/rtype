@@ -37,6 +37,18 @@ namespace potEngine
             engine.subscribeEvent(this, &MoveServerEvent::Move);
         };
 
+        uint32_t floatToUint32(float value) {
+            uint32_t result;
+            std::memcpy(&result, &value, sizeof(float));
+            return result;
+        }
+
+        float uint32ToFloat(uint32_t value) {
+            float result;
+            std::memcpy(&result, &value, sizeof(float));
+            return result;
+        }
+
         std::shared_ptr<AEntity> check_collision(std::shared_ptr<MoveServerInfoEvent> info, std::vector<float> current_pos)
         {
             auto current_entity = engine.getEntity(info->entity_id);
@@ -94,8 +106,8 @@ namespace potEngine
             auto tmp = _timeTemp - info->_time;
             auto multiplicator = std::chrono::duration<double>(tmp).count();
 
-            int save_x = _entity->getComponent<PositionComponent>()->get()->_position[0];
-            int save_y = _entity->getComponent<PositionComponent>()->get()->_position[1];
+            float save_x = _entity->getComponent<PositionComponent>()->get()->_position[0];
+            float save_y = _entity->getComponent<PositionComponent>()->get()->_position[1];
 
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
             float speed = _entity->getComponent<MovementComponent>()->get()->speed * multiplicator;
@@ -110,10 +122,10 @@ namespace potEngine
                 position[0] = (position[0] - speed > 0) ? position[0] - speed : 0;
 
             auto entity_collide = check_collision(info, position);
-            std::vector<size_t> _pos = {static_cast<size_t>(save_x), static_cast<size_t>(save_y)};
+            std::vector<size_t> _pos = {floatToUint32(save_x), floatToUint32(save_y)};
             if (entity_collide == nullptr) {
                 _entity->getComponent<PositionComponent>()->get()->_position = position;
-                _pos = {position.begin(), position.end()};
+                _pos = {floatToUint32(position[0]), floatToUint32(position[1])};
             } else {
                 auto collisionEventInfo = std::make_shared<CollisionInfoEvent>(
                     info->max_players,
@@ -134,6 +146,8 @@ namespace potEngine
                 );
                 engine.publishEvent(sendMessageEventInfo);
             }
+            std::cout << "[SERVER] Entity with {ID}-[" << info->entity_id << "] has move to {POS}-["
+                << uint32ToFloat(_pos[0]) << ", " << uint32ToFloat(_pos[1]) << "]." << std::endl;
         }
     };
 }

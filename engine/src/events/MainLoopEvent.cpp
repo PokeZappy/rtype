@@ -21,12 +21,13 @@ void potEngine::MainLoopEvent::eventMainLoop(std::shared_ptr<MainLoopEvent> even
     engine.publishEvent(event);
 
     double tickDuration = 1.0f / engine.timer.timerGetTps();
+    auto now = std::chrono::high_resolution_clock::now() + elapsedTime;
 
-    auto now = std::chrono::high_resolution_clock::now();
     if (elapsedTime.count() < tickDuration) {
         double timeToSleep = tickDuration;
         std::this_thread::sleep_for(std::chrono::duration<double>(timeToSleep));
     }
+
     if (engine.timer.timerGetTick() >= engine.timer.timerGetTps()) {
         engine.timer.timerSetTick(0);
     }

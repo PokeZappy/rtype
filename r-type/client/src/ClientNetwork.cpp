@@ -61,7 +61,7 @@ void RType::Client::createPlayerEntity(std::vector<size_t> params, size_t entity
 
     std::shared_ptr<potEngine::PlayerComponent> playerComponent = std::make_shared<potEngine::PlayerComponent>(username);
     std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(position[0], position[1]);
-    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(300.0f);
+    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(200.0f);
     std::shared_ptr<potEngine::LifeComponent> lifeComponent = std::make_shared<potEngine::LifeComponent>(3);
     std::shared_ptr<potEngine::CollisionComponent> collisionComponent = std::make_shared<potEngine::CollisionComponent>();
     std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(66, 1), sf::Vector2i(33, 17)));
@@ -131,7 +131,7 @@ void smoothUpdatePosition(std::shared_ptr<potEngine::AEntity> entity, const std:
     auto positionComponent = entity->getComponent<potEngine::PositionComponent>();
     auto& currentPos = positionComponent->get()->_position;
 
-    float alpha = 0.1f;
+    float alpha = 0.2f;
     std::vector<float> newPos = lerp(currentPos, serverPos, alpha);
     positionComponent->get()->_position = newPos;
 }
@@ -146,7 +146,7 @@ void RType::Client::handle_message()
     if (event_type == potEngine::EventType::DISCONNECT) {
         if (entity_id == player_id) {
             std::cout << "[CLIENT] Disconnected from server." << std::endl;
-            return;
+            exit(0);
         }
     }
     if (event_type == potEngine::MOVE_UP || event_type == potEngine::MOVE_DOWN || event_type == potEngine::MOVE_RIGHT || event_type == potEngine::MOVE_LEFT) {
