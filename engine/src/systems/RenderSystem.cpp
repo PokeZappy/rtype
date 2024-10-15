@@ -11,6 +11,11 @@
 
 namespace potEngine
 {
+    /*!
+    * @brief Construct a new Render System object.
+    *
+    * This constructor initializes the RenderSystem and sets up the necessary component signatures and event subscriptions.
+    */
     RenderSystem::RenderSystem() : ASystem(true)
     {
         _signature.set(AComponent::getID<SpriteComponent>(), true);
@@ -19,10 +24,20 @@ namespace potEngine
         engine.subscribeEvent(this, &RenderSystem::renderWindow);
     }
 
+    /*!
+    * @brief Destroy the Render System object.
+    */
     RenderSystem::~RenderSystem() {
 
     }
 
+    /*!
+    * @brief Render the window.
+    *
+    * This function renders the window by clearing it, drawing all entities with sprite and text components, and then displaying the window.
+    *
+    * @param event The event triggering the render.
+    */
     void RenderSystem::renderWindow(std::shared_ptr<NoneEvent> event) {
         // std::cout << "RENDER" << std::endl;
         // std::cout << _entitiesSystem.size() << std::endl;

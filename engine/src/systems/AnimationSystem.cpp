@@ -5,6 +5,11 @@
 
 namespace potEngine {
 
+    /*!
+    * @brief Construct a new Animation System object.
+    *
+    * This constructor initializes the AnimationSystem and sets up the necessary component signatures and event subscriptions.
+    */
     AnimationSystem::AnimationSystem() : ASystem()
     {
         _signature.set(AComponent::getID<SpriteComponent>(), true);
@@ -12,10 +17,20 @@ namespace potEngine {
         engine.subscribeEvent(this, &AnimationSystem::updateAnimations);
     }
 
+    /*!
+    * @brief Destroy the Animation System object.
+    */
     AnimationSystem::~AnimationSystem() {
 
     }
 
+    /*!
+    * @brief Update the animations.
+    *
+    * This function updates the animations by iterating through entities with animation components and updating their frames based on the elapsed time.
+    *
+    * @param event The event triggering the animation update.
+    */
     void AnimationSystem::updateAnimations(std::shared_ptr<NoneEvent> event) {
         // std::cout << "ANIMATION" << std::endl;
         for (auto entity : _entitiesSystem) {

@@ -10,6 +10,9 @@
 #include "NoneEvent.hpp"
 
 namespace potEngine {
+    /*!
+    * @brief System class for managing rendering.
+    */
     class RenderSystem : public ASystem {
     public:
         RenderSystem();

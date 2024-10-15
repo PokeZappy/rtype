@@ -12,6 +12,9 @@
 #include "NoneEvent.hpp"
 
 namespace potEngine {
+    /*!
+    * @brief System class for managing audio.
+    */
     class AudioSystem : public ASystem {
     public:
         AudioSystem();

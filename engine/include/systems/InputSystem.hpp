@@ -10,6 +10,9 @@
 #include "NoneEvent.hpp"
 
 namespace potEngine {
+    /*!
+    * @brief System class for managing input.
+    */
     class InputSystem : public ASystem {
     public:
         InputSystem();

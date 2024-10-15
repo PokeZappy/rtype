@@ -7,16 +7,31 @@
 
 namespace potEngine {
 
+    /*!
+    * @brief Construct a new Input System object.
+    *
+    * This constructor initializes the InputSystem and sets up the necessary component signatures and event subscriptions.
+    */
     InputSystem::InputSystem() : ASystem()
     {
         _signature.set(AComponent::getID<WindowComponent>(), true);
         engine.subscribeEvent(this, &InputSystem::pollInputs);
     }
 
+    /*!
+    * @brief Destroy the Input System object.
+    */
     InputSystem::~InputSystem() {
 
     }
 
+    /*!
+    * @brief Poll inputs from the window.
+    *
+    * This function polls inputs from the window and processes key press and release events.
+    *
+    * @param event The event triggering the input polling.
+    */
     void InputSystem::pollInputs(std::shared_ptr<NoneEvent> event) {
         // std::cout << "INPUT" << std::endl;
         for (auto entity : _entitiesSystem) {

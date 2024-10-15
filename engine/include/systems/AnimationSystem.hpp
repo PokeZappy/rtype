@@ -11,6 +11,9 @@
 #include "NoneEvent.hpp"
 
 namespace potEngine {
+    /*!
+    * @brief Event class for starting the main loop of the engine.
+    */
     class AnimationSystem : public ASystem {
     public:
         AnimationSystem();
