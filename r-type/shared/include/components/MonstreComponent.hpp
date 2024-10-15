@@ -6,7 +6,7 @@ namespace potEngine
 {
     class MonstreComponent : public AComponent {
     public:
-        MonstreComponent(int nbMonster) : monsterId(nbMonster);
+        MonstreComponent(int nbMonster) : monsterId(nbMonster) {}
         ~MonstreComponent() = default;
         int monsterId;
     };

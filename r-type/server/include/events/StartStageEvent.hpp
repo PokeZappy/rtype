@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "server_config.hpp"
-// #include "StageComponent.hpp"
+#include "StageComponent.hpp"
 #include "StageEvent.hpp"
 #include <libconfig.h++>
 
@@ -31,22 +31,21 @@ namespace potEngine
             engine.subscribeEvent(this, &StartStageEvent::StartStage);
         };
 
-        std::shared_ptr<potEngine::EnemyInfo> addMonster(std::string monsterName, std::shared_ptr<potEngine::StageComponent> stageCmpnt) {
+        std::shared_ptr<potEngine::EnemyInfo> addMonster(std::string monsterName, std::vector<std::shared_ptr<potEngine::EnemyInfo>> enemiesAlreadyStored) {
             libconfig::Config cfg;
             cfg.readFile((assetFinder() + "/../shared/config/enemies.cfg").c_str());
             libconfig::Setting &root = cfg.getRoot();
 
-            libconfig::Setting &enemy = root["enemies"][monsterName];
+            libconfig::Setting &enemy = root["enemies"][monsterName.c_str()];
             std::shared_ptr<potEngine::EnemyInfo> enemyInfo = std::make_shared<potEngine::EnemyInfo>();
             enemyInfo->id = enemy["id"];
             enemyInfo->hp = enemy["hp"];
             enemyInfo->speed = enemy["speed"];
-            enemyInfo->movePattern = enemy["move_pattern"];
-            enemyInfo->attackPattern = enemy["attack_pattern"];
+            enemyInfo->movePattern = enemy["move_pattern"].c_str();
+            enemyInfo->attackPattern = enemy["attack_pattern"].c_str();
+            enemyInfo->name = monsterName;
 
             // assert enemy was not already added
-            auto enemiesAlreadyStored = stageCmpnt->get()->_enemies;
-
             for (auto enemy : enemiesAlreadyStored) {
                 if (enemy->id == enemyInfo->id)
                     return (nullptr);
@@ -86,7 +85,7 @@ namespace potEngine
                     for (int j = 0; j < waves["monsters"].getLength(); j++) {
                         stageInfo._monsters.push_back(waves["monsters"][j]);
 
-                        std::shared_ptr<potEngine::StageComponent> monsterInfo = addMonster(waves["monsters"][j], );
+                        std::shared_ptr<potEngine::EnemyInfo> monsterInfo = addMonster(waves["monsters"][j], stageComponent->get()->_enemies);
                         if (monsterInfo != nullptr) {
                             stageComponent->get()->_enemies.push_back(monsterInfo);
                         }

@@ -53,7 +53,7 @@ void RType::Server::init_subscribe()
     auto MoveServerEvent = std::make_shared<potEngine::MoveServerEvent>();
     auto collisionEvent = std::make_shared<potEngine::CollisionEvent>();
     auto startStageEvent = std::make_shared<potEngine::StartStageEvent>();
-    auto stageEvent = std::make_shared<potEngine::StageEvent>();
+    auto stageEvent = std::make_shared<potEngine::StageEvent>(server_fd);
     auto entityCreateEvent = std::make_shared<potEngine::EntityCreateEvent>();
 }
 
