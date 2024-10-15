@@ -3,6 +3,9 @@
 #include "ISystem.hpp"
 
 namespace potEngine {
+    /*!
+    * @brief Abstract base class for systems in the game engine.
+    */
     class ASystem : public ISystem {
     public:
         ASystem(bool inclusive = false);

@@ -11,6 +11,9 @@
 
 namespace potEngine {
     class IComponent;
+    /*!
+    * @brief Class representing an entity in the game engine.
+    */
     class AEntity {
     public:
         AEntity(const std::size_t _id);

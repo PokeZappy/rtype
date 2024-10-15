@@ -2,6 +2,13 @@
 
 namespace potEngine {
 
+    /*!
+    * @brief Construct a new ASystem object.
+    *
+    * This constructor initializes the ASystem and sets the inclusive flag.
+    *
+    * @param inclusive A boolean indicating whether the system is inclusive.
+    */
     ASystem::ASystem(bool inclusive) : _inclusive(inclusive)
     {
         _entitiesSystem = std::vector<std::shared_ptr<AEntity>>();
@@ -21,6 +28,11 @@ namespace potEngine {
     //     }
     // }
 
+    /*!
+    * @brief Get the entities in the system.
+    *
+    * @return A reference to the vector of shared pointers to entities.
+    */
     std::vector<std::shared_ptr<AEntity>> &ASystem::getEntities()
     {
         return _entitiesSystem;
