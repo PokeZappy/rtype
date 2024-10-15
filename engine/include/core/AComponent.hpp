@@ -4,6 +4,9 @@
 
 namespace potEngine
 {
+    /*!
+    * @brief Abstract base class for components in the game engine.
+    */
     class AComponent : public IComponent {
     public:
         AComponent();
