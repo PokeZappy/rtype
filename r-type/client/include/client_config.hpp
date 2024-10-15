@@ -28,6 +28,7 @@ namespace RType
         ~Client();
 
         void start();
+        void parseEnemies();
         void init_subscribe();
         void setNonBlockingInput();
         void create_background();
@@ -37,6 +38,7 @@ namespace RType
         std::tuple<size_t, potEngine::EventType, std::vector<size_t>> recv_message();
         void handle_message();
         void createPlayerEntity(std::vector<size_t> params, size_t entity_id);
+        void createMonsterEntity(std::vector<size_t> params, size_t entity_id);
         void createShootEntity(std::vector<size_t> params, size_t entity_id);
         void handleCreateEntity(std::vector<size_t> params, size_t entity_id);
     private:
@@ -44,6 +46,7 @@ namespace RType
         int client_fd;
         struct sockaddr_in _addr;
         socklen_t _addr_len;
+        std::vector<std::shared_ptr<struct potEngine::EnemyInfo>> _parsedEnemies;
     };
 }
 

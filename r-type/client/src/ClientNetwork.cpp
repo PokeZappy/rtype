@@ -96,6 +96,51 @@ void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_
     //     << "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
 }
 
+void RType::Client::createMonsterEntity(std::vector<size_t> params, size_t entity_id) {
+
+    if (params.size() != 4) {
+        std::cout << "[CLIENT] Missing Parameters for Monster Creation. Could not create." << std::endl;
+        return;
+    }
+
+    size_t enemyId = params[3];
+    std::string texturePath = assetFinder();
+    sf::IntRect textureRect;
+    int enemySpeed;
+    bool monsterFound = false;
+    for (auto enemy : _parsedEnemies) {
+        if (enemy->id == enemyId) {
+            monsterFound = true;
+            texturePath += enemy->texturePath;
+            textureRect.left = enemy->textureRect[0];
+            textureRect.top = enemy->textureRect[1];
+            textureRect.width = enemy->textureRect[2];
+            textureRect.height = enemy->textureRect[3];
+            enemySpeed = enemy->speed;
+            break;
+        }
+    }
+    if (!monsterFound) {
+        std::cout << "[CLIENT] Cannot create Monster : ID not found." << std::endl;
+        return;
+    }
+
+
+    auto entity = potEngine::engine.createServerEntity(entity_id);
+
+    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(enemySpeed, potEngine::MOVE_LEFT, potEngine::MOVE_Y_STOP);
+    std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(params[1], params[2]);
+    std::shared_ptr<potEngine::CollisionComponent> collisionComponent = std::make_shared<potEngine::CollisionComponent>();
+    std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, textureRect);
+
+    potEngine::engine.addComponent(entity, movementComponent);
+    potEngine::engine.addComponent(entity, positionComponent);
+    potEngine::engine.addComponent(entity, collisionComponent);
+    potEngine::engine.addComponent(entity, spriteComponent);
+
+
+}
+
 void RType::Client::handleCreateEntity(std::vector<size_t> params, size_t entity_id)
 {
     size_t type = params[0];
@@ -104,6 +149,8 @@ void RType::Client::handleCreateEntity(std::vector<size_t> params, size_t entity
         return createPlayerEntity(params, entity_id);
     if (type == potEngine::EntityType::PEW)
         return createShootEntity(params, entity_id);
+    if (type == potEngine::EntityType::MONSTRE)
+        return createMonsterEntity(params, entity_id);
 }
 
 float uint32ToFloat(uint32_t value) {
@@ -164,6 +211,7 @@ void RType::Client::handle_message()
         }
     }
     if (event_type == potEngine::EventType::INFORMATION) {
+        std::cout << "entité crée" << std::endl;
         handleCreateEntity(params, entity_id);
     }
     if (event_type == potEngine::EventType::DEATH) {

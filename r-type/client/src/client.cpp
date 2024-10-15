@@ -31,7 +31,47 @@ RType::Client::Client(const std::string &ip, int port) : player_id(0)
     potEngine::engine.registerSystem<potEngine::BackgroundSystem>();
 
 
+
+
     // std::cout << "[CLIENT] Ready to connect to the server...\n";
+}
+
+void RType::Client::parseEnemies()
+{
+    try {
+        libconfig::Config cfg;
+        cfg.readFile((assetFinder() + "/../shared/config/enemies.cfg").c_str());
+        libconfig::Setting &root = cfg.getRoot();
+
+        for (int i = 0; i < root["enemies"].getLength(); i++) {
+            libconfig::Setting &enemy = root["enemies"][i];
+            struct potEngine::EnemyInfo enemyInfo;
+            enemyInfo.id = enemy["id"];
+            enemyInfo.hp = enemy["hp"];
+            enemyInfo.speed = enemy["speed"];
+            enemyInfo.movePattern = enemy["move_pattern"].c_str();
+            enemyInfo.attackPattern = enemy["attack_pattern"].c_str();
+            enemyInfo.texturePath = enemy["texturePath"].c_str();
+            enemyInfo.textureRect.push_back(enemy["textureRect"]["x"]);
+            enemyInfo.textureRect.push_back(enemy["textureRect"]["y"]);
+            enemyInfo.textureRect.push_back(enemy["textureRect"]["w"]);
+            enemyInfo.textureRect.push_back(enemy["textureRect"]["h"]);
+            // enemyInfo.name = monsterName;
+            _parsedEnemies.push_back(std::make_shared<struct potEngine::EnemyInfo>(enemyInfo));
+        }
+    } catch (const libconfig::FileIOException &fioex) {
+        std::cerr << "I/O error while reading file." << std::endl;
+        return;
+    } catch (const libconfig::ParseException &pex) {
+        std::cerr << "Parse error at " << pex.getFile() << ":" << pex.getLine() << " - " << pex.getError() << std::endl;
+        return;
+    } catch (const libconfig::SettingNotFoundException &nfex) {
+        std::cerr << "Setting not found in configuration file." << nfex.getPath() << std::endl;
+        return;
+    } catch (const libconfig::SettingTypeException &stex) {
+        std::cerr << "Setting type error in configuration file." << stex.getPath() << std::endl;
+        return;
+    }
 }
 
 RType::Client::~Client()

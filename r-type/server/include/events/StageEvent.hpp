@@ -42,6 +42,42 @@ namespace potEngine
             return (monster);
         }
 
+        void sendMonsterToClients(std::string monsterName, std::shared_ptr<PositionComponent> position, std::vector<std::shared_ptr<EnemyInfo>> enemies)
+        {
+            auto monster = createMonsterEntity(monsterName, position, enemies);
+            auto monsterId = monster->getID();
+
+            std::vector<size_t> params;
+            params.push_back(EntityType::MONSTRE);
+            
+            params.push_back(static_cast<size_t>(position->_position[0]));
+            params.push_back(static_cast<size_t>(position->_position[1]));
+
+            bool hasMonsterBeenFound = false;
+            for (auto enemy : enemies) {
+                if (enemy->name == monsterName) {
+                    params.push_back(static_cast<size_t>(enemy->id));
+                    hasMonsterBeenFound = true;
+                    break;
+                }
+            }
+            if (!hasMonsterBeenFound) {
+                std::cout << "[SERVER] Error retrieving monster ID during creation ! Could not send to client" << std::endl;
+                return;
+            }
+            auto sendMessageToAllEventInfo = std::make_shared<SendMessageToAllEventInfo>(
+                MAX_PLAYERS,
+                serverFd,
+                monsterId,
+                INFORMATION,
+                params,
+                engine.getEntities()
+            );
+            engine.publishEvent(sendMessageToAllEventInfo);
+
+            std::cout << "[SERVER] Monster entity created !" << std::endl;
+        }
+
         void StageGame(std::shared_ptr<StageInfoEvent> info)
         {
             auto stageComponent = info->_stage->getComponent<StageComponent>();
@@ -68,25 +104,26 @@ namespace potEngine
             for (std::size_t i = 0; i < wave->_monsters.size(); i++) {
                 if (stage->_clock.getElapsedTime().asSeconds() >  wave->_nb_monsters[i] * wave->_waves_time / (wave->_apparition_time[i])) {
                     if (i == 0) {
-                        std::cout << std::endl << "actual_wave: " << stage->_actual_wave << " stage size: " << (int) stage->_stageInfo.size() << std::endl; 
-                        std::cout << "timer: " << stage->_clock.getElapsedTime().asSeconds() << std::endl << std::endl;
-                        std::cout << "actual_time: " << stage->_clock.getElapsedTime().asSeconds() << std::endl;
-                        std::cout << "waves_time: " << wave->_waves_time << std::endl;
+                        // std::cout << std::endl << "actual_wave: " << stage->_actual_wave << " stage size: " << (int) stage->_stageInfo.size() << std::endl; 
+                        // std::cout << "timer: " << stage->_clock.getElapsedTime().asSeconds() << std::endl << std::endl;
+                        // std::cout << "actual_time: " << stage->_clock.getElapsedTime().asSeconds() << std::endl;
+                        // std::cout << "waves_time: " << wave->_waves_time << std::endl;
 
                     }
-                    std::cout << "apparition_time: " << wave->_apparition_time[i] << std::endl;
+                    // std::cout << "apparition_time: " << wave->_apparition_time[i] << std::endl;
 
                     std::shared_ptr<PositionComponent> monsterPosition;
                     if (wave->_apparition_point[i][0] == std::vector<int>{-1, -1}) {
                         monsterPosition = std::make_shared<PositionComponent>(-1, -1);
-                        engine.addComponent(monster, monsterPosition);
+                        // engine.addComponent(monster, monsterPosition);
                         int rand_pos_left_srceen = rand() % 1080;
-                        std::cout << "apparition_point: 1920, " << rand_pos_left_srceen << std::endl;
+                        // std::cout << "apparition_point: 1920, " << rand_pos_left_srceen << std::endl;
                     } else {
+                        monsterPosition = std::make_shared<PositionComponent>(800, 300);
                     }
                     monster = createMonsterEntity(wave->_monsters[i], monsterPosition, stage->_enemies);
-                    sendMonsterToClients();
-                    std::cout << "monster: " << wave->_monsters[i] << std::endl;
+                    sendMonsterToClients(wave->_monsters[i], monsterPosition, stage->_enemies);
+                    // std::cout << "monster: " << wave->_monsters[i] << std::endl;
                     // for (std::size_t j = 0; j < wave->_apparition_point->size(); j++) {
                     //     for (std::size_t k = 0; k < wave->_apparition_point[j]->size(); k++) {
                     //         std::cout << "apparition_point: " << wave->_apparition_point[j][k][0] << " " << wave->_apparition_point[j][k][1] << std::endl;

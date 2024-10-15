@@ -21,3 +21,7 @@ std::string assetFinder();
 
 #include "SendMessageEvent.hpp"
 
+// Stage parsing info
+
+#include "StageParsingInfo.hpp"
+
