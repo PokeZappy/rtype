@@ -7,6 +7,9 @@
 
 namespace potEngine
 {
+    /*!
+    * @brief Class representing a window entity in the game engine.
+    */
     class WindowEntity : public AEntity {
     public:
         WindowEntity(const std::size_t id);
