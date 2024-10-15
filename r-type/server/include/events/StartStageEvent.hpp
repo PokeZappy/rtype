@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "server_config.hpp"
-#include "StageComponent.hpp"
+// #include "StageComponent.hpp"
 #include "StageEvent.hpp"
 #include <libconfig.h++>
 
@@ -31,13 +31,36 @@ namespace potEngine
             engine.subscribeEvent(this, &StartStageEvent::StartStage);
         };
 
+        std::shared_ptr<potEngine::EnemyInfo> addMonster(std::string monsterName, std::shared_ptr<potEngine::StageComponent> stageCmpnt) {
+            libconfig::Config cfg;
+            cfg.readFile((assetFinder() + "/../shared/config/enemies.cfg").c_str());
+            libconfig::Setting &root = cfg.getRoot();
+
+            libconfig::Setting &enemy = root["enemies"][monsterName];
+            std::shared_ptr<potEngine::EnemyInfo> enemyInfo = std::make_shared<potEngine::EnemyInfo>();
+            enemyInfo->id = enemy["id"];
+            enemyInfo->hp = enemy["hp"];
+            enemyInfo->speed = enemy["speed"];
+            enemyInfo->movePattern = enemy["move_pattern"];
+            enemyInfo->attackPattern = enemy["attack_pattern"];
+
+            // assert enemy was not already added
+            auto enemiesAlreadyStored = stageCmpnt->get()->_enemies;
+
+            for (auto enemy : enemiesAlreadyStored) {
+                if (enemy->id == enemyInfo->id)
+                    return (nullptr);
+            }
+            return (enemyInfo);
+        }
+
         void StartStage(std::shared_ptr<StratStageInfoEvent> info)
         {
             std::optional<std::shared_ptr<potEngine::StageComponent>> stageComponent = std::nullopt;
             std::shared_ptr<potEngine::AEntity> entity;
 
             for (auto entity : engine.getEntities()) {
-                if (entity->hasComponent<StageComponent>()) {
+                if (entity->getComponent<StageComponent>()) {
                     stageComponent = entity->getComponent<StageComponent>();
                     return;
                 }
@@ -62,6 +85,12 @@ namespace potEngine
                     stageInfo._waves_time = waves["wave_time"];
                     for (int j = 0; j < waves["monsters"].getLength(); j++) {
                         stageInfo._monsters.push_back(waves["monsters"][j]);
+
+                        std::shared_ptr<potEngine::StageComponent> monsterInfo = addMonster(waves["monsters"][j], );
+                        if (monsterInfo != nullptr) {
+                            stageComponent->get()->_enemies.push_back(monsterInfo);
+                        }
+
                         stageInfo._apparition_time.push_back(waves["apparition_time"][j]);
                         stageInfo._nb_monsters.push_back(0);
                         const libconfig::Setting &valueArray = waves["apparition_point"][j];

@@ -117,4 +117,8 @@ void RType::Server::handle_message()
         std::cout << "[SERVER] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
         potEngine::engine.removeEntity(entity_id);
     }
+    if (event_type == potEngine::START_STAGE) {
+        auto stageInfos = std::make_shared<potEngine::StratStageInfoEvent>(MAX_PLAYERS, server_fd, entity_id);
+        potEngine::engine.publishEvent(stageInfos);
+    }
 }

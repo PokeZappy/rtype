@@ -103,6 +103,10 @@ namespace potEngine {
                         auto moveInfo = std::make_shared<potEngine::MoveClientInfoEvent>(_clientFd, _serverAddr, potEngine::MOVE_X_STOP, _playerId);
                         potEngine::engine.publishEvent(moveInfo);
                     }
+                    if (event->key == sf::Keyboard::L) {
+                        auto startStage = std::make_shared<potEngine::SendMessageEventInfo>(MAX_PLAYERS, _clientFd, _serverAddr, _playerId, potEngine::START_STAGE, std::vector<size_t>{});
+                        potEngine::engine.publishEvent(startStage);
+                    }
                 }
                 auto playerEntity = engine.getEntity(_playerId);
                 auto playerComponent = playerEntity->getComponent<PlayerComponent>();

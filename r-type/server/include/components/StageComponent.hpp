@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-#include "server_config.hpp"
+#include "/home/samuel/tek3/rtpe/r-type/server/include/server_config.hpp"
 
 typedef std::vector<int> Position;
 
@@ -18,6 +18,31 @@ namespace potEngine
         std::vector<int> _nb_monsters;
     };
 
+    // struct EnemyInfo
+    // {
+    //     size_t id;
+    //     size_t hp;
+    //     size_t speed;
+    //     size_t scoreValue;
+    //     std::string movePattern;
+    //     std::string attackPattern;
+    // };
+
+    // struct AttackPaternInfo
+    // {
+    //     std::string type;
+    //     size_t bulletSpeed;
+    //     size_t bulletFrequency;
+    //     std::string direction;
+    // };
+
+    // struct MovePatternInfo
+    // {
+    //     std::string type;
+    //     size_t speed;
+    //     std::string direction;
+    // };
+
     class StageComponent : public AComponent
     {
     public:
@@ -29,5 +54,6 @@ namespace potEngine
         float _start_time = 0;
         int _actual_wave = 0;
         std::vector<std::shared_ptr<struct StageInfo>> _stageInfo;
+        std::vector<std::shared_ptr<struct EnemyInfo>> _enemies;
     };
 }

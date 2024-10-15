@@ -27,6 +27,10 @@ namespace potEngine
             std::srand(time(nullptr));
         };
 
+        void createMonsterEntity() {
+
+        }
+
         void StageGame(std::shared_ptr<StageInfoEvent> info)
         {
             auto stageComponent = info->_stage->getComponent<StageComponent>();
@@ -61,7 +65,7 @@ namespace potEngine
                     }
                     std::cout << "apparition_time: " << wave->_apparition_time[i] << std::endl;
                     monster = engine.createEntity();
-                    std::shared_ptr<PositionComponent> comp;
+                    std::shared_ptr<PositionComponent> monsterPosition;
                     std::cout << "monster: " << wave->_monsters[i] << std::endl;
                     // for (std::size_t j = 0; j < wave->_apparition_point->size(); j++) {
                     //     for (std::size_t k = 0; k < wave->_apparition_point[j]->size(); k++) {
@@ -69,17 +73,17 @@ namespace potEngine
                     //     }
                     // }
                     if (wave->_apparition_point[i][0] == std::vector<int>{-1, -1}) {
-                        // comp = std::make_shared<PositionComponent>(-1, -1);
-                        // ecsManager->addComponent(monster, comp);
+                        monsterPosition = std::make_shared<PositionComponent>(-1, -1);
+                        engine.addComponent(monster, monsterPosition);
                         int rand_pos_left_srceen = rand() % 1080;
                         std::cout << "apparition_point: 1920, " << rand_pos_left_srceen << std::endl;
                     } else {
                         int rand_pos = std::rand() % wave->_apparition_point[i].size();
                         std::cout << "apparition_point: " << wave->_apparition_point[i][rand_pos][0] << ", " << wave->_apparition_point[i][rand_pos][1] << std::endl;
-                        // comp = std::make_shared<PositionComponent>(wave->_apparition_point[i][0], wave->_apparition_point[i][1]);
-                        // ecsManager->addComponent(monster, comp);
+                        monsterPosition = std::make_shared<PositionComponent>(wave->_apparition_point[i][0], wave->_apparition_point[i][1]);
+                        engine.addComponent(monster, monsterPosition);
                     }
-                    engine.addComponent(monster, comp);
+                    // engine.addComponent(monster, monsterPosition);
                     wave->_nb_monsters[i]++;
                     std::cout << "nb_monsters: " << wave->_nb_monsters[i] << std::endl << std::endl;
                 }
@@ -88,3 +92,12 @@ namespace potEngine
         }
     };
 }
+
+
+
+// type de monstre
+// MonstreComponent : besoin de l'id du monstre
+// Positioncomponent - on a déjà
+// movementcomponent 
+// lifecomponent
+
