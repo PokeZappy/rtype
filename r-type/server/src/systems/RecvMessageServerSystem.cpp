@@ -58,7 +58,12 @@ namespace potEngine {
                 EntityType::PEW
             );
             engine.publishEvent(createShootEntity);
-        } if (event_type == DEATH) {
+        }
+        if (event_type == START_STAGE) {
+            auto startStage = std::make_shared<potEngine::StratStageInfoEvent>(4, _serverFd, entity_id);
+            engine.publishEvent(startStage);
+        }
+        if (event_type == DEATH) {
             std::cout << "[SERVER] Entity {ID}-[" << entity_id << "] is removed." << std::endl;
             engine.removeEntity(entity_id);
         }

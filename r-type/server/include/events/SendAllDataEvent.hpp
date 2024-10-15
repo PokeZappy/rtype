@@ -41,7 +41,7 @@ namespace potEngine
             if (entity->getComponent<ShootComponent>())
                 return EntityType::PEW;
             else
-                return EntityType::NONE;
+                return EntityType::NONE_ENTITY;
         }
 
         void sendAllData(std::shared_ptr<SendAllDataInfoEvent> info)

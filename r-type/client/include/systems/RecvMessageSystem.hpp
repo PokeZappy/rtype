@@ -1,16 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-
-#include "ASystem.hpp"
-#include "AEntity.hpp"
-#include "WindowEntity.hpp"
-#include "EventBus.hpp"
-#include "Engine.hpp"
-#include "WindowComponent.hpp"
-#include "Config.hpp"
-#include "NoneEvent.hpp"
-// #include "GameInclude.hpp" // TODO faire marcher cet include trop la flemme actuellement
+#include "client_config.hpp"
 
 namespace potEngine {
     class RecvMessageSystem : public ASystem {

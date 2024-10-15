@@ -51,6 +51,7 @@
     #include <unistd.h>
     #include <stdint.h>
     #include <fcntl.h>
+    #include <libconfig.h++>
 
     #define INIT_WINSOCK()
 

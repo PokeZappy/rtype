@@ -17,6 +17,8 @@ r-type_client
 *.so
 r-type_client_test
 r-type_server_test
-.vscode
+installer.sh
+uninstaller.sh
+.vcpkg/
 .vcpkg/
 .vs

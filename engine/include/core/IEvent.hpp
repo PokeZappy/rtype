@@ -13,12 +13,13 @@ namespace potEngine
         MOVE_RIGHT = 0x07,
         COLLISION = 0x08,
         DEATH = 0x09,
-        SHOOT = 0x10
+        SHOOT = 0x10,
+        START_STAGE = 0x11
     };
     // TODO à enlever
 
     enum EntityType {
-        NONE = 0x00,
+        NONE_ENTITY = 0x00,
         PLAYER = 0x01,
         MONSTRE = 0x02,
         PEW = 0x03
