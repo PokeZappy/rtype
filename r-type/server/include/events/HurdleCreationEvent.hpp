@@ -46,19 +46,6 @@ namespace potEngine
                 engine.getEntities()
             );
             engine.publishEvent(sendMessageToAllEventInfo);
-//            auto hurdle = engine.createEntity();
-//            auto hurdleComp = std::make_shared<HurdleComponent>(info->entity_hp);
-//            auto posComp = std::make_shared<PositionComponent>(info->entity_pos[0], info->entity_pos[1]);
-//            auto sizeComp = std::make_shared<SizeComponent>(info->entity_size[0], info->entity_size[1]);
-//            auto staticMouv = std::make_shared<staticMoveComponent>(info->entity_pos, info->final_pos);
-//
-//            engine.addComponent(hurdle, hurdleComp);
-//            engine.addComponent(hurdle, posComp);
-//            engine.addComponent(hurdle, sizeComp);
-//            engine.addComponent(hurdle, staticMouv);
-//
-//            std::shared_ptr<HurdleReadyToBeCreated> ready = std::make_shared<HurdleReadyToBeCreated>(hurdle);
-//            engine.publishEvent(ready);
         }
     };
 }

@@ -38,9 +38,12 @@ namespace potEngine
 
             libconfig::Setting &enemy = root["enemies"][monsterName.c_str()];
             std::shared_ptr<potEngine::EnemyInfo> enemyInfo = std::make_shared<potEngine::EnemyInfo>();
-            enemyInfo->id = enemy["id"];
-            enemyInfo->hp = enemy["hp"];
-            enemyInfo->speed = enemy["speed"];
+            int id = enemy["id"];
+            int hp = enemy["hp"];
+            int speed = enemy["speed"];
+            enemyInfo->id = (size_t)id;
+            enemyInfo->hp = (size_t)hp;
+            enemyInfo->speed = (size_t)speed;
             enemyInfo->movePattern = enemy["move_pattern"].c_str();
             enemyInfo->attackPattern = enemy["attack_pattern"].c_str();
             enemyInfo->name = monsterName;
@@ -57,7 +60,6 @@ namespace potEngine
         {
             std::shared_ptr<potEngine::HurdleInfo> info = std::make_shared<potEngine::HurdleInfo>();
             int id = hurdle["id"];
-            info->entity_id = (size_t)id;
             info->entity_id = (size_t)id;
             int size = hurdle["size_x"];
             info->entity_size.push_back((size_t) size);
