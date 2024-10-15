@@ -9,7 +9,7 @@ namespace potEngine
         SpriteComponent() {};
         SpriteComponent(const std::string &texturePath);
         SpriteComponent(const std::string &texturePath, sf::IntRect textureRect);
-        SpriteComponent(const std::string &texturePath, sf::IntRect textureRect, sf::Vector2i targetSize, sf::Vector2i actualSize);
+        SpriteComponent(const std::string &texturePath, sf::IntRect textureRect, sf::Vector2i targetSize);
         ~SpriteComponent();
 
         virtual void init();

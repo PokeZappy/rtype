@@ -33,7 +33,7 @@ namespace potEngine
 
         std::shared_ptr<potEngine::EnemyInfo> addMonster(std::string monsterName, std::vector<std::shared_ptr<potEngine::EnemyInfo>> enemiesAlreadyStored) {
             libconfig::Config cfg;
-            cfg.readFile((assetFinder() + "/../shared/config/enemies.cfg").c_str());
+            cfg.readFile((configFinder("config") + "/enemies.cfg").c_str());
             libconfig::Setting &root = cfg.getRoot();
 
             libconfig::Setting &enemy = root["enemies"][monsterName.c_str()];
@@ -51,6 +51,19 @@ namespace potEngine
                     return (nullptr);
             }
             return (enemyInfo);
+        }
+
+       std::shared_ptr<potEngine::HurdleInfo> addHurdle(libconfig::Setting &hurdle)
+        {
+            std::shared_ptr<potEngine::HurdleInfo> info = std::make_shared<potEngine::HurdleInfo>();
+            int id = hurdle["id"];
+            info->entity_id = (size_t)id;
+            info->entity_id = (size_t)id;
+            int size = hurdle["size_x"];
+            info->entity_size.push_back((size_t) size);
+            size = hurdle["size_y"];
+            info->entity_size.push_back((size_t)size);
+            return info;
         }
 
         void StartStage(std::shared_ptr<StratStageInfoEvent> info)
@@ -73,7 +86,8 @@ namespace potEngine
             stageComponent->get()->_level++;
             try {
                 libconfig::Config cfg;
-                cfg.readFile((assetFinder() + "/../server/config/stage_" + std::to_string(stageComponent->get()->_level) + ".cfg").c_str());
+//                TODO - check pourquoi trouve pas le cfg
+                cfg.readFile((configFinder("server") + "/stage_" + std::to_string(stageComponent->get()->_level) + ".cfg").c_str());
                 libconfig::Setting &root = cfg.getRoot();
                 stageComponent->get()->_clock.restart();
                 stageComponent->get()->_start_time = root["stage_info"]["start_time"];
@@ -85,10 +99,10 @@ namespace potEngine
                     for (int j = 0; j < waves["monsters"].getLength(); j++) {
                         stageInfo._monsters.push_back(waves["monsters"][j]);
 
-                        std::shared_ptr<potEngine::EnemyInfo> monsterInfo = addMonster(waves["monsters"][j], stageComponent->get()->_enemies);
-                        if (monsterInfo != nullptr) {
-                            stageComponent->get()->_enemies.push_back(monsterInfo);
-                        }
+//                        std::shared_ptr<potEngine::EnemyInfo> monsterInfo = addMonster(waves["monsters"][j], stageComponent->get()->_enemies);
+//                        if (monsterInfo != nullptr) {
+//                            stageComponent->get()->_enemies.push_back(monsterInfo);
+//                        }
 
                         stageInfo._apparition_time.push_back(waves["apparition_time"][j]);
                         stageInfo._nb_monsters.push_back(0);
@@ -116,6 +130,16 @@ namespace potEngine
                     }
                     stageComponent->get()->_stageInfo.push_back(std::make_shared<struct StageInfo>(stageInfo));
                     stageComponent->get()->_isStarted = true;
+                }
+                std::cout << "ptibite" << std::endl;
+                cfg.readFile((configFinder("shared") + "/enemies.cfg").c_str());
+                std::cout << "bite" << std::endl;
+                libconfig::Setting const &route = cfg.getRoot();
+                auto const& hurdles = route["hurdle"];
+                for (int i = 0; i < hurdles.getLength(); i++) {
+                    libconfig::Setting &hurdle = hurdles[("HURDLE_" + std::to_string(i + 1)).c_str()];
+                    auto lol = addHurdle(hurdle);
+                    stageComponent->get()->_hurdle.push_back(lol);
                 }
             } catch (const libconfig::FileIOException &fioex) {
                 std::cerr << "I/O error while reading file." << std::endl;

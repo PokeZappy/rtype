@@ -55,6 +55,7 @@ void RType::Server::init_subscribe()
     auto startStageEvent = std::make_shared<potEngine::StartStageEvent>();
     auto stageEvent = std::make_shared<potEngine::StageEvent>(server_fd);
     auto entityCreateEvent = std::make_shared<potEngine::EntityCreateEvent>();
+    auto hurdleCreateEvent = std::make_shared<potEngine::HurdleCreationEvent>();
 }
 
 void RType::Server::setNonBlockingInput()

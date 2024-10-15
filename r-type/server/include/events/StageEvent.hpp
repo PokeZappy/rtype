@@ -6,6 +6,7 @@
 #include <ctime>
 
 #include "server_config.hpp"
+#include "HurdleCreationEvent.hpp"
 
 namespace potEngine
 {
@@ -49,7 +50,7 @@ namespace potEngine
                 return;
             }
             auto stage = stageComponent->get();
-            if ((std::size_t) stage->_actual_wave > stage->_stageInfo.size())
+            if ((std::size_t) stage->_actual_wave > stage->_stageInfo.size() - 1)
                 return;
             if (stage->_actual_wave == 0 && stage->_clock.getElapsedTime().asSeconds() < stage->_start_time) {
                 engine.publishEvent(info);
@@ -59,7 +60,7 @@ namespace potEngine
                 stage->_clock.restart();
                 stage->_actual_wave = 1;
             }
-            std::shared_ptr<struct StageInfo> wave = stage->_stageInfo[stage->_actual_wave - 1];
+            std::shared_ptr<struct StageInfo> wave = stage->_stageInfo[stage->_actual_wave];
             if (wave->_waves_time < stage->_clock.getElapsedTime().asSeconds()) {
                 stage->_actual_wave++;
                 stage->_clock.restart();
@@ -78,14 +79,17 @@ namespace potEngine
 
                     std::shared_ptr<PositionComponent> monsterPosition;
                     if (wave->_apparition_point[i][0] == std::vector<int>{-1, -1}) {
-                        monsterPosition = std::make_shared<PositionComponent>(-1, -1);
-                        engine.addComponent(monster, monsterPosition);
-                        int rand_pos_left_srceen = rand() % 1080;
-                        std::cout << "apparition_point: 1920, " << rand_pos_left_srceen << std::endl;
+//                        monsterPosition = std::make_shared<PositionComponent>(-1, -1);
+//                        engine.addComponent(monster, monsterPosition);
+                        size_t rand_pos_left_srceen = rand() % 600; // TODO - changer la limite hardcodé
+                        auto hurdle = std::make_shared<HurdleCreationInfo>(stage->_hurdle[0]->entity_id, std::vector<size_t>{400, rand_pos_left_srceen});
+//                        auto hurdle = std::make_shared<HurdleCreationInfo>(1, std::vector<size_t>{400, rand_pos_left_srceen});
+                        engine.publishEvent(hurdle);
                     } else {
+
                     }
-                    monster = createMonsterEntity(wave->_monsters[i], monsterPosition, stage->_enemies);
-                    sendMonsterToClients();
+                   // monster = createMonsterEntity(wave->_monsters[i], monsterPosition, stage->_enemies);
+//                    sendMonsterToClients();
                     std::cout << "monster: " << wave->_monsters[i] << std::endl;
                     // for (std::size_t j = 0; j < wave->_apparition_point->size(); j++) {
                     //     for (std::size_t k = 0; k < wave->_apparition_point[j]->size(); k++) {

@@ -17,12 +17,13 @@ namespace potEngine {
         _initialTextureRect = textureRect;
     }
 
-    SpriteComponent::SpriteComponent(const std::string &texturePath, sf::IntRect textureRect, sf::Vector2i targetSize, sf::Vector2i actualSize) {
+    SpriteComponent::SpriteComponent(const std::string &texturePath, sf::IntRect textureRect, sf::Vector2i targetSize) {
         _texture.loadFromFile(texturePath);
         _sprite = sf::Sprite(_texture);
         _sprite.setTextureRect(textureRect);
 //        _sprite.setScale(sf::Vector2f(3, 3));
-        _sprite.setScale(targetSize.x / actualSize.x, targetSize.y / actualSize.y);
+        //_sprite.setScale(targetSize.x / actualSize.x, targetSize.y / actualSize.y);
+        _sprite.setScale(targetSize.x / textureRect.width, targetSize.y / textureRect.height);
         _initialTextureRect = textureRect;
     }
 
@@ -65,4 +66,3 @@ namespace potEngine {
         return (_initialTextureRect);
     }
 }
-

@@ -21,5 +21,6 @@
 #include "CollisionEvent.hpp"
 #include "StartStageEvent.hpp"
 #include "StageEvent.hpp"
+#include "HurdleCreationEvent.hpp"
 
 #include "StageComponent.hpp"

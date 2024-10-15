@@ -85,7 +85,7 @@ void RType::Client::create_background() {
     const std::string &texturePath = assetFinder() + "/sprites/space_ background.png";
 
     auto positionComponent = std::make_shared<potEngine::PositionComponent>(0, 0);
-    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(0, 0, 1206, 207), sf::Vector2i(3140, 1080), sf::Vector2i(1206, 207));
+    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(0, 0, 1206, 207), sf::Vector2i(3140, 1080));
     auto static_move_component = std::make_shared<potEngine::staticMoveComponent>(sf::Vector2i(-3000, 0), sf::Vector2i(0, 0));
     potEngine::engine.addComponent(entity, positionComponent);
     potEngine::engine.addComponent(entity, spriteComponent);

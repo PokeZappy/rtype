@@ -71,20 +71,22 @@ void RType::Client::createPlayerEntity(std::vector<size_t> params, size_t entity
     potEngine::engine.addComponent(entity, spriteComponent);
 }
 
-void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_id)
-{
+void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_id) {
     std::vector<size_t> position(params.begin() + 1, params.end());
 
     auto entity = potEngine::engine.createServerEntity(entity_id);
 
 
-    std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(position[0], position[1]);
-    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(600.0f, potEngine::MOVE_RIGHT, potEngine::MOVE_Y_STOP);
+    std::shared_ptr<potEngine::PositionComponent> positionComponent = std::make_shared<potEngine::PositionComponent>(
+            position[0], position[1]);
+    std::shared_ptr<potEngine::MovementComponent> movementComponent = std::make_shared<potEngine::MovementComponent>(
+            600.0f, potEngine::MOVE_RIGHT, potEngine::MOVE_Y_STOP);
     std::shared_ptr<potEngine::CollisionComponent> collisionComponent = std::make_shared<potEngine::CollisionComponent>();
     std::shared_ptr<potEngine::ShootComponent> shootComponent = std::make_shared<potEngine::ShootComponent>();
 
     const std::string &texturePath = assetFinder() + "/sprites/r-typesheet1.gif";
-    std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(sf::Vector2i(249, 89), sf::Vector2i(16, 6)));
+    std::shared_ptr<potEngine::SpriteComponent> spriteComponent = std::make_shared<potEngine::SpriteComponent>(
+            texturePath, sf::IntRect(sf::Vector2i(249, 89), sf::Vector2i(16, 6)));
 
     potEngine::engine.addComponent(entity, positionComponent);
     potEngine::engine.addComponent(entity, movementComponent);
@@ -95,6 +97,28 @@ void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_
     // std::cout << "[CLIENT] New ShootEntity created {ID}-[" << static_cast<int>(entity_id)
     //     << "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
 }
+
+void RType::Client::createHurdleEntity(std::vector<size_t> params, size_t entity_id) {
+    auto entity =  potEngine::engine.createEntity();
+
+    if (sf::Texture hurdleTexture; !hurdleTexture.loadFromFile(assetFinder() + "/sprites/space_ background.png"))
+        std::cout << assetFinder() << std::endl;
+    const std::string &texturePath = assetFinder() + "/sprites/space_ background.png";
+
+    auto positionComponent = std::make_shared<potEngine::PositionComponent>(1920, 0);
+    auto spriteComponent = std::make_shared<potEngine::SpriteComponent>(texturePath, sf::IntRect(417, 286, 279, 7), sf::Vector2i(279 * 5, 7 * 5));
+    auto staticMoveComponent = std::make_shared<potEngine::staticMoveComponent>(sf::Vector2i(-3000, 500), sf::Vector2i(400, 500));
+    auto collisionComponent = std::make_shared<potEngine::CollisionComponent>();
+
+    potEngine::engine.addComponent(entity, positionComponent);
+    potEngine::engine.addComponent(entity, spriteComponent);
+    potEngine::engine.addComponent(entity, staticMoveComponent);
+    potEngine::engine.addComponent(entity, collisionComponent);
+
+
+    std::cout << "[CLIENT] Hurdle created." << std::endl;
+}
+
 
 void RType::Client::handleCreateEntity(std::vector<size_t> params, size_t entity_id)
 {
@@ -118,6 +142,9 @@ void RType::Client::handle_message()
 
     if (event_type == potEngine::EventType::CONNECTION) {
         createPlayerEntity(params, entity_id);
+    }
+    if (event_type == potEngine::EventType::HURDLE) {
+        createHurdleEntity(params, entity_id);
     }
     if (event_type == potEngine::EventType::DISCONNECT) {
         if (entity_id == player_id) {

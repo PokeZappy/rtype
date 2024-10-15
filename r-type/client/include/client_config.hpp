@@ -38,6 +38,7 @@ namespace RType
         void handle_message();
         void createPlayerEntity(std::vector<size_t> params, size_t entity_id);
         void createShootEntity(std::vector<size_t> params, size_t entity_id);
+        void createHurdleEntity(std::vector<size_t> params, size_t entity_id);
         void handleCreateEntity(std::vector<size_t> params, size_t entity_id);
     private:
         size_t player_id;

@@ -102,6 +102,7 @@ namespace potEngine
             auto position = _entity->getComponent<PositionComponent>()->get()->_position;
             float speed = _entity->getComponent<MovementComponent>()->get()->speed * multiplicator;
 
+//             TODO - enlever les limites max hardcodées
             if (info->event == MOVE_UP && position[1] > 0)
                 position[1] = (position[1] - speed > 0) ? position[1] - speed : 0;
             if (info->event == MOVE_DOWN && position[1] < 600)

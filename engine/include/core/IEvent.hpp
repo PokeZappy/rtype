@@ -16,7 +16,8 @@ namespace potEngine
         COLLISION = 0x10,
         DEATH = 0x11,
         SHOOT = 0x12,
-        START_STAGE = 0x11
+        START_STAGE = 0x13,
+        HURDLE = 0x14
     };
     // TODO à enlever
 

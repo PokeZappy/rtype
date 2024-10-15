@@ -7,6 +7,7 @@ const int MAX_PLAYERS = 4;
 #include "EngineInclude.hpp"
 
 std::string assetFinder();
+std::string configFinder(const char *dir);
 
 // Include Components
 

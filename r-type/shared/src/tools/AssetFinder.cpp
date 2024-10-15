@@ -53,3 +53,28 @@ std::string assetFinder() {
     }
 
 }
+
+std::string configFinder(const char *dir) {
+    try {
+        std::string executablePath = getExecutablePath();
+        std::filesystem::path execPath(executablePath);
+        std::filesystem::path projectRoot = findRootPath(execPath.parent_path(), ".git");
+        std::filesystem::path assetsRoot = projectRoot / "r-type" / dir / "config";
+
+        // std::cout << "Executable Path: " << execPath << std::endl;
+        // std::cout << "Project Root Path: " << projectRoot << std::endl;
+        // std::cout << "Config Root Path: " << assetsRoot << std::endl;
+
+        if (!std::filesystem::exists(assetsRoot)) {
+            std::cerr << "Folder assets not found, please make sure the assets are in the correct folder." << std::endl;
+            return {};
+        }
+
+        std::cout << "Config found at: " << assetsRoot << std::endl;
+        return assetsRoot.string();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return {};
+    }
+
+}
