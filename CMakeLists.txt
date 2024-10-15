@@ -5,10 +5,12 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(cmake/auto-vcpkg.cmake)
-vcpkg_bootstrap()
-vcpkg_install_packages(sfml)
-vcpkg_install_packages(libconfig)
-# vcpkg_add_package(sfml)
+#include(cmake/nice-vcpkg.cmake)
+#vcpkg_bootstrap()
+#vcpkg_install_packages(sfml)
+#vcpkg_install_packages(libconfig)
+ vcpkg_add_package(sfml)
+ vcpkg_add_package(libconfig)
 
 set(CLIENT_INCLUDE_DIRS
     r-type/client/include
@@ -71,7 +73,9 @@ file(GLOB_RECURSE SERVER_SOURCES
     "r-type/server/src/*.cpp"
 )
 
-add_executable(r-type_server ${SERVER_SOURCES} ${SHARED_SOURCES})
+add_executable(r-type_server ${SERVER_SOURCES} ${SHARED_SOURCES}
+        r-type/server/include/events/HurdleCreationEvent.hpp
+        r-type/server/include/events/MonsterCreationEvent.hpp)
 target_include_directories(r-type_server PRIVATE ${SERVER_INCLUDE_DIRS} ${SHARED_INCLUDE_DIRS})
 target_link_libraries(r-type_server PRIVATE engine)
 
