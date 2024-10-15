@@ -113,7 +113,7 @@ void RType::Client::createHurdleEntity(std::vector<size_t> params, size_t entity
     potEngine::engine.addComponent(entity, positionComponent);
     potEngine::engine.addComponent(entity, spriteComponent);
     potEngine::engine.addComponent(entity, staticMoveComponent);
-    potEngine::engine.addComponent(entity, collisionComponent);
+//    potEngine::engine.addComponent(entity, collisionComponent);
 
 
     std::cout << "[CLIENT] Hurdle created." << std::endl;
