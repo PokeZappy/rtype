@@ -2,6 +2,9 @@
 
 namespace potEngine
 {
+    /*!
+    * @brief Enumeration of event types.
+    */
     enum EventType {
         UNKNOW = 0x00,
         CONNECTION = 0x01,
@@ -19,6 +22,9 @@ namespace potEngine
     };
     // TODO à enlever
 
+    /*!
+    * @brief Enumeration of entity types.
+    */
     enum EntityType {
         NONE = 0x00,
         PLAYER = 0x01,
@@ -26,6 +32,9 @@ namespace potEngine
         PEW = 0x03
     };
 
+    /*!
+    * @brief Interface for events in the game engine.
+    */
     class IEvent {
     public:
         virtual ~IEvent() = default;

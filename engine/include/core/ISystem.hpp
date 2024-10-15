@@ -4,6 +4,9 @@
 
 namespace potEngine {
     class AEntity;
+    /*!
+    * @brief The ISystem class is an interface for all systems in the game engine.
+    */
     class ISystem {
     public:
         virtual ~ISystem() = default;
