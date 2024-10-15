@@ -13,6 +13,9 @@
 
 namespace potEngine
 {
+    /*!
+    * @brief Component class for managing the position of an entity.
+    */
     class PositionComponent : public AComponent {
     public:
         std::vector<int> _position = {0, 0};

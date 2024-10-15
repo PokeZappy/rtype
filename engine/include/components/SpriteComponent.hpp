@@ -4,6 +4,9 @@
 
 namespace potEngine
 {
+    /*!
+    * @brief Component class for rendering sprites in the game engine.
+    */
     class SpriteComponent : public RenderComponent {
     public:
         SpriteComponent() {};

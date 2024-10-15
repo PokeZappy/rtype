@@ -4,6 +4,9 @@
 
 namespace potEngine
 {
+    /*!
+    * @brief Component class for rendering text in the game engine.
+    */
     class TextComponent : public RenderComponent {
     public:
         TextComponent() {};
