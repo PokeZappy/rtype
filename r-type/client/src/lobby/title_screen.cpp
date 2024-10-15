@@ -22,6 +22,16 @@ sf::View adjustAspectWithBlackBars(sf::View view, float windowWidth, float windo
     return view;
 }
 
+/*!
+* @brief Create letter sprites.
+*
+* This function creates letter sprites from the given texture.
+*
+* @param maxWidth The maximum width for scaling.
+* @param maxHeight The maximum height for scaling.
+* @param texture The texture containing the letters.
+* @return std::vector<sf::Sprite> A vector of letter sprites.
+*/
 std::vector<sf::Sprite> create_letters(float maxWidth, float maxHeight, const sf::Texture& texture) {
     std::vector<sf::Sprite> sprites;
     sprites.emplace_back(texture, sf::IntRect(228, 891, 468, 468));
@@ -35,6 +45,16 @@ std::vector<sf::Sprite> create_letters(float maxWidth, float maxHeight, const sf
     return sprites;
 }
 
+/*!
+* @brief Create line sprites.
+*
+* This function creates line sprites from the given texture.
+*
+* @param maxWidth The maximum width for scaling.
+* @param maxHeight The maximum height for scaling.
+* @param texture The texture containing the lines.
+* @return std::vector<sf::Sprite> A vector of line sprites.
+*/
 std::vector<sf::Sprite> create_lines(float maxWidth, float maxHeight, const sf::Texture& texture) {
     std::vector<sf::Sprite> lines;
     lines.emplace_back(texture, sf::IntRect(1678, 74, 1, 61));
@@ -58,6 +78,16 @@ std::vector<sf::Sprite> create_lines(float maxWidth, float maxHeight, const sf::
     return lines;
 }
 
+/*!
+* @brief Calculate the first animation.
+*
+* This function calculates the positions for the first animation.
+*
+* @param sprites The sprites to animate.
+* @param startPos The starting position.
+* @param positions The target positions.
+* @param progress The progress of the animation.
+*/
 void firstAnimationCalculi(std::vector<sf::Sprite> &sprites, sf::Vector2f startPos, std::vector<sf::Vector2f> positions, float progress) {
     for (size_t i = 0; i < sprites.size(); ++i) {
         sf::Vector2f endPos = positions[i];
@@ -67,6 +97,16 @@ void firstAnimationCalculi(std::vector<sf::Sprite> &sprites, sf::Vector2f startP
     }
 }
 
+/*!
+* @brief Calculate the second animation.
+*
+* This function calculates the positions for the second animation.
+*
+* @param sprites The sprites to animate.
+* @param firstPos The starting positions.
+* @param secondPos The target positions.
+* @param progress The progress of the animation.
+*/
 void secondAnimationCalculi(std::vector<sf::Sprite> &sprites, std::vector<sf::Vector2f> firstPos, std::vector<sf::Vector2f> secondPos, float progress) {
     for (size_t i = 0; i < sprites.size(); ++i) {
         sf::Vector2f startPos = firstPos[i];
@@ -76,6 +116,16 @@ void secondAnimationCalculi(std::vector<sf::Sprite> &sprites, std::vector<sf::Ve
         sprites[i].setPosition(x, y);
     }
 }
+
+/*!
+* @brief Calculate the third animation.
+*
+* This function calculates the position for the third animation.
+*
+* @param endPos The target position.
+* @param progress The progress of the animation.
+* @return sf::Vector2f The calculated position.
+*/
 sf::Vector2f thirdAnimationCalculi(sf::Vector2f endPos, float progress) {
 
     sf::Vector2f startPos(0.f, 0.f);
@@ -84,6 +134,16 @@ sf::Vector2f thirdAnimationCalculi(sf::Vector2f endPos, float progress) {
     return {x, y};
 }
 
+/*!
+* @brief Calculate the fourth animation.
+*
+* This function calculates the positions for the fourth animation.
+*
+* @param sprites The sprites to animate.
+* @param secondPos The starting positions.
+* @param thirdPos The target positions.
+* @param progress The progress of the animation.
+*/
 void fourthAnimationCalculi(std::vector<sf::Sprite> &sprites, std::vector<sf::Vector2f> secondPos,std::vector<sf::Vector2f> thirdPos,float progress) {
     for (size_t i = 0; i < sprites.size(); ++i) {
         sf::Vector2f startPos = secondPos[i];
@@ -94,6 +154,16 @@ void fourthAnimationCalculi(std::vector<sf::Sprite> &sprites, std::vector<sf::Ve
     }
 }
 
+/*!
+* @brief Calculate the fifth animation.
+*
+* This function calculates the fifth animation, which involves changing the width of the lines.
+*
+* @param sprites The sprites to animate.
+* @param index The current index of the line.
+* @param sixthAnimation A flag indicating if the sixth animation should start.
+* @param clock The clock to measure elapsed time.
+*/
 void fifthAnimationCalculi(std::vector<sf::Sprite> &sprites, int &index, bool &sixthAnimation, sf::Clock &clock) {
     std::vector<int> maxWidthLines = {1360, 1360, 1169, 1169, 778, 594, 1489};
     float progress = clock.getElapsedTime().asSeconds() / 0.5f;
@@ -113,7 +183,16 @@ void fifthAnimationCalculi(std::vector<sf::Sprite> &sprites, int &index, bool &s
     }
 }
 
-
+/*!
+* @brief Calculate the sixth animation.
+*
+* This function calculates the sixth animation, which involves changing the opacity of the sprites.
+*
+* @param sprites The sprites to animate.
+* @param transparent A flag indicating if the sprites should become transparent.
+* @param opacity The current opacity of the sprites.
+* @param clock The clock to measure elapsed time.
+*/
 void sixthAnimationCalculi(std::vector<sf::Sprite> &sprites, bool &transparent, float &opacity, sf::Clock &clock) {
     float elapsed = clock.getElapsedTime().asSeconds();
     if (elapsed > 0.05f) {
@@ -135,6 +214,13 @@ void sixthAnimationCalculi(std::vector<sf::Sprite> &sprites, bool &transparent, 
     sprites[4].setColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(opacity)));
 }
 
+/*!
+* @brief Display the title screen.
+*
+* This function displays the title screen with animations and music.
+*
+* @param assetPath The path to the assets.
+*/
 void title_screen(const std::string& assetPath) {
     sf::View view;
     view.setSize( 1920.f, 1080.f );

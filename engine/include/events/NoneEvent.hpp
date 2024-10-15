@@ -6,6 +6,9 @@
 
 namespace potEngine
 {
+    /*!
+    * @brief Event class representing a no-operation event.
+    */
     struct NoneEvent : public IEvent
     {
         NoneEvent()

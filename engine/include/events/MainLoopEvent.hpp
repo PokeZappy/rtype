@@ -11,6 +11,9 @@
 
 namespace potEngine
 {
+    /*!
+    * @brief Event class for managing the main loop of the engine.
+    */
     class MainLoopEvent : public IEvent {
         public:
         bool isRunning;

@@ -8,6 +8,9 @@
 namespace potEngine
 {
     class MainLoopEvent;
+    /*!
+    * @brief Event class for starting the main loop of the engine.
+    */
     class StartEvent : public IEvent
     {
         public:

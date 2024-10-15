@@ -12,15 +12,33 @@
 
 namespace potEngine {
     typedef std::list<std::shared_ptr<AEventHandler>> HandlerList;
+    /*!
+    * @brief Class for managing event subscriptions and publishing events.
+    */
     class EventBus {
     public:
+        /*!
+        * @brief Get the singleton instance of the EventBus.
+        * @return Reference to the EventBus instance.
+        */
         static EventBus& getInstance() {
             static EventBus instance;
             return instance;
         }
+        /*!
+        * @brief Deleted copy constructor to enforce singleton pattern.
+        */
         EventBus(EventBus const&) = delete;
+        /*!
+        * @brief Deleted assignment operator to enforce singleton pattern.
+        */
         void operator=(EventBus const&) = delete;
 
+        /*!
+        * @brief Publish an event to all subscribed handlers.
+        * @tparam EventType The type of the event.
+        * @param event Shared pointer to the event.
+        */
         template<class EventType>
         void publish(std::shared_ptr<EventType> event) {
             auto it = _subscribers.find(std::type_index(typeid(EventType)));
@@ -45,6 +63,13 @@ namespace potEngine {
             }
         }
 
+        /*!
+        * @brief Subscribe a member function to an event type.
+        * @tparam T The type of the instance.
+        * @tparam EventType The type of the event.
+        * @param instance Pointer to the instance.
+        * @param memberFunction Pointer to the member function.
+        */
         template<class T, class EventType>
         void subscribe(T* instance, void (T::*memberFunction)(std::shared_ptr<EventType>)) {
             // auto it = _subscribers.find(typeid(EventType));
@@ -70,6 +95,10 @@ namespace potEngine {
             // std::cout << "[EVENTBUS] Event subscribed "  << typeid(EventType).name() << std::endl;
         }
 
+        /*!
+        * @brief Get the next handler for an event.
+        * @return A pair containing the event and the handler list.
+        */
         std::pair<std::shared_ptr<IEvent>, std::shared_ptr<HandlerList>> getHandler() {
             if (_handlers.empty())
                 return std::make_pair(nullptr, nullptr);

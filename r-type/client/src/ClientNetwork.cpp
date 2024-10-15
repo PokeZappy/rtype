@@ -7,6 +7,17 @@
 
 #include "client_config.hpp"
 
+/*!
+* @brief Send a message to the server.
+*
+* This function sends a message to the server, including the entity ID, action type, and parameters.
+*
+* @param entity_id The ID of the entity.
+* @param action The action type.
+* @param params The parameters of the action.
+* @param maxP The maximum number of players.
+* @param fd The file descriptor for the socket.
+*/
 void RType::Client::send_message(size_t entity_id, potEngine::EventType action, const std::vector<size_t>& params, size_t maxP, int fd)
 {
     const size_t EVENT_TYPE_BITS = 8;
@@ -22,6 +33,13 @@ void RType::Client::send_message(size_t entity_id, potEngine::EventType action, 
     sendto(fd, packet.data(), packet.size(), 0, (const struct sockaddr*)&_addr, _addr_len);
 }
 
+/*!
+* @brief Receive a message from the server.
+*
+* This function receives a message from the server, extracting the entity ID, event type, and parameters.
+*
+* @return A tuple containing the entity ID, event type, and parameters.
+*/
 std::tuple<size_t, potEngine::EventType, std::vector<size_t>> RType::Client::recv_message()
 {
     uint8_t buffer[1024];
@@ -44,6 +62,14 @@ std::tuple<size_t, potEngine::EventType, std::vector<size_t>> RType::Client::rec
     return std::make_tuple(entity_id, event_type, params);
 }
 
+/*!
+* @brief Create a player entity.
+*
+* This function creates a player entity with the given parameters and entity ID.
+*
+* @param params The parameters for the player entity.
+* @param entity_id The ID of the entity.
+*/
 void RType::Client::createPlayerEntity(std::vector<size_t> params, size_t entity_id)
 {
     size_t username_length = params[1];
@@ -71,6 +97,14 @@ void RType::Client::createPlayerEntity(std::vector<size_t> params, size_t entity
     potEngine::engine.addComponent(entity, spriteComponent);
 }
 
+/*!
+* @brief Create a shoot entity.
+*
+* This function creates a shoot entity with the given parameters and entity ID.
+*
+* @param params The parameters for the shoot entity.
+* @param entity_id The ID of the entity.
+*/
 void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_id)
 {
     std::vector<size_t> position(params.begin() + 1, params.end());
@@ -96,6 +130,14 @@ void RType::Client::createShootEntity(std::vector<size_t> params, size_t entity_
         << "] {POS}-[" << position[0] << "," << position[1] << "]." << std::endl;
 }
 
+/*!
+* @brief Handle the creation of an entity.
+*
+* This function handles the creation of an entity based on the given parameters and entity ID.
+*
+* @param params The parameters for the entity.
+* @param entity_id The ID of the entity.
+*/
 void RType::Client::handleCreateEntity(std::vector<size_t> params, size_t entity_id)
 {
     size_t type = params[0];
@@ -106,6 +148,11 @@ void RType::Client::handleCreateEntity(std::vector<size_t> params, size_t entity
         return createShootEntity(params, entity_id);
 }
 
+/*!
+* @brief Handle a received message.
+*
+* This function processes a received message by performing the appropriate actions based on the event type.
+*/
 void RType::Client::handle_message()
 {
     auto [entity_id, event_type, params] = recv_message();

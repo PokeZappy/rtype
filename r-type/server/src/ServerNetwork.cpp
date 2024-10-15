@@ -7,6 +7,13 @@
 
 #include "server_config.hpp"
 
+/*!
+* @brief Receive a message from a client.
+*
+* This function receives a message from a client, extracts the parameters from the message.
+*
+* @return A tuple containing the entity ID, event type, and parameters.
+*/
 std::tuple<size_t, potEngine::EventType, std::vector<size_t>> RType::Server::recv_message()
 {
     uint8_t buffer[1024];
@@ -29,6 +36,13 @@ std::tuple<size_t, potEngine::EventType, std::vector<size_t>> RType::Server::rec
     return std::make_tuple(entity_id, event_type, params);
 }
 
+/*!
+* @brief Send a message to a client.
+*
+* This function processes a received message by publishing the appropriate event based on the event type.
+*
+* @param entity_id The entity
+*/
 void RType::Server::handle_message()
 {
     auto [entity_id, event_type, params] = recv_message();

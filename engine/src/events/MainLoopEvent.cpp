@@ -1,10 +1,22 @@
 #include "MainLoopEvent.hpp"
 
+/*!
+* @brief Construct a new Main Loop Event object.
+*
+* This constructor initializes the MainLoopEvent and subscribes to the stopMainLoop function.
+*/
 potEngine::MainLoopEvent::MainLoopEvent() : isRunning(true)
 {
     engine.subscribeEvent(this, &MainLoopEvent::stopMainLoop);
 };
 
+/*!
+* @brief Handle the main loop event.
+*
+* This function handles the main loop event by managing the timing and publishing events at each tick.
+*
+* @param event The main loop event.
+*/
 void potEngine::MainLoopEvent::eventMainLoop(std::shared_ptr<MainLoopEvent> event)
 {
     if (!isRunning)
@@ -32,6 +44,13 @@ void potEngine::MainLoopEvent::eventMainLoop(std::shared_ptr<MainLoopEvent> even
     }
 }
 
+/*!
+* @brief Stop the main loop.
+*
+* This function stops the main loop by setting the isRunning flag to false.
+*
+* @param event The stop main loop event.
+*/
 void potEngine::MainLoopEvent::stopMainLoop(std::shared_ptr<StopMainLoopEvent> event)
 {
     isRunning = false;
